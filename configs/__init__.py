@@ -1,0 +1,1 @@
+from .my_config import MyConfig
