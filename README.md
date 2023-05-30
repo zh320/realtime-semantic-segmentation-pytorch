@@ -16,18 +16,22 @@ tqdm
 # Supported models
 If you want to use encoder-decoder structure with pretrained encoders, you may refer to this repo: segmentation-models-pytorch[^smp]
 
-[BiSeNetv2](https://github.com/zh320/realtime-semantic-segmentation-pytorch/blob/main/models/bisenetv2.py) [^bisenetv2]  
-[ENet](https://github.com/zh320/realtime-semantic-segmentation-pytorch/blob/main/models/enet.py) [^enet]  
-[FastSCNN](https://github.com/zh320/realtime-semantic-segmentation-pytorch/blob/main/models/fastscnn.py) [^fastscnn]  
-[LEDNet](https://github.com/zh320/realtime-semantic-segmentation-pytorch/blob/main/models/lednet.py) [^lednet]  
+[BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
+[ContextNet](models/contextnet.py)[^contextnet]  
+[ENet](models/enet.py) [^enet]  
+[FastSCNN](models/fastscnn.py) [^fastscnn]  
+[LEDNet](models/lednet.py) [^lednet]  
+[LinkNet](models/linknet.py)[&linknet]  
 
 More models and benchmarks are coming.
 
 
 [^bisenetv2]: [BiSeNet V2: Bilateral Network with Guided Aggregation for Real-time Semantic Segmentation](https://arxiv.org/abs/2004.02147)  
+[^contextnet]: [ContextNet: Exploring Context and Detail for Semantic Segmentation in Real-time](https://arxiv.org/abs/1805.04554)  
 [^enet]: [ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation](https://arxiv.org/abs/1606.02147)  
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
+[^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
 
@@ -51,13 +55,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 # Performances and checkpoints
 (full resolution on Cityscapes)
-| Model | Params | mIoU (200 epoch) | mIoU (800 epoch) |
-| :---: | :---: | :---: | :---: |
-| BiSeNetv2 | - | [0.6441](weights/bisenetv2_200epoch.pth) | [0.6868](weights/bisenetv2_800epoch.pth) |
-| ENet | - | [0.6203](weights/enet_200epoch.pth) | [0.6965](weights/enet_800epoch.pth) |
-| FastSCNN | - | [0.6131](weights/fastscnn_200epoch.pth) | [0.6675](weights/fastscnn_800epoch.pth) |
-| LEDNet | - | [0.6591](weights/lednet_200epoch.pth) | [0.7176](weights/lednet_800epoch.pth) |
-
+| Model | Params | mIoU (paper) <br> val / test| mIoU (200 epoch) | mIoU (800 epoch) |
+| :---: | :---: | :---: | :---: | :---: |
+| BiSeNetv2 | - | 73.4 / 72.6 | [64.41](weights/bisenetv2_200epoch.pth) | [68.68](weights/bisenetv2_800epoch.pth) |
+| ContextNet | - | 65.9 / 66.1 | [62.17](weights/contextnet_200epoch.pth) | [66.15](weights/contextnet_800epoch.pth) |
+| ENet | - | - / 58.3 | [62.03](weights/enet_200epoch.pth) | [69.65](weights/enet_800epoch.pth) |
+| FastSCNN | - | 68.6 / 68.0 | [61.31](weights/fastscnn_200epoch.pth) | [66.75](weights/fastscnn_800epoch.pth) |
+| LEDNet | - | - / 70.6 | [65.91](weights/lednet_200epoch.pth) | [71.76](weights/lednet_800epoch.pth) |
+| LinkNet | - | - / 76.4| [63.82](weights/linknet_200epoch.pth) | [70.86](weights/linknet_800epoch.pth) |
 
 # Prepare the dataset
 ```
