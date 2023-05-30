@@ -21,7 +21,7 @@ If you want to use encoder-decoder structure with pretrained encoders, you may r
 [ENet](models/enet.py) [^enet]  
 [FastSCNN](models/fastscnn.py) [^fastscnn]  
 [LEDNet](models/lednet.py) [^lednet]  
-[LinkNet](models/linknet.py)[&linknet]  
+[LinkNet](models/linknet.py)[^linknet]  
 
 More models and benchmarks are coming.
 
@@ -70,6 +70,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
     /gtFine
     /leftImg8bit
 ```
+
 
 
 # References
