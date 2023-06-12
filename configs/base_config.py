@@ -16,6 +16,8 @@ class BaseConfig:
         self.total_epoch = 200
         self.base_lr = 0.01
         self.train_bs = 16      # For each GPU
+        self.use_aux = False
+        self.aux_coef = None
         
         # Validating
         self.val_bs = 16        # For each GPU

@@ -13,23 +13,30 @@ from .modules import conv1x1, DSConvBNAct, DWConvBNAct, PWConvBNAct, ConvBNAct, 
 
 
 class ContextNet(nn.Module):
-    def __init__(self, num_class=1, n_channel=3, act_type='relu'):
+    def __init__(self, num_class=1, n_channel=3, act_type='relu', use_aux=False):
         super(ContextNet, self).__init__()
+        self.use_aux = use_aux
         self.full_res_branch = Branch_1(n_channel, [32, 64, 128], 128, act_type=act_type)
-        self.lower_res_branch = Branch_4(n_channel, 128, act_type=act_type)
+        self.lower_res_branch = Branch_4(n_channel, 128, num_class, act_type=act_type, use_aux=use_aux)
         self.feature_fusion = FeatureFusion(128, 128, 128, act_type=act_type)
         self.classifier = ConvBNAct(128, num_class, 1, act_type=act_type)
 
-    def forward(self, x):
+    def forward(self, x, is_training=False):
         size = x.size()[2:]
         x_lower = F.interpolate(x, scale_factor=0.25, mode='bilinear', align_corners=True)
         full_res_feat = self.full_res_branch(x)
-        lower_res_feat = self.lower_res_branch(x_lower)
+        if self.use_aux:
+            lower_res_feat, aux1, aux2, aux3, aux4 = self.lower_res_branch(x_lower)
+        else:
+            lower_res_feat = self.lower_res_branch(x_lower)
         x = self.feature_fusion(full_res_feat, lower_res_feat)
         x = self.classifier(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
         
-        return x
+        if self.use_aux and is_training:
+            return x, (aux1, aux2, aux3, aux4)
+        else:    
+            return x
 
 
 class Branch_1(nn.Sequential):
@@ -47,9 +54,11 @@ class Branch_1(nn.Sequential):
 
 
 class Branch_4(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type='relu'):
+    def __init__(self, in_channels, out_channels, num_class, act_type='relu', use_aux=False):
         super(Branch_4, self).__init__()
+        self.use_aux = use_aux
         self.conv_init = ConvBNAct(in_channels, 32, 3, 2, act_type=act_type)
+        
         inverted_residual_setting = [
                 # t, c, n, s
                 [1, 32, 1, 1],
@@ -59,25 +68,63 @@ class Branch_4(nn.Module):
                 [6, 96, 2, 1],
                 [6, 128, 2, 1],
             ]
-        
+
         # Building inverted residual blocks, codes borrowed from 
         # https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv2.py
-        features = []
+        all_features = []
         in_channels = 32
-        for t, c, n, s in inverted_residual_setting:
+        for setting in inverted_residual_setting:
+            features = []
+            t, c, n, s = setting
             for i in range(n):
                 stride = s if i == 0 else 1
                 features.append(InvertedResidual(in_channels, c, stride, t, act_type=act_type))
                 in_channels = c
-        self.bottlenecks = nn.Sequential(*features)
+            all_features.append(features)
+        
+        self.bottleneck0 = nn.Sequential(*all_features[0])
+        self.bottleneck1 = nn.Sequential(*all_features[1])
+        self.bottleneck2 = nn.Sequential(*all_features[2])
+        self.bottleneck3 = nn.Sequential(*all_features[3])
+        self.bottleneck4 = nn.Sequential(*all_features[4])
+        self.bottleneck5 = nn.Sequential(*all_features[5])
+        
+        if use_aux:
+            self.aux_head1 = AuxHead(32, num_class, act_type=act_type)
+            self.aux_head2 = AuxHead(48, num_class, act_type=act_type)
+            self.aux_head3 = AuxHead(64, num_class, act_type=act_type)
+            self.aux_head4 = AuxHead(96, num_class, act_type=act_type)
+
         self.conv_last = ConvBNAct(128, out_channels, 3, 1, act_type=act_type)
         
     def forward(self, x):
         x = self.conv_init(x)
-        x = self.bottlenecks(x)
+        x = self.bottleneck0(x)
+        
+        x = self.bottleneck1(x)
+        if self.use_aux:
+            aux1 = self.aux_head1(x)
+            
+        x = self.bottleneck2(x)
+        if self.use_aux:
+            aux2 = self.aux_head2(x)
+
+        x = self.bottleneck3(x)
+        if self.use_aux:
+            aux3 = self.aux_head3(x)
+            
+        x = self.bottleneck4(x)
+        if self.use_aux:
+            aux4 = self.aux_head4(x)
+
+        x = self.bottleneck5(x)
+        
         x = self.conv_last(x)
         
-        return x
+        if self.use_aux:
+            return x, aux1, aux2, aux3, aux4
+        else:
+            return x
 
 
 class FeatureFusion(nn.Module):
@@ -121,3 +168,12 @@ class InvertedResidual(nn.Module):
             return x + self.conv(x)
         else:
             return self.conv(x)
+
+
+class AuxHead(nn.Sequential):
+    def __init__(self, in_channels, num_class, act_type='relu'):
+        super(AuxHead, self).__init__(
+            DSConvBNAct(in_channels, in_channels, 3, 1, act_type=act_type),
+            DSConvBNAct(in_channels, in_channels, 3, 1, act_type=act_type),
+            PWConvBNAct(in_channels, num_class, act_type=act_type),
+        )        

@@ -13,22 +13,30 @@ from .modules import conv1x1, DSConvBNAct, DWConvBNAct, PWConvBNAct, ConvBNAct
 
 
 class FastSCNN(nn.Module):
-    def __init__(self, num_class=1, n_channel=3, act_type='relu'):
+    def __init__(self, num_class=1, n_channel=3, act_type='relu', use_aux=False):
         super(FastSCNN, self).__init__()
+        self.use_aux = use_aux
         self.learning_to_downsample = LearningToDownsample(n_channel, 64, act_type=act_type)
-        self.global_feature_extractor = GlobalFeatureExtractor(64, 128, act_type=act_type)
+        self.global_feature_extractor = GlobalFeatureExtractor(64, 128, num_class, act_type=act_type, use_aux=use_aux)
         self.feature_fusion = FeatureFusionModule(64, 128, 128, act_type=act_type)
         self.classifier = Classifier(128, num_class, act_type=act_type)
         
-    def forward(self, x):
+    def forward(self, x, is_training=False):
         size = x.size()[2:]
         higher_res_feat = self.learning_to_downsample(x)
-        lower_res_feat = self.global_feature_extractor(higher_res_feat)
+        if self.use_aux:
+            lower_res_feat, aux1, aux2, aux3 = self.global_feature_extractor(higher_res_feat)
+        else:
+            lower_res_feat = self.global_feature_extractor(higher_res_feat)
+            
         x = self.feature_fusion(higher_res_feat, lower_res_feat)
         x = self.classifier(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
         
-        return x
+        if self.use_aux and is_training:
+            return x, (aux1, aux2, aux3)
+        else:    
+            return x
         
         
 class LearningToDownsample(nn.Sequential):
@@ -41,8 +49,9 @@ class LearningToDownsample(nn.Sequential):
 
 
 class GlobalFeatureExtractor(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type='relu'):
+    def __init__(self, in_channels, out_channels, num_class, act_type='relu', use_aux=False):
         super(GlobalFeatureExtractor, self).__init__()
+        self.use_aux = use_aux
         inverted_residual_setting = [
                 # t, c, n, s
                 [6, 64, 3, 2],
@@ -52,23 +61,47 @@ class GlobalFeatureExtractor(nn.Module):
         
         # Building inverted residual blocks, codes borrowed from 
         # https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv2.py
-        features = []
-        for t, c, n, s in inverted_residual_setting:
+        all_features = []
+        for setting in inverted_residual_setting:
+            features = []
+            t, c, n, s = setting
             for i in range(n):
                 stride = s if i == 0 else 1
                 features.append(InvertedResidual(in_channels, c, stride, t, act_type=act_type))
                 in_channels = c
-        self.bottlenecks = nn.Sequential(*features)
+            all_features.append(features)    
+
+        self.bottleneck1 = nn.Sequential(*all_features[0])
+        self.bottleneck2 = nn.Sequential(*all_features[1])
+        self.bottleneck3 = nn.Sequential(*all_features[2])
+        
+        if use_aux:
+            self.aux_head1 = Classifier(inverted_residual_setting[0][1], num_class, act_type=act_type)
+            self.aux_head2 = Classifier(inverted_residual_setting[1][1], num_class, act_type=act_type)
+            self.aux_head3 = Classifier(inverted_residual_setting[2][1], num_class, act_type=act_type)
         
         self.ppm = PyramidPoolingModule(in_channels, out_channels, act_type=act_type)
-        
+
     def forward(self, x):
-        x = self.bottlenecks(x)
+        x = self.bottleneck1(x)
+        if self.use_aux:
+            aux1 = self.aux_head1(x)
+            
+        x = self.bottleneck2(x)
+        if self.use_aux:
+            aux2 = self.aux_head2(x)
+            
+        x = self.bottleneck3(x)
+        if self.use_aux:
+            aux3 = self.aux_head3(x)
+
         x = self.ppm(x)
-        
-        return x
-        
-        
+        if self.use_aux:
+            return x, aux1, aux2, aux3
+        else:    
+            return x
+
+
 class PyramidPoolingModule(nn.Module):
     def __init__(self, in_channels, out_channels, act_type='relu'):
         super(PyramidPoolingModule, self).__init__()

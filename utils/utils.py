@@ -47,7 +47,7 @@ def log_config(config, logger):
     keys = ['dataset', 'num_class', 'model', 'encoder', 'decoder', 'loss_type', 
             'optimizer_type', 'lr_policy', 'total_epoch', 'train_bs', 'val_bs',  
             'train_num', 'val_num', 'gpu_num', 'num_workers', 'amp_training', 
-            'DDP', 'kd_training', 'synBN', 'use_ema']
+            'DDP', 'kd_training', 'synBN', 'use_ema', 'use_aux']
             
     config_dict = vars(config)
     infos = f"\n\n\n{'#'*25} Config Informations {'#'*25}\n" 
