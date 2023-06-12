@@ -14,24 +14,31 @@ from .modules import conv3x3, conv1x1, DWConvBNAct, PWConvBNAct, ConvBNAct, Acti
 
 
 class BiSeNetv2(nn.Module):
-    def __init__(self, num_class=1, n_channel=3, act_type='relu'):
+    def __init__(self, num_class=1, n_channel=3, act_type='relu', use_aux=True):
         super(BiSeNetv2, self).__init__()
+        self.use_aux = use_aux
         self.detail_branch = DetailBranch(n_channel, 128, act_type)
-        self.semantic_branch = SemanticBranch(n_channel, 128, act_type)
+        self.semantic_branch = SemanticBranch(n_channel, 128, num_class, act_type, use_aux)
         self.bga_layer = BilateralGuidedAggregationLayer(128, 128, act_type)
         self.seg_head = SegHead(128, num_class, act_type)
         
-    def forward(self, x):
+    def forward(self, x, is_training=False):
         size = x.size()[2:]
         x_d = self.detail_branch(x)
-        x_s = self.semantic_branch(x)
+        if self.use_aux:
+            x_s, aux2, aux3, aux4, aux5 = self.semantic_branch(x)
+        else:
+            x_s = self.semantic_branch(x)
         x = self.bga_layer(x_d, x_s)
         x = self.seg_head(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
         
-        return x
-        
-        
+        if self.use_aux and is_training:
+            return x, (aux2, aux3, aux4, aux5)
+        else:
+            return x
+
+
 class DetailBranch(nn.Sequential):
     def __init__(self, in_channels, out_channels, act_type='relu'):
         super(DetailBranch, self).__init__(
@@ -47,20 +54,55 @@ class DetailBranch(nn.Sequential):
 
 
 class SemanticBranch(nn.Sequential):
-    def __init__(self, in_channels, out_channels, act_type='relu'):
-        super(SemanticBranch, self).__init__(
-            StemBlock(in_channels, 16, act_type),
-            GatherExpansionLayer(16, 32, 2, act_type),
-            GatherExpansionLayer(32, 32, 1, act_type),
-            GatherExpansionLayer(32, 64, 2, act_type),
-            GatherExpansionLayer(64, 64, 1, act_type),
-            GatherExpansionLayer(64, 128, 2, act_type),
-            GatherExpansionLayer(128, 128, 1, act_type),
-            GatherExpansionLayer(128, 128, 1, act_type),
-            GatherExpansionLayer(128, 128, 1, act_type),
-            GatherExpansionLayer(128, 128, 1, act_type),
-            ContextEmbeddingBlock(128, out_channels, act_type)
-        )
+    def __init__(self, in_channels, out_channels, num_class, act_type='relu', use_aux=False):
+        super(SemanticBranch, self).__init__()
+        self.use_aux = use_aux
+        self.stage1to2 = StemBlock(in_channels, 16, act_type)
+        self.stage3 = nn.Sequential(
+                            GatherExpansionLayer(16, 32, 2, act_type),
+                            GatherExpansionLayer(32, 32, 1, act_type),
+                        )
+        self.stage4 = nn.Sequential(
+                            GatherExpansionLayer(32, 64, 2, act_type),
+                            GatherExpansionLayer(64, 64, 1, act_type),
+                        )
+        self.stage5_1to4 = nn.Sequential(
+                                GatherExpansionLayer(64, 128, 2, act_type),
+                                GatherExpansionLayer(128, 128, 1, act_type),
+                                GatherExpansionLayer(128, 128, 1, act_type),
+                                GatherExpansionLayer(128, 128, 1, act_type),
+                            )
+        self.stage5_5 = ContextEmbeddingBlock(128, out_channels, act_type)
+        
+        if self.use_aux:
+            self.seg_head2 = SegHead(16, num_class, act_type)
+            self.seg_head3 = SegHead(32, num_class, act_type)
+            self.seg_head4 = SegHead(64, num_class, act_type)
+            self.seg_head5 = SegHead(128, num_class, act_type)
+
+    def forward(self, x):
+        x = self.stage1to2(x)
+        if self.use_aux:
+            aux2 = self.seg_head2(x)
+
+        x = self.stage3(x)
+        if self.use_aux:
+            aux3 = self.seg_head3(x)
+
+        x = self.stage4(x)
+        if self.use_aux:
+            aux4 = self.seg_head4(x)
+
+        x = self.stage5_1to4(x)
+        if self.use_aux:
+            aux5 = self.seg_head5(x)
+
+        x = self.stage5_5(x)
+
+        if self.use_aux:
+            return x, aux2, aux3, aux4, aux5
+        else:
+            return x
 
 
 class StemBlock(nn.Module):
@@ -112,9 +154,9 @@ class GatherExpansionLayer(nn.Module):
         res = self.left_branch(x)
         
         if self.stride == 2:
-            res += self.right_branch(x)
+            res = self.right_branch(x) + res
         else:
-            res += x
+            res = x + res
             
         return self.act(res)
 
@@ -132,7 +174,7 @@ class ContextEmbeddingBlock(nn.Module):
     def forward(self, x):
         res = self.pool(x)
         res = self.conv_mid(res)
-        x += res
+        x = res + x
         x = self.conv_last(x)
         
         return x

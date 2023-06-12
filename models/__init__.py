@@ -17,6 +17,9 @@ decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':
 def get_model(config):
     model_hub = {'bisenetv2':BiSeNetv2, 'enet':ENet, 'fastscnn':FastSCNN, 'lednet':LEDNet,
                  'linknet':LinkNet, 'contextnet':ContextNet,}
+
+    # The following models currently support auxiliary heads
+    aux_models = ['bisenetv2', 'contextnet', 'fastscnn']
     
     if config.model == 'smp':   # Use segmentation models pytorch
         if config.decoder not in decoder_hub:
@@ -27,7 +30,10 @@ def get_model(config):
                                             in_channels=3, classes=config.num_class)
 
     elif config.model in model_hub.keys():
-        model = model_hub[config.model](num_class=config.num_class)
+        if config.model in aux_models:
+            model = model_hub[config.model](num_class=config.num_class, use_aux=config.use_aux)
+        else:
+            model = model_hub[config.model](num_class=config.num_class)
 
     else:
         raise NotImplementedError(f"Unsupport model type: {config.model}")
