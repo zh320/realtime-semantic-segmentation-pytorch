@@ -18,6 +18,7 @@ class MyConfig(BaseConfig):
         self.loss_type = 'ohem'
         self.optimizer_type = 'adam'
         self.logger_name = 'seg_trainer'
+        self.use_aux = True
 
         # Validating
         self.val_bs = 10

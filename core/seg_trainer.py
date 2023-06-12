@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 from torch.cuda import amp
+import torch.nn.functional as F
+
 from .base_trainer import BaseTrainer
 from .loss import kd_loss_fn
 from models import get_teacher_model
@@ -31,15 +33,35 @@ class SegTrainer(BaseTrainer):
             self.train_itrs += 1
 
             images = images.to(self.device, dtype=torch.float32)
-            masks = masks.to(self.device, dtype=torch.long)
+            masks = masks.to(self.device, dtype=torch.long)    
 
             self.optimizer.zero_grad()
             
             # Forward path
-            with amp.autocast(enabled=config.amp_training):
-                preds = self.model(images)
-                loss = self.loss_fn(preds, masks)
-                
+            if config.use_aux:
+                with amp.autocast(enabled=config.amp_training):
+                    preds, preds_aux = self.model(images, is_training=True)
+                    loss = self.loss_fn(preds, masks)
+                    
+                masks_auxs = masks.unsqueeze(1).float()
+                if config.aux_coef is None:
+                    config.aux_coef = torch.ones(len(preds_aux))
+                elif len(preds_aux) != len(config.aux_coef):
+                    raise ValueError('Auxiliary loss coefficient length does not match.')
+
+                for i in range(len(preds_aux)):
+                    aux_size = preds_aux[i].size()[2:]
+                    masks_aux = F.interpolate(masks_auxs, aux_size, mode='nearest')
+                    masks_aux = masks_aux.squeeze(1).to(self.device, dtype=torch.long)
+
+                    with amp.autocast(enabled=config.amp_training):
+                        loss += config.aux_coef[i] * self.loss_fn(preds_aux[i], masks_aux)
+
+            else:
+                with amp.autocast(enabled=config.amp_training):
+                    preds = self.model(images)
+                    loss = self.loss_fn(preds, masks)
+
             if config.use_tb and self.main_rank:
                 self.writer.add_scalar('train/loss', loss.detach(), self.train_itrs)
             
