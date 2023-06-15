@@ -14,12 +14,12 @@ tqdm
 
 
 # Supported models
-[BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
-[ContextNet](models/contextnet.py)[^contextnet]  
-[ENet](models/enet.py) [^enet]  
-[FastSCNN](models/fastscnn.py) [^fastscnn]  
-[LEDNet](models/lednet.py) [^lednet]  
-[LinkNet](models/linknet.py)[^linknet]  
+- [BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
+- [ContextNet](models/contextnet.py)[^contextnet]  
+- [ENet](models/enet.py) [^enet]  
+- [FastSCNN](models/fastscnn.py) [^fastscnn]  
+- [LEDNet](models/lednet.py) [^lednet]  
+- [LinkNet](models/linknet.py)[^linknet]  
 
 If you want to use encoder-decoder structure with pretrained encoders, you may refer to this repo: segmentation-models-pytorch[^smp]  
 
