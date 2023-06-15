@@ -24,7 +24,7 @@ def cal_model_params(config, imgw=1024, imgh=512):
     except:
         import numpy as np
         params = np.sum([p.numel() for p in model.parameters()])
-        print(f'Number of parameters: {params / 1000000:.2f}M\n')
+        print(f'Number of parameters: {params / 1e6:.2f}M\n')
 
 
 if __name__ == '__main__':
