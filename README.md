@@ -55,14 +55,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 # Performances and checkpoints
 (full resolution on Cityscapes)
-| Model | Params | mIoU (paper) <br> val / test| mIoU (200 epoch) | mIoU (800 epoch) |
+| Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (200 epoch) | mIoU (800 epoch) |
 | :---: | :---: | :---: | :---: | :---: |
-| BiSeNetv2 | - | 73.4 / 72.6 | [64.41](weights/bisenetv2_200epoch.pth) / [69.36*](weights/bisenetv2-aux_200epoch.pth) | [68.68](weights/bisenetv2_800epoch.pth) / [72.15*](weights/bisenetv2-aux_800epoch.pth) |
-| ContextNet | - | 65.9 / 66.1 | [62.17](weights/contextnet_200epoch.pth) | [66.15](weights/contextnet_800epoch.pth) |
-| ENet | - | - / 58.3 | [62.03](weights/enet_200epoch.pth) | [69.65](weights/enet_800epoch.pth) |
-| FastSCNN | - | 68.6 / 68.0 | [61.31](weights/fastscnn_200epoch.pth) | [66.75](weights/fastscnn_800epoch.pth) |
-| LEDNet | - | - / 70.6 | [65.91](weights/lednet_200epoch.pth) | [71.76](weights/lednet_800epoch.pth) |
-| LinkNet | - | - / 76.4| [63.82](weights/linknet_200epoch.pth) | [70.86](weights/linknet_800epoch.pth) |
+| BiSeNetv2 | 2.53 / - | 73.4 / 72.6 | [64.41](weights/bisenetv2_200epoch.pth) / [69.36*](weights/bisenetv2-aux_200epoch.pth) | [68.68](weights/bisenetv2_800epoch.pth) / [72.15*](weights/bisenetv2-aux_800epoch.pth) |
+| ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | [62.17](weights/contextnet_200epoch.pth) | [66.15](weights/contextnet_800epoch.pth) |
+| ENet | 0.37 / 0.37 | - / 58.3 | [62.03](weights/enet_200epoch.pth) | [69.65](weights/enet_800epoch.pth) |
+| FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | [61.31](weights/fastscnn_200epoch.pth) | [66.75](weights/fastscnn_800epoch.pth) |
+| LEDNet | 1.46 / 0.94 | - / 70.6 | [65.91](weights/lednet_200epoch.pth) | [71.76](weights/lednet_800epoch.pth) |
+| LinkNet | 11.71 / 11.5 | - / 76.4| [63.82](weights/linknet_200epoch.pth) | [70.86](weights/linknet_800epoch.pth) |
 
 [*These results are obtained by using auxiliary heads]  
 
