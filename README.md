@@ -21,7 +21,7 @@ tqdm
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
 
-If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to use DeepLabv3Plus with ResNet-101 as backbone)  
+If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
 ```
 self.model = 'smp'
 self.encoder = 'resnet101'
@@ -56,8 +56,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 ```
 
 
-# Performances and checkpoints
-(full resolution on Cityscapes)
+# Performances and checkpoints  
+## full resolution on Cityscapes  
 | Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (200 epoch) | mIoU (800 epoch) |
 | :---: | :---: | :---: | :---: | :---: |
 | BiSeNetv2 | 2.53 / - | 73.4 / 72.6 | [64.41](weights/bisenetv2_200epoch.pth) / [69.36*](weights/bisenetv2-aux_200epoch.pth) | [68.68](weights/bisenetv2_800epoch.pth) / [72.15*](weights/bisenetv2-aux_800epoch.pth) |
@@ -70,7 +70,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 [*These results are obtained by using auxiliary heads]  
 
 
-(SMP performance on Cityscapes)  
+## SMP performance on Cityscapes  
 | Decoder | Params (M) | mIoU (200 epoch) | mIoU (800 epoch) |
 | :---: | :---: | :---: | :---: |
 | DeepLabv3 | 15.90 | 75.22 | 77.16 |
