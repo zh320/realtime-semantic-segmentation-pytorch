@@ -21,9 +21,12 @@ tqdm
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
 
-If you want to use encoder-decoder structure with pretrained encoders, you may refer to this repo: segmentation-models-pytorch[^smp]  
-
-More models and benchmarks are coming.
+If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to use DeepLabv3Plus with ResNet-101 as backbone)  
+```
+self.model = 'smp'
+self.encoder = 'resnet101'
+self.decoder = 'deeplabv3p'
+```
 
 
 [^bisenetv2]: [BiSeNet V2: Bilateral Network with Guided Aggregation for Real-time Semantic Segmentation](https://arxiv.org/abs/2004.02147)  
@@ -65,6 +68,23 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | LinkNet | 11.71 / 11.5 | - / 76.4| [63.82](weights/linknet_200epoch.pth) | [70.86](weights/linknet_800epoch.pth) |
 
 [*These results are obtained by using auxiliary heads]  
+
+
+(SMP performance on Cityscapes)  
+| Decoder | Params (M) | mIoU (200 epoch) | mIoU (800 epoch) |
+| :---: | :---: | :---: | :---: |
+| DeepLabv3 | 15.90 | 75.22 | 77.16 |
+| DeepLabv3Plus | 12.33 | 73.97 | 75.90 |
+| FPN | 13.05 | 73.44 | 74.94 |
+| LinkNet | 11.66 | 71.17 | 73.19 |
+| MANet | 21.68 | 74.59 | 76.14 |
+| PAN | 11.37 | 70.25 | 72.46 |
+| PSPNet | 11.41 | 61.63 | 67.26 |
+| UNet | 14.33 | 72.99 | 74.45 |
+| UNetPlusPlus | 15.97 | 74.31 | 75.57 |
+
+[For comparison, the above results are all using ResNet-18 as encoders.]  
+
 
 # Prepare the dataset
 ```
