@@ -40,7 +40,7 @@ class MyConfig(BaseConfig):
         self.brightness = 0.5
         self.contrast = 0.5
         self.saturation = 0.5
-        self.h_flip = True
+        self.h_flip = 0.5
         
         # Knowledge Distillation
         self.kd_training = False
