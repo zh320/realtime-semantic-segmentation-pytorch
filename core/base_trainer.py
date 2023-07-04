@@ -84,15 +84,15 @@ class BaseTrainer:
             
             self.train_one_epoch(config)
             
-            val_score = self.validate(config)
-            
-            # Save checkpoint
-            if self.main_rank:
-                # Save best model
-                if val_score > self.best_score:
+            if cur_epoch >= config.begin_val_epoch and cur_epoch % config.val_interval == 0:
+                val_score = self.validate(config)
+                
+                if self.main_rank and val_score > self.best_score:
+                    # Save best model
                     self.best_score = val_score
                     self.save_ckpt(config, save_best=True) 
                     
+            if self.main_rank:
                 # Save last model    
                 self.save_ckpt(config)
 

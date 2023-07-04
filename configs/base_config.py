@@ -21,6 +21,8 @@ class BaseConfig:
         
         # Validating
         self.val_bs = 16        # For each GPU
+        self.begin_val_epoch = 0    # Epoch to start validation
+        self.val_interval = 1   # Epoch interval between validation
         
         # Testing
         self.is_testing = False
@@ -68,8 +70,8 @@ class BaseConfig:
         self.brightness = 0.0
         self.contrast = 0.0
         self.saturation = 0.0
-        self.h_flip = False
-        self.v_flip = False
+        self.h_flip = 0.0
+        self.v_flip = 0.0
         
         # DDP
         self.synBN = True
