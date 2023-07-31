@@ -115,8 +115,8 @@ class Cityscapes(Dataset):
             self.transform = AT.Compose([
                 transforms.Scale(scale=config.scale),
                 AT.RandomScale(scale_limit=config.randscale),
-                AT.PadIfNeeded(min_height=config.crop_size, min_width=config.crop_size, value=(114,114,114), mask_value=(0,0,0)),
-                AT.RandomCrop(height=config.crop_size, width=config.crop_size),
+                AT.PadIfNeeded(min_height=config.crop_h, min_width=config.crop_w, value=(114,114,114), mask_value=(0,0,0)),
+                AT.RandomCrop(height=config.crop_h, width=config.crop_w),
                 AT.ColorJitter(brightness=config.brightness, contrast=config.contrast, saturation=config.saturation),
                 AT.HorizontalFlip(p=config.h_flip),
                 AT.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
