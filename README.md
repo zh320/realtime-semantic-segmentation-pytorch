@@ -20,6 +20,7 @@ tqdm
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
+- [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
 
 If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
 ```
@@ -35,6 +36,7 @@ self.decoder = 'deeplabv3p'
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
+[^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
 
@@ -66,8 +68,11 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | [61.31](weights/fastscnn_200epoch.pth) | [66.75](weights/fastscnn_800epoch.pth) |
 | LEDNet | 1.46 / 0.94 | - / 70.6 | [65.91](weights/lednet_200epoch.pth) | [71.76](weights/lednet_800epoch.pth) |
 | LinkNet | 11.71 / 11.5 | - / 76.4| [63.82](weights/linknet_200epoch.pth) | [70.86](weights/linknet_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC1 | 6.33 / - | 76.0** / 74.9**| [62.91](weights/ppliteseg_stdc1_200epoch.pth) | [69.07](weights/ppliteseg_stdc1_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC2 | 10.56 / - | 78.2** / 77.5**| [63.36](weights/ppliteseg_stdc2_200epoch.pth) | [72.42](weights/ppliteseg_stdc2_800epoch.pth) |
 
 [*These results are obtained by using auxiliary heads]  
+[**These results are obtained at resolution 768 × 1536]  
 
 
 ## SMP performance on Cityscapes  
