@@ -65,6 +65,8 @@ class BaseConfig:
 
         # Augmentation
         self.crop_size = 512
+        self.crop_h = None
+        self.crop_w = None
         self.scale = 1.0
         self.randscale = 0.0
         self.brightness = 0.0
@@ -91,4 +93,10 @@ class BaseConfig:
             self.load_ckpt_path = f'{self.save_dir}/last.pth'
 
         if self.tb_log_dir is None:
-            self.tb_log_dir = f'{self.save_dir}/tb_logs/'    
+            self.tb_log_dir = f'{self.save_dir}/tb_logs/'
+            
+        if self.crop_h is None:
+            self.crop_h = self.crop_size
+            
+        if self.crop_w is None:
+            self.crop_w = self.crop_size

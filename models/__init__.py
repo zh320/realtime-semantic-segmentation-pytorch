@@ -7,6 +7,7 @@ from .fastscnn import FastSCNN
 from .lednet import LEDNet
 from .linknet import LinkNet
 from .contextnet import ContextNet
+from .pp_liteseg import PPLiteSeg
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -16,7 +17,7 @@ decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':
 
 def get_model(config):
     model_hub = {'bisenetv2':BiSeNetv2, 'enet':ENet, 'fastscnn':FastSCNN, 'lednet':LEDNet,
-                 'linknet':LinkNet, 'contextnet':ContextNet,}
+                 'linknet':LinkNet, 'contextnet':ContextNet, 'ppliteseg':PPLiteSeg,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'contextnet', 'fastscnn']
@@ -32,6 +33,8 @@ def get_model(config):
     elif config.model in model_hub.keys():
         if config.model in aux_models:
             model = model_hub[config.model](num_class=config.num_class, use_aux=config.use_aux)
+        elif config.model == 'ppliteseg':
+            model = model_hub[config.model](num_class=config.num_class, encoder_type=config.encoder)
         else:
             model = model_hub[config.model](num_class=config.num_class)
 
