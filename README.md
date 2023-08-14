@@ -63,7 +63,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 # Performances and checkpoints  
 ## full resolution on Cityscapes  
 | Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (200 epoch) <br> crop 768x768 | mIoU (800 epoch) <br> crop 768x768 | mIoU (800 epoch) <br> crop 1024x1024 |
-| :---: | :---: | :---: | :---: | :---: |
+| :---: | :---: | :---: | :---: | :---: | :---: |
 | BiSeNetv2 | 2.53 / - | 73.4 / 72.6 | [64.41](weights/bisenetv2_200epoch.pth) / [69.36*](weights/bisenetv2-aux_200epoch.pth) | [68.68](weights/bisenetv2_800epoch.pth) / [72.15*](weights/bisenetv2-aux_800epoch.pth) | 73.73* |
 | ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | [62.17](weights/contextnet_200epoch.pth) | [66.15](weights/contextnet_800epoch.pth) | 66.61 |
 | DDRNet | 5.54 / 5.7 | 77.8 / 77.4 | [68.40*](weights/ddrnet-23-slim_200epoch.pth) | [73.70*](weights/ddrnet-23-slim_800epoch.pth) | 74.34 |
