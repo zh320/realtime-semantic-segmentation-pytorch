@@ -18,6 +18,7 @@ tqdm
 - [ContextNet](models/contextnet.py)[^contextnet]  
 - [DDRNet](models/ddrnet.py)[^ddrnet]  
 - [ENet](models/enet.py) [^enet]  
+- [ERFNet](models/erfnet.py) [^erfnet]  
 - [ESPNet](models/espnet.py) [^espnet]  
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
 - [LEDNet](models/lednet.py) [^lednet]  
@@ -36,6 +37,7 @@ self.decoder = 'deeplabv3p'
 [^contextnet]: [ContextNet: Exploring Context and Detail for Semantic Segmentation in Real-time](https://arxiv.org/abs/1805.04554)  
 [^ddrnet]: [Deep Dual-resolution Networks for Real-time and Accurate Semantic Segmentation of Road Scenes](https://arxiv.org/abs/2101.06085)  
 [^enet]: [ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation](https://arxiv.org/abs/1606.02147)  
+[^erfnet]: [ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation](https://ieeexplore.ieee.org/document/8063438)  
 [^espnet]: [ESPNet: Efficient Spatial Pyramid of Dilated Convolutions for Semantic Segmentation](https://arxiv.org/abs/1803.06815)  
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
@@ -70,6 +72,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | 62.17 | [66.15](weights/contextnet_800epoch.pth) | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
 | DDRNet | 5.54 / 5.7 | 77.8 / 77.4 | 68.40* | [73.70*](weights/ddrnet-23-slim_800epoch.pth) | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
 | ENet | 0.37 / 0.37 | N/A / 58.3 | 62.03 | [69.65](weights/enet_800epoch.pth) | [71.31](weights/enet_crop-1024_800epoch.pth) |
+| ERFNet | 2.07 / 2.06 | 70.0 / 68.0 | 69.72 | [74.71](weights/erfnet_800epoch.pth) | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
 | ESPNet | 0.38 / 0.36 | N/A / 60.3 | 55.73 | [64.44](weights/espnet_800epoch.pth) | [66.39](weights/espnet_crop-1024_800epoch.pth) |
 | FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | 61.31 | [66.75](weights/fastscnn_800epoch.pth) | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
 | LEDNet | 1.46 / 0.94 | N/A / 70.6 | 65.91 | [71.76](weights/lednet_800epoch.pth) | [71.40](weights/lednet_crop-1024_800epoch.pth) |
