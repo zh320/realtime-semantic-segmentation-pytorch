@@ -10,6 +10,7 @@ from .contextnet import ContextNet
 from .pp_liteseg import PPLiteSeg
 from .ddrnet import DDRNet
 from .espnet import ESPNet
+from .erfnet import ERFNet
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -20,7 +21,7 @@ decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':
 def get_model(config):
     model_hub = {'bisenetv2':BiSeNetv2, 'enet':ENet, 'fastscnn':FastSCNN, 'lednet':LEDNet,
                  'linknet':LinkNet, 'contextnet':ContextNet, 'ppliteseg':PPLiteSeg,
-                 'ddrnet':DDRNet, 'espnet':ESPNet,}
+                 'ddrnet':DDRNet, 'espnet':ESPNet, 'erfnet':ERFNet,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet']
