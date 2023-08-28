@@ -66,22 +66,22 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 # Performances and checkpoints  
 ## full resolution on Cityscapes  
-| Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (200 epoch) <br> crop 768x768 | mIoU (800 epoch) <br> crop 768x768 | mIoU (800 epoch) <br> crop 1024x1024 |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| BiSeNetv2 | 2.53 / N/A | 73.4 / 72.6 | 69.36* | [72.15*](weights/bisenetv2-aux_800epoch.pth) | [73.73*](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
-| ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | 62.17 | [66.15](weights/contextnet_800epoch.pth) | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
-| DDRNet | 5.54 / 5.7 | 77.8 / 77.4 | 68.40* | [73.70*](weights/ddrnet-23-slim_800epoch.pth) | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
-| ENet | 0.37 / 0.37 | N/A / 58.3 | 62.03 | [69.65](weights/enet_800epoch.pth) | [71.31](weights/enet_crop-1024_800epoch.pth) |
-| ERFNet | 2.07 / 2.06 | 70.0 / 68.0 | 69.72 | [74.71](weights/erfnet_800epoch.pth) | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
-| ESPNet | 0.38 / 0.36 | N/A / 60.3 | 55.73 | [64.44](weights/espnet_800epoch.pth) | [66.39](weights/espnet_crop-1024_800epoch.pth) |
-| FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | 61.31 | [66.75](weights/fastscnn_800epoch.pth) | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
-| LEDNet | 1.46 / 0.94 | N/A / 70.6 | 65.91 | [71.76](weights/lednet_800epoch.pth) | [71.40](weights/lednet_crop-1024_800epoch.pth) |
-| LinkNet | 11.71 / 11.5 | N/A / 76.4| 63.82 | [70.86](weights/linknet_800epoch.pth) | [71.72](weights/linknet_crop-1024_800epoch.pth) |
-| PP-LiteSeg <br> Enc: STDC1 | 6.33 / N/A | 76.0** / 74.9**| 62.91 | [69.07](weights/ppliteseg_stdc1_800epoch.pth) | [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
-| PP-LiteSeg <br> Enc: STDC2 | 10.56 / N/A | 78.2** / 77.5**| 63.36 | [72.42](weights/ppliteseg_stdc2_800epoch.pth) | [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
+| Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (my) val*|
+| :---: | :---: | :---: | :---: |
+| BiSeNetv2 | 2.53 / n.a. | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
+| ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
+| DDRNet | 5.54 / 5.7 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
+| ENet | 0.37 / 0.37 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) |
+| ERFNet | 2.07 / 2.06 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
+| ESPNet | 0.38 / 0.36 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) |
+| FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
+| LEDNet | 1.46 / 0.94 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
+| LinkNet | 11.71 / 11.5 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC1 | 6.33 / n.a. | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC2 | 10.56 / n.a. | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
 
-[*These results are obtained by using auxiliary heads]  
-[**These results are obtained at resolution 768 × 1536]  
+[*These results are obtained by training 800 epochs with crop-size 1024x1024]
+[**These results are obtained by using auxiliary heads]  
 
 
 ## SMP performance on Cityscapes  
