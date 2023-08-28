@@ -80,7 +80,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | PP-LiteSeg <br> Enc: STDC1 | 6.33 / n.a. | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
 | PP-LiteSeg <br> Enc: STDC2 | 10.56 / n.a. | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
 
-[*These results are obtained by training 800 epochs with crop-size 1024x1024]
+[*These results are obtained by training 800 epochs with crop-size 1024x1024]  
 [**These results are obtained by using auxiliary heads]  
 
 
