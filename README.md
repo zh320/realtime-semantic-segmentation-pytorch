@@ -66,19 +66,19 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 # Performances and checkpoints  
 ## full resolution on Cityscapes  
-| Model | Params (M) <br> my / paper | mIoU (paper) <br> val / test| mIoU (my) val*|
+| Model | Params (M) <br> paper / my | mIoU (paper) <br> val / test| mIoU (my) val*|
 | :---: | :---: | :---: | :---: |
-| BiSeNetv2 | 2.53 / n.a. | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
-| ContextNet | 1.01 / 0.85 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
-| DDRNet | 5.54 / 5.7 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
+| BiSeNetv2 | n.a. / 2.53 | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
+| ContextNet | 0.85 / 1.01 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
+| DDRNet | 5.7 / 5.54 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
 | ENet | 0.37 / 0.37 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) |
-| ERFNet | 2.07 / 2.06 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
-| ESPNet | 0.38 / 0.36 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) |
-| FastSCNN | 1.02 / 1.11 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
-| LEDNet | 1.46 / 0.94 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
-| LinkNet | 11.71 / 11.5 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
-| PP-LiteSeg <br> Enc: STDC1 | 6.33 / n.a. | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
-| PP-LiteSeg <br> Enc: STDC2 | 10.56 / n.a. | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
+| ERFNet | 2.06 / 2.07 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
+| ESPNet | 0.36 / 0.38 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) |
+| FastSCNN | 1.11 / 1.02 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
+| LEDNet | 0.94 / 1.46 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
+| LinkNet | 11.5 / 11.71 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC1 | n.a. / 6.33 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
+| PP-LiteSeg <br> Enc: STDC2 | n.a. / 10.56 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
 
 [*These results are obtained by training 800 epochs with crop-size 1024x1024]  
 [**These results are obtained by using auxiliary heads]  
