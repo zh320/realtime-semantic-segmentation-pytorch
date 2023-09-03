@@ -24,6 +24,7 @@ tqdm
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
+- [SegNet](models/segnet.py)[^segnet]  
 
 If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
 ```
@@ -43,6 +44,7 @@ self.decoder = 'deeplabv3p'
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
+[^segnet]: [SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation](https://arxiv.org/abs/1511.00561)  
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
 
@@ -79,6 +81,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | LinkNet | 11.5 / 11.71 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
 | PP-LiteSeg <br> Enc: STDC1 | n.a. / 6.33 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
 | PP-LiteSeg <br> Enc: STDC2 | n.a. / 10.56 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
+| SegNet | 29.46 / 29.48 | n.a. / 56.1| [70.77](weights/segnet_crop-1024_800epoch.zip.001) |
 
 [*These results are obtained by training 800 epochs with crop-size 1024x1024]  
 [**These results are obtained by using auxiliary heads]  
