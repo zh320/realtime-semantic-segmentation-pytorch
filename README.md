@@ -85,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | AGLNet | 1.12 / 1.02 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) |
 | BiSeNetv1 | 49.0 / 13.32 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) |
 | BiSeNetv2 | n.a. / 2.53 | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
-| CGNet | 0.41 / 0.24 | 59.7 / 64.8*** | [67.25**](weights/cgnet_crop-1024_800epoch.pth) |
+| CGNet | 0.41 / 0.24 | 59.7 / 64.8*** | [67.25](weights/cgnet_crop-1024_800epoch.pth) |
 | ContextNet | 0.85 / 1.01 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
 | DABNet | 0.76 / 0.75 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) |
 | DDRNet | 5.7 / 5.54 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
