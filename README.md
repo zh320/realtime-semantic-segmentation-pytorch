@@ -17,6 +17,7 @@ tqdm
 - [AGLNet](models/aglnet.py) [^aglnet]  
 - [BiSeNetv1](models/bisenetv1.py) [^bisenetv1]  
 - [BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
+- [CGNet](models/cgnet.py) [^cgnet]  
 - [ContextNet](models/contextnet.py)[^contextnet]  
 - [DABNet](models/dabnet.py)[^dabnet]  
 - [DDRNet](models/ddrnet.py)[^ddrnet]  
@@ -41,6 +42,7 @@ self.decoder = 'deeplabv3p'
 [^aglnet]: [AGLNet: Towards real-time semantic segmentation of self-driving images via attention-guided lightweight network](https://www.sciencedirect.com/science/article/abs/pii/S1568494620306207)  
 [^bisenetv1]: [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897)  
 [^bisenetv2]: [BiSeNet V2: Bilateral Network with Guided Aggregation for Real-time Semantic Segmentation](https://arxiv.org/abs/2004.02147)  
+[^cgnet]: [CGNet: A Light-weight Context Guided Network for Semantic Segmentation](https://arxiv.org/abs/1811.08201)  
 [^contextnet]: [ContextNet: Exploring Context and Detail for Semantic Segmentation in Real-time](https://arxiv.org/abs/1805.04554)  
 [^dabnet]: [DABNet: Depth-wise Asymmetric Bottleneck for Real-time Semantic Segmentation](https://arxiv.org/abs/1907.11357)  
 [^ddrnet]: [Deep Dual-resolution Networks for Real-time and Accurate Semantic Segmentation of Road Scenes](https://arxiv.org/abs/2101.06085)  
@@ -81,6 +83,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | AGLNet | 1.12 / 1.02 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) |
 | BiSeNetv1 | 49.0 / 13.32 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) |
 | BiSeNetv2 | n.a. / 2.53 | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
+| CGNet | 0.41 / 0.24 | 59.7 / 64.8*** | [67.25**](weights/cgnet_crop-1024_800epoch.pth) |
 | ContextNet | 0.85 / 1.01 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
 | DABNet | 0.76 / 0.75 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) |
 | DDRNet | 5.7 / 5.54 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
@@ -97,6 +100,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 [*These results are obtained by training 800 epochs with crop-size 1024x1024]  
 [**These results are obtained by using auxiliary heads]  
+[***This result is obtained by using deeper model, i.e. CGNet_M3N21]  
 
 
 ## SMP performance on Cityscapes  
