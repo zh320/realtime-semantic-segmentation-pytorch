@@ -14,6 +14,7 @@ tqdm
 
 
 # Supported models
+- [ADSCNet](models/adscnet.py) [^adscnet]  
 - [AGLNet](models/aglnet.py) [^aglnet]  
 - [BiSeNetv1](models/bisenetv1.py) [^bisenetv1]  
 - [BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
@@ -41,6 +42,7 @@ self.decoder = 'deeplabv3p'
 ```
 
 
+[^adscnet]: [ADSCNet: asymmetric depthwise separable convolution for semantic segmentation in real-time](https://link.springer.com/article/10.1007/s10489-019-01587-1)  
 [^aglnet]: [AGLNet: Towards real-time semantic segmentation of self-driving images via attention-guided lightweight network](https://www.sciencedirect.com/science/article/abs/pii/S1568494620306207)  
 [^bisenetv1]: [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897)  
 [^bisenetv2]: [BiSeNet V2: Bilateral Network with Guided Aggregation for Real-time Semantic Segmentation](https://arxiv.org/abs/2004.02147)  
@@ -84,6 +86,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 ## full resolution on Cityscapes  
 | Model | Params (M) <br> paper / my | mIoU (paper) <br> val / test| mIoU (my) val*|
 | :---: | :---: | :---: | :---: |
+| ADSCNet | n.a. / 0.51 | n.a. / 67.5 | [69.06](weights/adscnet_crop-1024_800epoch.pth) |
 | AGLNet | 1.12 / 1.02 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) |
 | BiSeNetv1 | 49.0 / 13.32 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) |
 | BiSeNetv2 | n.a. / 2.53 | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
