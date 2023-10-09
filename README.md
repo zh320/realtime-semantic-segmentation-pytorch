@@ -24,6 +24,7 @@ tqdm
 - [EDANet](models/edanet.py) [^edanet]  
 - [ENet](models/enet.py) [^enet]  
 - [ERFNet](models/erfnet.py) [^erfnet]  
+- [ESNet](models/esnet.py) [^esnet]  
 - [ESPNet](models/espnet.py) [^espnet]  
 - [ESPNetv2](models/espnetv2.py) [^espnetv2]  
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
@@ -50,6 +51,7 @@ self.decoder = 'deeplabv3p'
 [^edanet]: [Efficient Dense Modules of Asymmetric Convolution for Real-Time Semantic Segmentation](https://arxiv.org/abs/1809.06323)  
 [^enet]: [ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation](https://arxiv.org/abs/1606.02147)  
 [^erfnet]: [ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation](https://ieeexplore.ieee.org/document/8063438)  
+[^esnet]: [ESNet: An Efficient Symmetric Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1906.09826)  
 [^espnet]: [ESPNet: Efficient Spatial Pyramid of Dilated Convolutions for Semantic Segmentation](https://arxiv.org/abs/1803.06815)  
 [^espnetv2]: [ESPNetv2: A Light-weight, Power Efficient, and General Purpose Convolutional Neural Network](https://arxiv.org/abs/1811.11431)  
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
@@ -92,6 +94,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | EDANet | 0.68 / 0.69 | n.a. / 67.3 | [70.76](weights/edanet_crop-1024_800epoch.pth) |
 | ENet | 0.37 / 0.37 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) |
 | ERFNet | 2.06 / 2.07 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
+| ESNet | 1.66 / 1.66 | n.a. / 70.7 | [71.82](weights/esnet_crop-1024_800epoch.pth) |
 | ESPNet | 0.36 / 0.38 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) |
 | ESPNetv2 | 1.25 / 0.86 | 66.4 / 66.2 | [70.35](weights/espnetv2_crop-1024_800epoch.pth) |
 | FastSCNN | 1.11 / 1.02 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
