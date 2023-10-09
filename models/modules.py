@@ -26,7 +26,7 @@ class DSConvBNAct(nn.Sequential):
 # Depth-wise convolution -> batchnorm -> activation
 class DWConvBNAct(nn.Sequential):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, 
-                    dilation=1, act_type='relu'):
+                    dilation=1, act_type='relu', **kwargs):
         if isinstance(kernel_size, list) or isinstance(kernel_size, tuple):
             padding = ((kernel_size[0] - 1) // 2 * dilation, (kernel_size[1] - 1) // 2 * dilation)
         elif isinstance(kernel_size, int):    
@@ -36,17 +36,17 @@ class DWConvBNAct(nn.Sequential):
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, 
                         dilation=dilation, groups=in_channels, bias=False),
             nn.BatchNorm2d(out_channels),
-            Activation(act_type)
+            Activation(act_type, **kwargs)
         )
 
 
 # Point-wise convolution -> batchnorm -> activation
 class PWConvBNAct(nn.Sequential):
-    def __init__(self, in_channels, out_channels, act_type='relu'):
+    def __init__(self, in_channels, out_channels, act_type='relu', **kwargs):
         super(PWConvBNAct, self).__init__(
             nn.Conv2d(in_channels, out_channels, 1),
             nn.BatchNorm2d(out_channels),
-            Activation(act_type)
+            Activation(act_type, **kwargs)
         )
 
 
