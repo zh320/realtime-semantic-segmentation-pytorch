@@ -20,6 +20,7 @@ from .cgnet import CGNet
 from .edanet import EDANet
 from .esnet import ESNet
 from .adscnet import ADSCNet
+from .canet import CANet
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -33,7 +34,7 @@ def get_model(config):
                  'ddrnet':DDRNet, 'espnet':ESPNet, 'erfnet':ERFNet, 'segnet':SegNet,
                  'dabnet':DABNet, 'bisenetv1':BiSeNetv1, 'espnetv2':ESPNetv2,
                  'aglnet':AGLNet, 'cgnet':CGNet, 'edanet':EDANet, 'esnet':ESNet,
-                 'adscnet':ADSCNet,}
+                 'adscnet':ADSCNet, 'canet':CANet,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet']
