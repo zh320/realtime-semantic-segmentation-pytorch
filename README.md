@@ -32,6 +32,7 @@ tqdm
 - [ESPNetv2](models/espnetv2.py) [^espnetv2]  
 - [FarseeNet](models/farseenet.py) [^farseenet]  
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
+- [FPENet](models/fpenet.py) [^fpenet]  
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
@@ -63,6 +64,7 @@ self.decoder = 'deeplabv3p'
 [^espnetv2]: [ESPNetv2: A Light-weight, Power Efficient, and General Purpose Convolutional Neural Network](https://arxiv.org/abs/1811.11431)  
 [^farseenet]: [FarSee-Net: Real-Time Semantic Segmentation by Efficient Multi-scale Context Aggregation and Feature Space Super-resolution](https://arxiv.org/abs/2003.03913)  
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
+[^fpenet]: [Feature Pyramid Encoding Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1909.08599)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
@@ -110,6 +112,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ESPNetv2 | 1.25 / 0.86 | 66.4 / 66.2 | [70.35](weights/espnetv2_crop-1024_800epoch.pth) |
 | FarseeNet | n.a. / 16.75 | 73.5 / 70.2 | [77.35](weights/farseenet_crop-1024_800epoch.pth) |
 | FastSCNN | 1.11 / 1.02 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
+| FPENet | 0.38 / 0.36 | n.a. / 70.1 | [72.05](weights/fpenet_crop-1024_800epoch.pth) |
 | LEDNet | 0.94 / 1.46 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
 | LinkNet | 11.5 / 11.71 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
 | PP-LiteSeg <br> Enc: STDC1 | n.a. / 6.33 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
