@@ -18,6 +18,7 @@ tqdm
 - [AGLNet](models/aglnet.py) [^aglnet]  
 - [BiSeNetv1](models/bisenetv1.py) [^bisenetv1]  
 - [BiSeNetv2](models/bisenetv2.py) [^bisenetv2]  
+- [CANet](models/canet.py) [^canet]  
 - [CGNet](models/cgnet.py) [^cgnet]  
 - [ContextNet](models/contextnet.py)[^contextnet]  
 - [DABNet](models/dabnet.py)[^dabnet]  
@@ -46,6 +47,7 @@ self.decoder = 'deeplabv3p'
 [^aglnet]: [AGLNet: Towards real-time semantic segmentation of self-driving images via attention-guided lightweight network](https://www.sciencedirect.com/science/article/abs/pii/S1568494620306207)  
 [^bisenetv1]: [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897)  
 [^bisenetv2]: [BiSeNet V2: Bilateral Network with Guided Aggregation for Real-time Semantic Segmentation](https://arxiv.org/abs/2004.02147)  
+[^canet]: [Cross Attention Network for Semantic Segmentation](https://arxiv.org/abs/1907.10958)  
 [^cgnet]: [CGNet: A Light-weight Context Guided Network for Semantic Segmentation](https://arxiv.org/abs/1811.08201)  
 [^contextnet]: [ContextNet: Exploring Context and Detail for Semantic Segmentation in Real-time](https://arxiv.org/abs/1805.04554)  
 [^dabnet]: [DABNet: Depth-wise Asymmetric Bottleneck for Real-time Semantic Segmentation](https://arxiv.org/abs/1907.11357)  
@@ -90,6 +92,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | AGLNet | 1.12 / 1.02 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) |
 | BiSeNetv1 | 49.0 / 13.32 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) |
 | BiSeNetv2 | n.a. / 2.53 | 73.4 / 72.6 | [73.73**](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
+| CANet | 4.8 / 4.77 | 73.4 / 73.5 | [73.76](weights/canet_crop-1024_800epoch.pth) |
 | CGNet | 0.41 / 0.24 | 59.7 / 64.8*** | [67.25](weights/cgnet_crop-1024_800epoch.pth) |
 | ContextNet | 0.85 / 1.01 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
 | DABNet | 0.76 / 0.75 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) |
