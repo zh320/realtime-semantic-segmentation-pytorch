@@ -94,36 +94,36 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 # Performances and checkpoints  
 ## full resolution on Cityscapes  
-| Model | Encoder | Params (M) <br> paper / my | mIoU (paper) <br> val / test| mIoU (my) val<sup>1</sup>| FPS<sup>2</sup> |
+| Model | Encoder | Params (M) <br> paper / my | FPS<sup>1</sup> | mIoU (paper) <br> val / test| mIoU (my) val<sup>2</sup>|
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ADSCNet | None | n.a. / 0.51 | n.a. / 67.5 | [69.06](weights/adscnet_crop-1024_800epoch.pth) | 89 |
-| AGLNet | None | 1.12 / 1.02 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) | 61 |
-| BiSeNetv1 | ResNet18 | 49.0 / 13.32 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) | 88 |
-| BiSeNetv2 | None | n.a. / 2.53 | 73.4 / 72.6 | [73.73<sup>3</sup>](weights/bisenetv2-aux_crop-1024_800epoch.pth) | 142 |
-| CANet | MobileNetv2 | 4.8 / 4.77 | 73.4 / 73.5 | [73.76](weights/canet_crop-1024_800epoch.pth) | 76 |
-| CFPNet | None | 0.55 / 0.27 | n.a. / 70.1 | [70.08](weights/cfpnet_crop-1024_800epoch.pth) | 64 |
-| CGNet | None | 0.41 / 0.24 | 59.7 / 64.8<sup>4</sup> | [67.25](weights/cgnet_crop-1024_800epoch.pth) | 157 |
-| ContextNet | None | 0.85 / 1.01 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) | 80 |
-| DABNet | None | 0.76 / 0.75 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) | 140 |
-| DDRNet | None | 5.7 / 5.54 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) | 233 |
-| EDANet | None | 0.68 / 0.69 | n.a. / 67.3 | [70.76](weights/edanet_crop-1024_800epoch.pth) | 125 |
-| ENet | None | 0.37 / 0.37 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) | 140 |
-| ERFNet | None | 2.06 / 2.07 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) | 60 |
-| ESNet | None | 1.66 / 1.66 | n.a. / 70.7 | [71.82](weights/esnet_crop-1024_800epoch.pth) | 66 |
-| ESPNet | None | 0.36 / 0.38 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) | 111 |
-| ESPNetv2 | None | 1.25 / 0.86 | 66.4 / 66.2 | [70.35](weights/espnetv2_crop-1024_800epoch.pth) | 101 |
-| FarseeNet | ResNet18 | n.a. / 16.75 | 73.5 / 70.2 | [77.35](weights/farseenet_crop-1024_800epoch.pth) | 130 |
-| FastSCNN | None | 1.11 / 1.02 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) | 358 |
-| FDDWNet | None | 0.80 / 0.77 | n.a. / 71.5 | [75.86](weights/fddwnet_crop-1024_800epoch.pth) | 51 |
-| FPENet | None | 0.38 / 0.36 | n.a. / 70.1 | [72.05](weights/fpenet_crop-1024_800epoch.pth) | 90 |
-| LEDNet | None | 0.94 / 1.46 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) | 76 |
-| LinkNet | None | 11.5 / 11.71 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) | 145 |
-| PP-LiteSeg | STDC1 | n.a. / 6.33 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) | 201 |
-| PP-LiteSeg | STDC2 | n.a. / 10.56 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) | 136 |
-| SegNet | None | 29.46 / 29.48 | n.a. / 56.1| [70.77](weights/segnet_crop-1024_800epoch.zip.001) | 14 |
+| ADSCNet | None | n.a. / 0.51 | 89 | n.a. / 67.5 | [69.06](weights/adscnet_crop-1024_800epoch.pth) |
+| AGLNet | None | 1.12 / 1.02 | 61 | 69.39 / 70.1 | [73.58](weights/aglnet_crop-1024_800epoch.pth) |
+| BiSeNetv1 | ResNet18 | 49.0 / 13.32 | 88 | 74.8 / 74.7 | [74.91](weights/bisenetv1_crop-1024_800epoch.pth) |
+| BiSeNetv2 | None | n.a. / 2.53 | 142 | 73.4 / 72.6 | [73.73<sup>3</sup>](weights/bisenetv2-aux_crop-1024_800epoch.pth) |
+| CANet | MobileNetv2 | 4.8 / 4.77 | 76 | 73.4 / 73.5 | [73.76](weights/canet_crop-1024_800epoch.pth) |
+| CFPNet | None | 0.55 / 0.27 | 64 | n.a. / 70.1 | [70.08](weights/cfpnet_crop-1024_800epoch.pth) |
+| CGNet | None | 0.41 / 0.24 | 157 | 59.7 / 64.8<sup>4</sup> | [67.25](weights/cgnet_crop-1024_800epoch.pth) |
+| ContextNet | None | 0.85 / 1.01 | 80 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
+| DABNet | None | 0.76 / 0.75 | 140 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) |
+| DDRNet | None | 5.7 / 5.54 | 233 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
+| EDANet | None | 0.68 / 0.69 | 125 | n.a. / 67.3 | [70.76](weights/edanet_crop-1024_800epoch.pth) |
+| ENet | None | 0.37 / 0.37 | 140 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) |
+| ERFNet | None | 2.06 / 2.07 | 60 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
+| ESNet | None | 1.66 / 1.66 | 66 | n.a. / 70.7 | [71.82](weights/esnet_crop-1024_800epoch.pth) |
+| ESPNet | None | 0.36 / 0.38 | 111 | n.a. / 60.3 | [66.39](weights/espnet_crop-1024_800epoch.pth) |
+| ESPNetv2 | None | 1.25 / 0.86 | 101 | 66.4 / 66.2 | [70.35](weights/espnetv2_crop-1024_800epoch.pth) |
+| FarseeNet | ResNet18 | n.a. / 16.75 | 130 | 73.5 / 70.2 | [77.35](weights/farseenet_crop-1024_800epoch.pth) |
+| FastSCNN | None | 1.11 / 1.02 | 358 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
+| FDDWNet | None | 0.80 / 0.77 | 51 | n.a. / 71.5 | [75.86](weights/fddwnet_crop-1024_800epoch.pth) |
+| FPENet | None | 0.38 / 0.36 | 90 | n.a. / 70.1 | [72.05](weights/fpenet_crop-1024_800epoch.pth) |
+| LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
+| LinkNet | None | 11.5 / 11.71 | 145 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
+| PP-LiteSeg | STDC1 | n.a. / 6.33 | 201 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
+| PP-LiteSeg | STDC2 | n.a. / 10.56 | 136 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
+| SegNet | None | 29.46 / 29.48 | 14 | n.a. / 56.1| [70.77](weights/segnet_crop-1024_800epoch.zip.001) |
 
-[<sup>1</sup>These results are obtained by training 800 epochs with crop-size 1024x1024]  
-[<sup>2</sup>FPSs are evaluated on RTX 2080 at resolution 1024x512 using this [script](tools/test_speed.py)]  
+[<sup>1</sup>FPSs are evaluated on RTX 2080 at resolution 1024x512 using this [script](tools/test_speed.py)]  
+[<sup>2</sup>These results are obtained by training 800 epochs with crop-size 1024x1024]  
 [<sup>3</sup>These results are obtained by using auxiliary heads]  
 [<sup>4</sup>This result is obtained by using deeper model, i.e. CGNet_M3N21]  
 
