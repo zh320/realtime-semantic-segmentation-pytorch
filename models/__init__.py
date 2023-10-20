@@ -27,6 +27,7 @@ from .fpenet import FPENet
 from .fddwnet import FDDWNet
 from .mininet import MiniNet
 from .mininetv2 import MiniNetv2
+from .icnet import ICNet
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -41,10 +42,11 @@ def get_model(config):
                  'dabnet':DABNet, 'bisenetv1':BiSeNetv1, 'espnetv2':ESPNetv2,
                  'aglnet':AGLNet, 'cgnet':CGNet, 'edanet':EDANet, 'esnet':ESNet,
                  'adscnet':ADSCNet, 'canet':CANet, 'cfpnet':CFPNet, 'farseenet':FarSeeNet,
-                 'fpenet':FPENet, 'fddwnet':FDDWNet, 'mininet':MiniNet, 'mininetv2':MiniNetv2,}
+                 'fpenet':FPENet, 'fddwnet':FDDWNet, 'mininet':MiniNet, 'mininetv2':MiniNetv2,
+                 'icnet':ICNet,}
 
     # The following models currently support auxiliary heads
-    aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet']
+    aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet', 'icnet']
     
     if config.model == 'smp':   # Use segmentation models pytorch
         if config.decoder not in decoder_hub:
