@@ -37,6 +37,7 @@ tqdm
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
 - [MiniNet](models/mininet.py)[^mininet]  
+- [MiniNetv2](models/mininetv2.py)[^mininetv2]  
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
 - [SegNet](models/segnet.py)[^segnet]  
 
@@ -71,6 +72,7 @@ self.decoder = 'deeplabv3p'
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
 [^mininet]: [Enhancing V-SLAM Keyframe Selection with an Efficient ConvNet for Semantic Analysis](https://ieeexplore.ieee.org/abstract/document/8793923)  
+[^mininetv2]: [MiniNet: An Efficient Semantic Segmentation ConvNet for Real-Time Robotic Applications](https://ieeexplore.ieee.org/abstract/document/9023474)  
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
 [^segnet]: [SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation](https://arxiv.org/abs/1511.00561)  
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
@@ -121,6 +123,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
 | LinkNet | None | 11.5 / 11.71 | 145 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
 | MiniNet | None | 3.1 / 1.41 | 254 | n.a. / 40.7| [61.59](weights/mininet_crop-1024_800epoch.pth) |
+| MiniNetv2 | None | 0.5 / 0.51 | 86 | n.a. / 70.5| [71.79](weights/mininetv2_crop-1024_800epoch.pth) |
 | PP-LiteSeg | STDC1 | n.a. / 6.33 | 201 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
 | PP-LiteSeg | STDC2 | n.a. / 10.56 | 136 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
 | SegNet | None | 29.46 / 29.48 | 14 | n.a. / 56.1| [70.77](weights/segnet_crop-1024_800epoch.zip.001) |
