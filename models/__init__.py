@@ -28,6 +28,7 @@ from .fddwnet import FDDWNet
 from .mininet import MiniNet
 from .mininetv2 import MiniNetv2
 from .icnet import ICNet
+from .liteseg import LiteSeg
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -43,7 +44,7 @@ def get_model(config):
                  'aglnet':AGLNet, 'cgnet':CGNet, 'edanet':EDANet, 'esnet':ESNet,
                  'adscnet':ADSCNet, 'canet':CANet, 'cfpnet':CFPNet, 'farseenet':FarSeeNet,
                  'fpenet':FPENet, 'fddwnet':FDDWNet, 'mininet':MiniNet, 'mininetv2':MiniNetv2,
-                 'icnet':ICNet,}
+                 'icnet':ICNet, 'liteseg':LiteSeg,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet', 'icnet']
