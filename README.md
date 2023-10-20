@@ -37,6 +37,7 @@ tqdm
 - [ICNet](models/icnet.py) [^icnet]  
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
+- [LiteSeg](models/liteseg.py)[^liteseg]  
 - [MiniNet](models/mininet.py)[^mininet]  
 - [MiniNetv2](models/mininetv2.py)[^mininetv2]  
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
@@ -73,6 +74,7 @@ self.decoder = 'deeplabv3p'
 [^icnet]: [ICNet for Real-Time Semantic Segmentation on High-Resolution Images](https://arxiv.org/abs/1704.08545)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
+[^liteseg]: [LiteSeg: A Novel Lightweight ConvNet for Semantic Segmentation](https://arxiv.org/abs/1912.06683)  
 [^mininet]: [Enhancing V-SLAM Keyframe Selection with an Efficient ConvNet for Semantic Analysis](https://ieeexplore.ieee.org/abstract/document/8793923)  
 [^mininetv2]: [MiniNet: An Efficient Semantic Segmentation ConvNet for Real-Time Robotic Applications](https://ieeexplore.ieee.org/abstract/document/9023474)  
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
@@ -125,6 +127,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ICNet | ResNet18 | 26.5<sup>5</sup> / 12.42 | 102 | 67.7<sup>5</sup> / 69.5<sup>5</sup> | [69.65](weights/icnet_crop-1024_800epoch.pth) |
 | LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
 | LinkNet | None | 11.5 / 11.71 | 145 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
+| LiteSeg | MobileNetv2 | 4.38 / 4.29 | 117 | 70.0 / 67.8| [75.72](weights/liteseg_crop-1024_800epoch.pth) |
 | MiniNet | None | 3.1 / 1.41 | 254 | n.a. / 40.7| [61.59](weights/mininet_crop-1024_800epoch.pth) |
 | MiniNetv2 | None | 0.5 / 0.51 | 86 | n.a. / 70.5| [71.79](weights/mininetv2_crop-1024_800epoch.pth) |
 | PP-LiteSeg | STDC1 | n.a. / 6.33 | 201 | 76.0 / 74.9| [72.49](weights/ppliteseg_stdc1_crop-1024_800epoch.pth) |
