@@ -34,6 +34,7 @@ tqdm
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
 - [FDDWNet](models/fddwnet.py) [^fddwnet]  
 - [FPENet](models/fpenet.py) [^fpenet]  
+- [FSSNet](models/fssnet.py) [^fssnet]  
 - [ICNet](models/icnet.py) [^icnet]  
 - [LEDNet](models/lednet.py) [^lednet]  
 - [LinkNet](models/linknet.py)[^linknet]  
@@ -72,6 +73,7 @@ self.decoder = 'deeplabv3p'
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
 [^fddwnet]: [FDDWNet: A Lightweight Convolutional Neural Network for Real-time Sementic Segmentation](https://arxiv.org/abs/1911.00632)  
 [^fpenet]: [Feature Pyramid Encoding Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1909.08599)  
+[^fssnet]: [Fast Semantic Segmentation for Scene Perception](https://ieeexplore.ieee.org/document/8392426)  
 [^icnet]: [ICNet for Real-Time Semantic Segmentation on High-Resolution Images](https://arxiv.org/abs/1704.08545)  
 [^lednet]: [LEDNet: A Lightweight Encoder-Decoder Network for Real-Time Semantic Segmentation](https://arxiv.org/abs/1905.02423)  
 [^linknet]: [LinkNet: Exploiting Encoder Representations for Efficient Semantic Segmentation](https://arxiv.org/abs/1707.03718)  
@@ -126,6 +128,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | FastSCNN | None | 1.11 / 1.02 | 358 | 68.6 / 68.0 | [69.37](weights/fastscnn_crop-1024_800epoch.pth) |
 | FDDWNet | None | 0.80 / 0.77 | 51 | n.a. / 71.5 | [75.86](weights/fddwnet_crop-1024_800epoch.pth) |
 | FPENet | None | 0.38 / 0.36 | 90 | n.a. / 70.1 | [72.05](weights/fpenet_crop-1024_800epoch.pth) |
+| FSSNet | None | 0.2 / 0.20 | 121 | n.a. / 58.8 | [65.44](weights/fssnet_crop-1024_800epoch.pth) |
 | ICNet | ResNet18 | 26.5<sup>5</sup> / 12.42 | 102 | 67.7<sup>5</sup> / 69.5<sup>5</sup> | [69.65](weights/icnet_crop-1024_800epoch.pth) |
 | LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [71.40](weights/lednet_crop-1024_800epoch.pth) |
 | LinkNet | None | 11.5 / 11.71 | 145 | n.a. / 76.4| [71.72](weights/linknet_crop-1024_800epoch.pth) |
