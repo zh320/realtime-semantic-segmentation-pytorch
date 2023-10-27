@@ -44,6 +44,7 @@ tqdm
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
 - [SegNet](models/segnet.py)[^segnet]  
 - [ShelfNet](models/shelfnet.py)[^shelfnet]  
+- [SwiftNet](models/swiftnet.py)[^swiftnet]  
 
 If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
 ```
@@ -83,6 +84,7 @@ self.decoder = 'deeplabv3p'
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
 [^segnet]: [SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation](https://arxiv.org/abs/1511.00561)  
 [^shelfnet]: [ShelfNet for Fast Semantic Segmentation](https://arxiv.org/abs/1811.11254)  
+[^swiftnet]: [In Defense of Pre-trained ImageNet Architectures for Real-time Semantic Segmentation of Road-driving Images](https://arxiv.org/abs/1903.08469)  
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
 
@@ -139,6 +141,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | PP-LiteSeg | STDC2 | n.a. / 10.56 | 136 | 78.2 / 77.5| [74.37](weights/ppliteseg_stdc2_crop-1024_800epoch.pth) |
 | SegNet | None | 29.46 / 29.48 | 14 | n.a. / 56.1| [70.77](weights/segnet_crop-1024_800epoch.zip.001) |
 | ShelfNet | ResNet18 | 23.5 / 16.04 | 110 | n.a. / 74.8| [77.63](weights/shelfnet_crop-1024_800epoch.pth) |
+| SwiftNet | ResNet18 | 11.8 / 11.95 | 141 | 75.4 / 75.5| [75.43](weights/swiftnet_crop-1024_800epoch.pth) |
 
 [<sup>1</sup>FPSs are evaluated on RTX 2080 at resolution 1024x512 using this [script](tools/test_speed.py)]  
 [<sup>2</sup>These results are obtained by training 800 epochs with crop-size 1024x1024]  
