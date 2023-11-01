@@ -24,6 +24,7 @@ tqdm
 - [ContextNet](models/contextnet.py)[^contextnet]  
 - [DABNet](models/dabnet.py)[^dabnet]  
 - [DDRNet](models/ddrnet.py)[^ddrnet]  
+- [DFANet](models/dfanet.py)[^dfanet]  
 - [EDANet](models/edanet.py) [^edanet]  
 - [ENet](models/enet.py) [^enet]  
 - [ERFNet](models/erfnet.py) [^erfnet]  
@@ -65,6 +66,7 @@ self.decoder = 'deeplabv3p'
 [^contextnet]: [ContextNet: Exploring Context and Detail for Semantic Segmentation in Real-time](https://arxiv.org/abs/1805.04554)  
 [^dabnet]: [DABNet: Depth-wise Asymmetric Bottleneck for Real-time Semantic Segmentation](https://arxiv.org/abs/1907.11357)  
 [^ddrnet]: [Deep Dual-resolution Networks for Real-time and Accurate Semantic Segmentation of Road Scenes](https://arxiv.org/abs/2101.06085)  
+[^dfanet]: [DFANet: Deep Feature Aggregation for Real-Time Semantic Segmentation](https://arxiv.org/abs/1904.02216)  
 [^edanet]: [Efficient Dense Modules of Asymmetric Convolution for Real-Time Semantic Segmentation](https://arxiv.org/abs/1809.06323)  
 [^enet]: [ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation](https://arxiv.org/abs/1606.02147)  
 [^erfnet]: [ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation](https://ieeexplore.ieee.org/document/8063438)  
@@ -122,6 +124,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ContextNet | None | 0.85 / 1.01 | 80 | 65.9 / 66.1 | [66.61](weights/contextnet_crop-1024_800epoch.pth) |
 | DABNet | None | 0.76 / 0.75 | 140 | n.a. / 70.1 | [70.78](weights/dabnet_crop-1024_800epoch.pth) |
 | DDRNet | None | 5.7 / 5.54 | 233 | 77.8 / 77.4 | [74.34](weights/ddrnet-23-slim_crop-1024_800epoch.pth) |
+| DFANet | XceptionA | 7.8 / 3.05 | 60 | 71.9 / 71.3 | [65.28](weights/dfanet-a_crop-1024_800epoch.pth) |
 | EDANet | None | 0.68 / 0.69 | 125 | n.a. / 67.3 | [70.76](weights/edanet_crop-1024_800epoch.pth) |
 | ENet | None | 0.37 / 0.37 | 140 | n.a. / 58.3 | [71.31](weights/enet_crop-1024_800epoch.pth) |
 | ERFNet | None | 2.06 / 2.07 | 60 | 70.0 / 68.0 | [76.00](weights/erfnet_crop-1024_800epoch.pth) |
