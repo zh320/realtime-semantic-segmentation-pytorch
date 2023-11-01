@@ -33,6 +33,7 @@ from .shelfnet import ShelfNet
 from .fssnet import FSSNet
 from .swiftnet import SwiftNet
 from .sqnet import SQNet
+from .dfanet import DFANet
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -49,7 +50,7 @@ def get_model(config):
                  'adscnet':ADSCNet, 'canet':CANet, 'cfpnet':CFPNet, 'farseenet':FarSeeNet,
                  'fpenet':FPENet, 'fddwnet':FDDWNet, 'mininet':MiniNet, 'mininetv2':MiniNetv2,
                  'icnet':ICNet, 'liteseg':LiteSeg, 'shelfnet':ShelfNet, 'fssnet':FSSNet,
-                 'swiftnet':SwiftNet, 'sqnet':SQNet,}
+                 'swiftnet':SwiftNet, 'sqnet':SQNet, 'dfanet':DFANet,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet', 'icnet']
