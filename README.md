@@ -56,7 +56,7 @@ self.decoder = 'deeplabv3p'
 ```
 or use [command-line arguments](configs/parser.py)  
 ```
-python main.py -- model smp --encoder resnet101 --decoder deeplabv3p
+python main.py --model smp --encoder resnet101 --decoder deeplabv3p
 ```
 Details of the configurations can also be found in this [file](configs/parser.py).  
 
