@@ -10,7 +10,7 @@ if __name__ == '__main__':
     
     config.init_dependent_config()
 
-    # If you want to command-line arguments, please uncomment the following lines
+    # If you want to use command-line arguments, please uncomment the following line
     # config = load_parser(config)
 
     trainer = SegTrainer(config)
