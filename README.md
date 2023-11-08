@@ -1,5 +1,5 @@
 # Introduction
-PyTorch Implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation etc.  
+PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation etc.  
 \
 <img src="demo/enet_800epoch.gif" width="100%" height="100%" />
 
@@ -54,6 +54,11 @@ self.model = 'smp'
 self.encoder = 'resnet101'
 self.decoder = 'deeplabv3p'
 ```
+or use [command-line arguments](configs/parser.py)  
+```
+python main.py -- model smp --encoder resnet101 --decoder deeplabv3p
+```
+Details of the configurations can also be found in this [file](configs/parser.py).  
 
 
 [^adscnet]: [ADSCNet: asymmetric depthwise separable convolution for semantic segmentation in real-time](https://link.springer.com/article/10.1007/s10489-019-01587-1)  

@@ -1,5 +1,5 @@
 from core import SegTrainer
-from configs import MyConfig
+from configs import MyConfig, load_parser
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -9,10 +9,13 @@ if __name__ == '__main__':
     config = MyConfig()
     
     config.init_dependent_config()
-    
+
+    # If you want to command-line arguments, please uncomment the following lines
+    # config = load_parser(config)
+
     trainer = SegTrainer(config)
     
     if config.is_testing:
         trainer.predict(config)
-    else:
+    else:    
         trainer.run(config)

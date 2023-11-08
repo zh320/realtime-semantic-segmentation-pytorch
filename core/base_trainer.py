@@ -90,9 +90,10 @@ class BaseTrainer:
                 if self.main_rank and val_score > self.best_score:
                     # Save best model
                     self.best_score = val_score
-                    self.save_ckpt(config, save_best=True) 
-                    
-            if self.main_rank:
+                    if config.save_ckpt:
+                        self.save_ckpt(config, save_best=True) 
+
+            if self.main_rank and config.save_ckpt:
                 # Save last model    
                 self.save_ckpt(config)
 
