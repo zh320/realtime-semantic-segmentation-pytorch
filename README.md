@@ -1,7 +1,7 @@
 # Introduction
 PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation etc.  
 \
-<img src="demo/enet_800epoch.gif" width="100%" height="100%" />
+<img src="https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/enet_800epoch.gif" width="100%" height="100%" />
 
 
 # Requirements
