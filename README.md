@@ -143,7 +143,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | FSSNet | None | 0.2 / 0.20 | 121 | n.a. / 58.8 | [65.44](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/fssnet.pth) |
 | ICNet | ResNet18 | 26.5<sup>5</sup> / 12.42 | 102 | 67.7<sup>5</sup> / 69.5<sup>5</sup> | [69.65](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/icnet.pth) |
 | LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [72.63](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/lednet.pth) |
-| LinkNet | None | 11.5 / 11.54 | 106 | n.a. / 76.4| [73.39](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/linknet.pth) |
+| LinkNet | ResNet18 | 11.5 / 11.54 | 106 | n.a. / 76.4| [73.39](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/linknet.pth) |
 | LiteSeg | MobileNetv2 | 4.38 / 4.29 | 117 | 70.0 / 67.8| [76.10](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/liteseg.pth) |
 | MiniNet | None | 3.1 / 1.41 | 254 | n.a. / 40.7| [61.47](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/mininet.pth) |
 | MiniNetv2 | None | 0.5 / 0.51 | 86 | n.a. / 70.5| [71.79](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/mininetv2.pth) |
