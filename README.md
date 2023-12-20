@@ -122,8 +122,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ADSCNet | None | n.a. / 0.51 | 89 | n.a. / 67.5 | [69.06](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/adscnet.pth) |
 | AGLNet | None | 1.12 / 1.02 | 61 | 69.39 / 70.1 | [73.58](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/aglnet.pth) |
 | BiSeNetv1 | ResNet18 | 49.0 / 13.32 | 88 | 74.8 / 74.7 | [74.91](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv1.pth) |
-| BiSeNetv2 | None | n.a. / 2.53 | 142 | 73.4 / 72.6 | [73.73<sup>3</sup>](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv2-aux.pth) |
-| CANet | MobileNetv2 | 4.8 / 4.77 | 76 | 73.4 / 73.5 | [73.76](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/canet.pth) |
+| BiSeNetv2 | None | n.a. / 2.27 | 142 | 73.4 / 72.6 | [73.73<sup>3</sup>](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv2-aux.pth) |
+| CANet | MobileNetv2 | 4.8 / 4.77 | 76 | 73.4 / 73.5 | [76.59](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/canet.pth) |
 | CFPNet | None | 0.55 / 0.27 | 64 | n.a. / 70.1 | [70.08](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/cfpnet.pth) |
 | CGNet | None | 0.41 / 0.24 | 157 | 59.7 / 64.8<sup>4</sup> | [67.25](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/cgnet.pth) |
 | ContextNet | None | 0.85 / 1.01 | 80 | 65.9 / 66.1 | [66.61](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/contextnet.pth) |
@@ -142,10 +142,10 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | FPENet | None | 0.38 / 0.36 | 90 | n.a. / 70.1 | [72.05](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/fpenet.pth) |
 | FSSNet | None | 0.2 / 0.20 | 121 | n.a. / 58.8 | [65.44](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/fssnet.pth) |
 | ICNet | ResNet18 | 26.5<sup>5</sup> / 12.42 | 102 | 67.7<sup>5</sup> / 69.5<sup>5</sup> | [69.65](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/icnet.pth) |
-| LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [71.40](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/lednet.pth) |
-| LinkNet | None | 11.5 / 11.71 | 145 | n.a. / 76.4| [71.72](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/linknet.pth) |
-| LiteSeg | MobileNetv2 | 4.38 / 4.29 | 117 | 70.0 / 67.8| [75.72](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/liteseg.pth) |
-| MiniNet | None | 3.1 / 1.41 | 254 | n.a. / 40.7| [61.59](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/mininet.pth) |
+| LEDNet | None | 0.94 / 1.46 | 76 | n.a. / 70.6 | [72.63](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/lednet.pth) |
+| LinkNet | None | 11.5 / 11.54 | 106 | n.a. / 76.4| [73.39](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/linknet.pth) |
+| LiteSeg | MobileNetv2 | 4.38 / 4.29 | 117 | 70.0 / 67.8| [76.10](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/liteseg.pth) |
+| MiniNet | None | 3.1 / 1.41 | 254 | n.a. / 40.7| [61.47](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/mininet.pth) |
 | MiniNetv2 | None | 0.5 / 0.51 | 86 | n.a. / 70.5| [71.79](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/mininetv2.pth) |
 | PP-LiteSeg | STDC1 | n.a. / 6.33 | 201 | 76.0 / 74.9| [72.49](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc1.pth) |
 | PP-LiteSeg | STDC2 | n.a. / 10.56 | 136 | 78.2 / 77.5| [74.37](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc2.pth) |
