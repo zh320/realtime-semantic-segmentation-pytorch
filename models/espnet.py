@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, conv3x3, ConvBNAct, Activation
+from .modules import conv1x1, conv3x3, ConvBNAct, DeConvBNAct, Activation
 
 
 class ESPNet(nn.Module):
@@ -147,13 +147,13 @@ class L3Block(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, num_class, l1_channel, l2_channel, act_type='prelu'):
         super(Decoder, self).__init__()
-        self.upconv_l3 = Upsample(num_class, num_class, act_type=act_type)
+        self.upconv_l3 = DeConvBNAct(num_class, num_class, act_type=act_type)
         self.conv_cat_l2 = ConvBNAct(l2_channel, num_class, 1)
         self.conv_l2 = ESPModule(2*num_class, num_class)
-        self.upconv_l2 = Upsample(num_class, num_class, act_type=act_type)
+        self.upconv_l2 = DeConvBNAct(num_class, num_class, act_type=act_type)
         self.conv_cat_l1 = ConvBNAct(l1_channel, num_class, 1)
         self.conv_l1 = ESPModule(2*num_class, num_class)
-        self.upconv_l1 = Upsample(num_class, num_class)
+        self.upconv_l1 = DeConvBNAct(num_class, num_class)
         
     def forward(self, x, x_l1, x_l2):
         x = self.upconv_l3(x)
@@ -221,31 +221,3 @@ class ESPModule(nn.Module):
             x += residual
 
         return x
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = 2 * padding + 2 - kernel_size
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

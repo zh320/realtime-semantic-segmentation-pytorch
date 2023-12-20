@@ -9,7 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import ConvBNAct, Activation
+from .modules import ConvBNAct, DeConvBNAct, Activation
+from .enet import InitialBlock as InitBlock
 
 
 class FSSNet(nn.Module):
@@ -26,7 +27,7 @@ class FSSNet(nn.Module):
         self.bottleneck2 = build_blocks(DilatedBlock, 64, 2, act_type=act_type)
         self.up1 = UpsamplingBlock(64, 16, act_type)
         self.bottleneck1 = build_blocks(DilatedBlock, 16, 2, act_type=act_type)
-        self.full_conv = Upsample(16, num_class, act_type=act_type)
+        self.full_conv = DeConvBNAct(16, num_class, act_type=act_type)
 
     def forward(self, x):
         x = self.init_block(x)      # 2x down
@@ -41,18 +42,6 @@ class FSSNet(nn.Module):
         x = self.bottleneck1(x)
         x = self.full_conv(x)       # 2x up
 
-        return x
-
-
-class InitBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(InitBlock, self).__init__()
-        assert out_channels > in_channels, 'out_channels should be larger than in_channels.\n'
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
         return x
 
 
@@ -139,7 +128,7 @@ class UpsamplingBlock(nn.Module):
         hid_channels = in_channels // 4
         self.deconv = nn.Sequential(
                             ConvBNAct(in_channels, hid_channels, 1, act_type=act_type),
-                            Upsample(hid_channels, hid_channels, act_type=act_type),
+                            DeConvBNAct(hid_channels, hid_channels, act_type=act_type),
                             ConvBNAct(hid_channels, out_channels, 1, act_type='none')
                         )
         self.conv = ConvBNAct(in_channels, out_channels, 1, act_type='none')
@@ -155,31 +144,3 @@ class UpsamplingBlock(nn.Module):
         x += x_deconv
 
         return self.act(x)
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = scale_factor - 1
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

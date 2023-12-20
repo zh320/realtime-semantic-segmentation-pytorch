@@ -11,6 +11,7 @@ import torch.nn.functional as F
 from math import ceil
 
 from .modules import ConvBNAct
+from .enet import InitialBlock as DownsamplingBlock
 
 
 class CFPNet(nn.Module):
@@ -49,18 +50,6 @@ class CFPNet(nn.Module):
         x = self.seg_head(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
 
-        return x
-
-
-class DownsamplingBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingBlock, self).__init__()
-        assert out_channels > in_channels, 'out_channels should be larger than in_channels.\n'
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
         return x
 
 

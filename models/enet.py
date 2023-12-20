@@ -33,17 +33,18 @@ class ENet(nn.Module):
         x = self.fullconv(x)
         
         return x
-
+ 
 
 class InitialBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type='prelu'):
+    def __init__(self, in_channels, out_channels, act_type, kernel_size=3, **kwargs):
         super(InitialBlock, self).__init__()
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type)
+        assert out_channels > in_channels, 'out_channels should be larger than in_channels.\n'
+        self.conv = ConvBNAct(in_channels, out_channels - in_channels, kernel_size, 2, act_type=act_type, **kwargs)
         self.pool = nn.MaxPool2d(3, 2, 1)
-        
+
     def forward(self, x):
         x = torch.cat([self.conv(x), self.pool(x)], dim=1)
-        
+
         return x        
 
 

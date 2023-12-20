@@ -9,7 +9,8 @@ Date:       2023/10/08
 import torch
 import torch.nn as nn
 
-from .modules import DWConvBNAct, ConvBNAct, Activation
+from .modules import DWConvBNAct, ConvBNAct, DeConvBNAct, Activation
+from .enet import InitialBlock as DownsamplingUnit
 
 
 class FDDWNet(nn.Module):
@@ -21,11 +22,11 @@ class FDDWNet(nn.Module):
         self.layer8 = DownsamplingUnit(64, 128, act_type)
         self.layer9_16 = build_blocks(EERMUnit, 128, 8, ks, [1,2,5,9,1,2,5,9], act_type)
         self.layer17_24 = build_blocks(EERMUnit, 128, 8, ks, [2,5,9,17,2,5,9,17], act_type)
-        self.layer25 = Upsample(128, 64, act_type=act_type)
+        self.layer25 = DeConvBNAct(128, 64, act_type=act_type)
         self.layer26_27 = build_blocks(EERMUnit, 64, 2, ks, [1,1], act_type)
-        self.layer28 = Upsample(64, 16, act_type=act_type)
+        self.layer28 = DeConvBNAct(64, 16, act_type=act_type)
         self.layer29_30 = build_blocks(EERMUnit, 16, 2, ks, [1,1], act_type)
-        self.layer31 = Upsample(16, num_class, act_type=act_type)
+        self.layer31 = DeConvBNAct(16, num_class, act_type=act_type)
 
     def forward(self, x):
         x = self.layer1(x)
@@ -77,43 +78,3 @@ class EERMUnit(nn.Module):
         x += residual
 
         return self.act(x)
-
-
-class DownsamplingUnit(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingUnit, self).__init__()
-        assert out_channels > in_channels, 'out_channels should be larger than in_channels.\n'
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type, inplace=True)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
-        return x
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = scale_factor - 1
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type, inplace=True),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

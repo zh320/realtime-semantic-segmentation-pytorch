@@ -1,39 +1,39 @@
 import os, torch
 import segmentation_models_pytorch as smp
 
-from .bisenetv2 import BiSeNetv2
-from .enet import ENet
-from .fastscnn import FastSCNN
-from .lednet import LEDNet
-from .linknet import LinkNet
-from .contextnet import ContextNet
-from .pp_liteseg import PPLiteSeg
-from .ddrnet import DDRNet
-from .espnet import ESPNet
-from .erfnet import ERFNet
-from .segnet import SegNet
-from .dabnet import DABNet
-from .bisenetv1 import BiSeNetv1
-from .espnetv2 import ESPNetv2
-from .aglnet import AGLNet
-from .cgnet import CGNet
-from .edanet import EDANet
-from .esnet import ESNet
 from .adscnet import ADSCNet
+from .aglnet import AGLNet
+from .bisenetv1 import BiSeNetv1
+from .bisenetv2 import BiSeNetv2
 from .canet import CANet
 from .cfpnet import CFPNet
+from .cgnet import CGNet
+from .contextnet import ContextNet
+from .dabnet import DABNet
+from .ddrnet import DDRNet
+from .dfanet import DFANet
+from .edanet import EDANet
+from .enet import ENet
+from .erfnet import ERFNet
+from .esnet import ESNet
+from .espnet import ESPNet
+from .espnetv2 import ESPNetv2
 from .farseenet import FarSeeNet
-from .fpenet import FPENet
+from .fastscnn import FastSCNN
 from .fddwnet import FDDWNet
+from .fpenet import FPENet
+from .fssnet import FSSNet
+from .icnet import ICNet
+from .lednet import LEDNet
+from .linknet import LinkNet
+from .liteseg import LiteSeg
 from .mininet import MiniNet
 from .mininetv2 import MiniNetv2
-from .icnet import ICNet
-from .liteseg import LiteSeg
+from .pp_liteseg import PPLiteSeg
+from .segnet import SegNet
 from .shelfnet import ShelfNet
-from .fssnet import FSSNet
-from .swiftnet import SwiftNet
 from .sqnet import SQNet
-from .dfanet import DFANet
+from .swiftnet import SwiftNet
 
 
 decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':smp.FPN,
@@ -42,18 +42,20 @@ decoder_hub = {'deeplabv3':smp.DeepLabV3, 'deeplabv3p':smp.DeepLabV3Plus, 'fpn':
 
 
 def get_model(config):
-    model_hub = {'bisenetv2':BiSeNetv2, 'enet':ENet, 'fastscnn':FastSCNN, 'lednet':LEDNet,
-                 'linknet':LinkNet, 'contextnet':ContextNet, 'ppliteseg':PPLiteSeg,
-                 'ddrnet':DDRNet, 'espnet':ESPNet, 'erfnet':ERFNet, 'segnet':SegNet,
-                 'dabnet':DABNet, 'bisenetv1':BiSeNetv1, 'espnetv2':ESPNetv2,
-                 'aglnet':AGLNet, 'cgnet':CGNet, 'edanet':EDANet, 'esnet':ESNet,
-                 'adscnet':ADSCNet, 'canet':CANet, 'cfpnet':CFPNet, 'farseenet':FarSeeNet,
-                 'fpenet':FPENet, 'fddwnet':FDDWNet, 'mininet':MiniNet, 'mininetv2':MiniNetv2,
-                 'icnet':ICNet, 'liteseg':LiteSeg, 'shelfnet':ShelfNet, 'fssnet':FSSNet,
-                 'swiftnet':SwiftNet, 'sqnet':SQNet, 'dfanet':DFANet,}
+    model_hub = {'adscnet':ADSCNet, 'aglnet':AGLNet, 'bisenetv1':BiSeNetv1, 
+                'bisenetv2':BiSeNetv2, 'canet':CANet, 'cfpnet':CFPNet, 
+                'cgnet':CGNet, 'contextnet':ContextNet, 'dabnet':DABNet, 
+                'ddrnet':DDRNet, 'dfanet':DFANet, 'edanet':EDANet, 
+                'enet':ENet, 'erfnet':ERFNet, 'esnet':ESNet, 
+                'espnet':ESPNet, 'espnetv2':ESPNetv2, 'farseenet':FarSeeNet, 
+                'fastscnn':FastSCNN, 'fddwnet':FDDWNet, 'fpenet':FPENet, 
+                'fssnet':FSSNet, 'icnet':ICNet, 'lednet':LEDNet,
+                'linknet':LinkNet, 'liteseg':LiteSeg, 'mininet':MiniNet, 
+                'mininetv2':MiniNetv2, 'ppliteseg':PPLiteSeg, 'segnet':SegNet, 
+                'shelfnet':ShelfNet, 'sqnet':SQNet, 'swiftnet':SwiftNet,}
 
     # The following models currently support auxiliary heads
-    aux_models = ['bisenetv2', 'contextnet', 'fastscnn', 'ddrnet', 'icnet']
+    aux_models = ['bisenetv2', 'ddrnet', 'icnet']
     
     if config.model == 'smp':   # Use segmentation models pytorch
         if config.decoder not in decoder_hub:
@@ -66,8 +68,6 @@ def get_model(config):
     elif config.model in model_hub.keys():
         if config.model in aux_models:
             model = model_hub[config.model](num_class=config.num_class, use_aux=config.use_aux)
-        elif config.model == 'ppliteseg':
-            model = model_hub[config.model](num_class=config.num_class, encoder_type=config.encoder)
         else:
             model = model_hub[config.model](num_class=config.num_class)
 

@@ -10,7 +10,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, DSConvBNAct, PWConvBNAct, ConvBNAct
+from .modules import (conv1x1, DSConvBNAct, PWConvBNAct, ConvBNAct, 
+                        PyramidPoolingModule, SegHead)
 
 
 class ESPNetv2(nn.Module):
@@ -25,7 +26,7 @@ class ESPNetv2(nn.Module):
         self.l4_block2 = build_blocks(EESPModule, 256, alpha4, act_type=act_type)
 
         self.convl4_l3 = ConvBNAct(256, 128, 1)
-        self.ppm = PyramidPoolingModule(256, 256, act_type=act_type)
+        self.ppm = PyramidPoolingModule(256, 256, act_type=act_type, bias=True)
         self.decoder = SegHead(256, num_class, act_type=act_type)
 
     def forward(self, x):
@@ -59,8 +60,8 @@ def build_blocks(block, channels, num_block, act_type='relu'):
     for _ in range(num_block):
         layers.append(block(channels, act_type=act_type))
     return  nn.Sequential(*layers)
-    
-    
+
+
 class EESPModule(nn.Module):
     def __init__(self, channels, K=4, ks=3, stride=1, act_type='prelu'):
         super(EESPModule, self).__init__()
@@ -110,37 +111,3 @@ class EESPModule(nn.Module):
             x += img
 
         return x
-
-    
-class PyramidPoolingModule(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(PyramidPoolingModule, self).__init__()
-        hid_channels = int(in_channels // 4)
-        self.stage1 = self._make_stage(in_channels, hid_channels, 1)
-        self.stage2 = self._make_stage(in_channels, hid_channels, 2)
-        self.stage3 = self._make_stage(in_channels, hid_channels, 4)
-        self.stage4 = self._make_stage(in_channels, hid_channels, 6)
-        self.conv = PWConvBNAct(2*in_channels, out_channels, act_type=act_type)
-
-    def _make_stage(self, in_channels, out_channels, pool_size):
-        return nn.Sequential(
-                        nn.AdaptiveAvgPool2d(pool_size),
-                        conv1x1(in_channels, out_channels)
-                )
-
-    def forward(self, x):
-        size = x.size()[2:]
-        x1 = F.interpolate(self.stage1(x), size, mode='bilinear', align_corners=True)
-        x2 = F.interpolate(self.stage2(x), size, mode='bilinear', align_corners=True)
-        x3 = F.interpolate(self.stage3(x), size, mode='bilinear', align_corners=True)
-        x4 = F.interpolate(self.stage4(x), size, mode='bilinear', align_corners=True)
-        x = self.conv(torch.cat([x, x1, x2, x3, x4], dim=1))
-        return x
-
-
-class SegHead(nn.Sequential):
-    def __init__(self, in_channels, out_channels, act_type, hid_channels=128):
-        super(SegHead, self).__init__(
-            ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
-            conv1x1(hid_channels, out_channels)
-        )
