@@ -9,7 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import ConvBNAct, Activation
+from .modules import ConvBNAct, DeConvBNAct, Activation
+from .enet import InitialBlock as DownsamplingUnit
 
 
 class ESNet(nn.Module):
@@ -21,11 +22,11 @@ class ESNet(nn.Module):
         self.block2 = build_blocks('fcu', 64, 2, K=5, act_type=act_type)
         self.block3_down = DownsamplingUnit(64, 128, act_type)
         self.block3 = build_blocks('pfcu', 128, 3, r1=2, r2=5, r3=9, act_type=act_type)
-        self.block4_up = Upsample(128, 64, act_type=act_type)
+        self.block4_up = DeConvBNAct(128, 64, act_type=act_type)
         self.block4 = build_blocks('fcu', 64, 2, K=5, act_type=act_type)
-        self.block5_up = Upsample(64, 16, act_type=act_type)
+        self.block5_up = DeConvBNAct(64, 16, act_type=act_type)
         self.block5 = build_blocks('fcu', 16, 2, K=3, act_type=act_type)
-        self.full_conv = Upsample(16, num_class, act_type=act_type)
+        self.full_conv = DeConvBNAct(16, num_class, act_type=act_type)
 
     def forward(self, x):
         x = self.block1_down(x)
@@ -127,43 +128,3 @@ class PFCU(nn.Module):
         x = x_left + x_mid + x_right + residual
 
         return  self.act(x)
-
-
-class DownsamplingUnit(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingUnit, self).__init__()
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type, 
-                                inplace=True)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
-        return x
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = 2 * padding + 2 - kernel_size
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type, inplace=True)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

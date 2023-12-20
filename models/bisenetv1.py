@@ -9,7 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, ConvBNAct
+from .modules import conv1x1, ConvBNAct, SegHead
+from .backbone import ResNet
 
 
 class BiSeNetv1(nn.Module):
@@ -57,7 +58,7 @@ class ContextPath(nn.Module):
         self.conv_32 = conv1x1(channels[1], out_channels)
 
     def forward(self, x):
-        x_32, x_16 = self.backbone(x)
+        _, _, x_16, x_32 = self.backbone(x)
         x_32_avg = self.pool(x_32)
         x_32 = self.arm_32(x_32)
         x_32 += x_32_avg
@@ -111,46 +112,3 @@ class FeatureFusionModule(nn.Module):
         x = x + x_pool
 
         return x
-
-
-class ResNet(nn.Module):
-    # Load ResNet pretrained on ImageNet from torchvision, see
-    # https://pytorch.org/vision/stable/models/resnet.html
-    def __init__(self, resnet_type, pretrained=True):
-        super(ResNet, self).__init__()
-        from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
-
-        resnet_hub = {'resnet18':resnet18, 'resnet34':resnet34, 'resnet50':resnet50,
-                        'resnet101':resnet101, 'resnet152':resnet152}
-        if resnet_type not in resnet_hub:
-            raise ValueError(f'Unsupported ResNet type: {resnet_type}.\n')
-
-        resnet = resnet_hub[resnet_type](pretrained=pretrained)
-        self.conv1 = resnet.conv1
-        self.bn1 = resnet.bn1
-        self.relu = resnet.relu
-        self.maxpool = resnet.maxpool
-        self.layer1 = resnet.layer1
-        self.layer2 = resnet.layer2
-        self.layer3 = resnet.layer3
-        self.layer4 = resnet.layer4
-
-    def forward(self, x):
-        x = self.conv1(x)       # 2x down
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)     # 4x down
-        x = self.layer1(x)
-        x = self.layer2(x)      # 8x down
-        x3 = self.layer3(x)      # 16x down
-        x = self.layer4(x3)      # 32x down
-
-        return x, x3
-
-
-class SegHead(nn.Sequential):
-    def __init__(self, in_channels, out_channels, act_type, hid_channels=128):
-        super(SegHead, self).__init__(
-            ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
-            conv1x1(hid_channels, out_channels)
-        )

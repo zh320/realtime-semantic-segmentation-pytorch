@@ -9,7 +9,7 @@ Date:       2023/09/30
 import torch
 import torch.nn as nn
 
-from .modules import conv1x1, ConvBNAct, DWConvBNAct, Activation
+from .modules import conv1x1, ConvBNAct, DWConvBNAct, DeConvBNAct, Activation
 
 
 class ADSCNet(nn.Module):
@@ -25,16 +25,16 @@ class ADSCNet(nn.Module):
         self.conv5 = ADSCModule(64, 2, act_type=act_type)
         self.ddcc = DDCC(128, [3, 5, 9, 13], act_type)
         self.up1 = nn.Sequential(
-                        Upsample(128, 64),
+                        DeConvBNAct(128, 64),
                         ADSCModule(64, 1, act_type=act_type)
                     )
         self.up2 = nn.Sequential(
                         ADSCModule(64, 1, act_type=act_type),
-                        Upsample(64, 32)
+                        DeConvBNAct(64, 32)
                     )
         self.up3 = nn.Sequential(
                         ADSCModule(32, 1, act_type=act_type),
-                        Upsample(32, num_class)
+                        DeConvBNAct(32, num_class)
                     )
 
     def forward(self, x):
@@ -123,31 +123,3 @@ class DDCC(nn.Module):
         x = self.conv_last(x)
 
         return x
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = scale_factor - 1
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

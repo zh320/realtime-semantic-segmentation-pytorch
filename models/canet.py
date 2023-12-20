@@ -8,7 +8,8 @@ Date:       2023/09/30
 import torch
 import torch.nn as nn
 
-from .modules import ConvBNAct, Activation
+from .modules import ConvBNAct, DeConvBNAct, Activation
+from .backbone import ResNet, Mobilenetv2
 
 
 class CANet(nn.Module):
@@ -17,7 +18,7 @@ class CANet(nn.Module):
         self.spatial_branch = SpatialBranch(n_channel, 64, act_type)
         self.context_branch = ContextBranch(64*4, backbone_type)
         self.fca = FeatureCrossAttentionModule(64*4, num_class, act_type)
-        self.up = Upsample(num_class, num_class, scale_factor=8)
+        self.up = DeConvBNAct(num_class, num_class, scale_factor=8)
 
     def forward(self, x):
         size = x.size()[2:]
@@ -50,11 +51,11 @@ class ContextBranch(nn.Module):
         else:
             raise NotImplementedError()
             
-        self.up1 = Upsample(channels[0], hid_channels)
-        self.up2 = Upsample(channels[1] + hid_channels, out_channels)
+        self.up1 = DeConvBNAct(channels[0], hid_channels)
+        self.up2 = DeConvBNAct(channels[1] + hid_channels, out_channels)
 
     def forward(self, x):
-        x, x_d16 = self.backbone(x)
+        _, _, x_d16, x = self.backbone(x)
         x = self.up1(x)
 
         x = torch.cat([x, x_d16], dim=1)
@@ -114,83 +115,3 @@ class ChannelAttentionBlock(nn.Module):
         x = torch.sigmoid(x)
 
         return x.unsqueeze(-1).unsqueeze(-1)
-
-
-class Mobilenetv2(nn.Module):
-    def __init__(self, pretrained=True):
-        super(Mobilenetv2, self).__init__()
-        from torchvision.models import mobilenet_v2
-
-        mobilenet = mobilenet_v2(pretrained=pretrained)
-
-        self.layer1 = mobilenet.features[:7]
-        self.layer2 = mobilenet.features[7:14]
-        self.layer3 = mobilenet.features[14:18]
-        
-    def forward(self, x):
-        x = self.layer1(x)      # 8x down
-        x2 = self.layer2(x)     # 16x down
-        x = self.layer3(x2)     # 32x down
-
-        return x, x2
-
-
-class ResNet(nn.Module):
-    def __init__(self, resnet_type, pretrained=True):
-        super(ResNet, self).__init__()
-        from torchvision.models import resnet18, resnet34, resnet50, resnet101
-
-        resnet_hub = {'resnet18':resnet18, 'resnet34':resnet34, 'resnet50':resnet50,
-                        'resnet101':resnet101,}
-        if resnet_type not in resnet_hub:
-            raise ValueError(f'Unsupported ResNet type: {resnet_type}.\n')
-
-        resnet = resnet_hub[resnet_type](pretrained=pretrained)
-        self.conv1 = resnet.conv1
-        self.bn1 = resnet.bn1
-        self.relu = resnet.relu
-        self.maxpool = resnet.maxpool
-        self.layer1 = resnet.layer1
-        self.layer2 = resnet.layer2
-        self.layer3 = resnet.layer3
-        self.layer4 = resnet.layer4
-
-    def forward(self, x):
-        x = self.conv1(x)       # 2x down
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)     # 4x down
-        x = self.layer1(x)
-        x = self.layer2(x)      # 8x down
-        x3 = self.layer3(x)      # 16x down
-        x = self.layer4(x3)      # 32x down
-
-        return x, x3
-
-
-class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, padding=None,
-                    upsample_type='deconvolution', act_type='relu'):
-        super(Upsample, self).__init__()
-        if upsample_type == 'deconvolution':
-            if kernel_size is None:
-                kernel_size = 2*scale_factor - 1
-            if padding is None:    
-                padding = (kernel_size - 1) // 2
-            output_padding = scale_factor - 1
-            self.up_conv = nn.Sequential(
-                                    nn.ConvTranspose2d(in_channels, out_channels, 
-                                                        kernel_size=kernel_size, 
-                                                        stride=scale_factor, padding=padding,
-                                                        output_padding=output_padding),
-                                    nn.BatchNorm2d(out_channels),
-                                    Activation(act_type)
-                            )
-        else:
-            self.up_conv = nn.Sequential(
-                                    ConvBNAct(in_channels, out_channels, 1, act_type=act_type),
-                                    nn.Upsample(scale_factor=scale_factor, mode='bilinear')
-                            )
-
-    def forward(self, x):
-        return self.up_conv(x)

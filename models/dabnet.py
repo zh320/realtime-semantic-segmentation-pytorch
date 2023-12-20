@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, DWConvBNAct, ConvBNAct
+from .enet import InitialBlock
 
 
 class DABNet(nn.Module):
@@ -57,17 +58,6 @@ class DABNet(nn.Module):
         # Stage 4
         x = self.layer15(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
-        return x
-
-
-class InitialBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(InitialBlock, self).__init__()
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
         return x
 
 

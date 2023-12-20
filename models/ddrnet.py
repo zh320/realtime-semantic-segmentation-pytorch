@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, ConvBNAct, Activation
+from .modules import conv1x1, ConvBNAct, Activation, SegHead
 
 
 class DDRNet(nn.Module):
@@ -284,11 +284,3 @@ class DAPPM(nn.Module):
         x = self.conv_last(torch.cat([y1, y2, y3, y4, y5], dim=1)) + y0
     
         return x
-
-
-class SegHead(nn.Sequential):
-    def __init__(self, in_channels, num_class, act_type='relu', hid_channels=128):
-        super(SegHead, self).__init__(
-            ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
-            conv1x1(hid_channels, num_class)
-        )

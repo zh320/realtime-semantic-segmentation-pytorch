@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, DWConvBNAct, ConvBNAct
+from .backbone import ResNet
 
 
 class FarSeeNet(nn.Module):
@@ -28,7 +29,7 @@ class FarSeeNet(nn.Module):
     def forward(self, x):
         size = x.size()[2:]
 
-        x_high, x_low = self.frontend_network(x)
+        _, _, x_low, x_high = self.frontend_network(x)
 
         x = self.backend_network(x_high, x_low)
 
@@ -103,36 +104,3 @@ class FASPP(nn.Module):
         x = self.sub_pixel_low(x)
 
         return x
-
-
-class ResNet(nn.Module):
-    def __init__(self, resnet_type, pretrained=True):
-        super(ResNet, self).__init__()
-        from torchvision.models import resnet18, resnet34, resnet50, resnet101
-
-        resnet_hub = {'resnet18':resnet18, 'resnet34':resnet34, 'resnet50':resnet50,
-                        'resnet101':resnet101,}
-        if resnet_type not in resnet_hub:
-            raise ValueError(f'Unsupported ResNet type: {resnet_type}.\n')
-
-        resnet = resnet_hub[resnet_type](pretrained=pretrained)
-        self.conv1 = resnet.conv1
-        self.bn1 = resnet.bn1
-        self.relu = resnet.relu
-        self.maxpool = resnet.maxpool
-        self.layer1 = resnet.layer1
-        self.layer2 = resnet.layer2
-        self.layer3 = resnet.layer3
-        self.layer4 = resnet.layer4
-
-    def forward(self, x):
-        x = self.conv1(x)       # 2x down
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)     # 4x down
-        x = self.layer1(x)
-        x = self.layer2(x)      # 8x down
-        x3 = self.layer3(x)      # 16x down
-        x = self.layer4(x3)      # 32x down
-
-        return x, x3
