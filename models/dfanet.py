@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, DSConvBNAct, DWConvBNAct, ConvBNAct, Activation
+from .modules import conv1x1, DSConvBNAct, DWConvBNAct, ConvBNAct, Activation, SegHead
 
 
 class DFANet(nn.Module):
@@ -191,11 +191,3 @@ class XceptionBlock(nn.Module):
             x_right += residual
 
         return x_right
-
-
-class SegHead(nn.Sequential):
-    def __init__(self, in_channels, out_channels, act_type, hid_channels=128):
-        super(SegHead, self).__init__(
-            ConvBNAct(in_channels, hid_channels, 3, act_type=act_type, inplace=True),
-            conv1x1(hid_channels, out_channels)
-        )

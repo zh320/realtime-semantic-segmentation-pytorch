@@ -10,7 +10,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, ConvBNAct, Activation
+from .modules import conv1x1, ConvBNAct, Activation, channel_shuffle
+from .enet import InitialBlock as DownsamplingUnit
+from .lednet import SSnbtUnit
 
 
 class AGLNet(nn.Module):
@@ -54,18 +56,6 @@ class AGLNet(nn.Module):
         return x
 
 
-class DownsamplingUnit(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingUnit, self).__init__()
-        self.conv = ConvBNAct(in_channels, out_channels - in_channels, 3, 2, act_type=act_type)
-        self.pool = nn.MaxPool2d(3, 2, 1)
-
-    def forward(self, x):
-        x = torch.cat([self.conv(x), self.pool(x)], dim=1)
-
-        return x
-
-
 def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
     if len(dilations) == 0:
         dilations = [1 for _ in range(num_block)]
@@ -77,62 +67,6 @@ def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
     for i in range(num_block):
         layers.append(block(channels, dilation=dilations[i], act_type=act_type))
     return  nn.Sequential(*layers)
-
-
-class SSnbtUnit(nn.Module):
-    def __init__(self, channels, dilation, act_type):
-        super(SSnbtUnit, self).__init__()
-        assert channels % 2 == 0, 'Input channel should be multiple of 2.\n'
-        split_channels = channels // 2
-        self.split_channels = split_channels
-        self.left_branch = nn.Sequential(
-                                nn.Conv2d(split_channels, split_channels, (3, 1), padding=(1,0)),
-                                Activation(act_type),
-                                ConvBNAct(split_channels, split_channels, (1, 3), act_type=act_type),
-                                nn.Conv2d(split_channels, split_channels, (3, 1), 
-                                            padding=(dilation,0), dilation=dilation),
-                                Activation(act_type),
-                                ConvBNAct(split_channels, split_channels, (1, 3), dilation=dilation, act_type=act_type),
-                            )
-                            
-        self.right_branch = nn.Sequential(
-                                nn.Conv2d(split_channels, split_channels, (1, 3), padding=(0,1)),
-                                Activation(act_type),
-                                ConvBNAct(split_channels, split_channels, (3, 1), act_type=act_type),
-                                nn.Conv2d(split_channels, split_channels, (1, 3), 
-                                            padding=(0,dilation), dilation=dilation),
-                                Activation(act_type),
-                                ConvBNAct(split_channels, split_channels, (3, 1), dilation=dilation, act_type=act_type),
-                            )
-        self.act = Activation(act_type)
-
-    def forward(self, x):
-        x_left = x[:, :self.split_channels].clone()
-        x_right = x[:, self.split_channels:].clone()
-        x_left = self.left_branch(x_left)
-        x_right = self.right_branch(x_right)
-        x_cat = torch.cat([x_left, x_right], dim=1)
-        x += x_cat
-        x = self.act(x)
-        x = channel_shuffle(x)
-        return x
-
-
-def channel_shuffle(x, groups=2):
-    # Codes are borrowed from 
-    # https://github.com/pytorch/vision/blob/main/torchvision/models/shufflenetv2.py
-    batchsize, num_channels, height, width = x.size()
-    channels_per_group = num_channels // groups
-
-    # reshape
-    x = x.view(batchsize, groups, channels_per_group, height, width)
-
-    x = torch.transpose(x, 1, 2).contiguous()
-
-    # flatten
-    x = x.view(batchsize, -1, height, width)
-
-    return x
 
 
 class FAPM(nn.Module):

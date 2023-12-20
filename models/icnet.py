@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, ConvBNAct, Activation
+from .modules import conv1x1, ConvBNAct, Activation, PyramidPoolingModule, SegHead
 
 
 class ICNet(nn.Module):
@@ -97,40 +97,6 @@ class HighResolutionBranch(nn.Sequential):
             ConvBNAct(hid_channels, hid_channels*2, 3, 2, act_type=act_type),
             ConvBNAct(hid_channels*2, out_channels, 3, 2, act_type=act_type)
         )
-
-
-class SegHead(nn.Sequential):
-    def __init__(self, in_channels, num_class, act_type, hid_channels=128):
-        super(SegHead, self).__init__(
-            ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
-            conv1x1(hid_channels, num_class)
-        )
-
-
-class PyramidPoolingModule(nn.Module):
-    def __init__(self, in_channels, out_channels, act_type):
-        super(PyramidPoolingModule, self).__init__()
-        hid_channels = int(in_channels // 4)
-        self.stage1 = self._make_stage(in_channels, hid_channels, 1)
-        self.stage2 = self._make_stage(in_channels, hid_channels, 2)
-        self.stage3 = self._make_stage(in_channels, hid_channels, 4)
-        self.stage4 = self._make_stage(in_channels, hid_channels, 6)
-        self.conv = ConvBNAct(2*in_channels, out_channels, 1, act_type=act_type)
-
-    def _make_stage(self, in_channels, out_channels, pool_size):
-        return nn.Sequential(
-                        nn.AdaptiveAvgPool2d(pool_size),
-                        conv1x1(in_channels, out_channels)
-                )
-
-    def forward(self, x):
-        size = x.size()[2:]
-        x1 = F.interpolate(self.stage1(x), size, mode='bilinear', align_corners=True)
-        x2 = F.interpolate(self.stage2(x), size, mode='bilinear', align_corners=True)
-        x3 = F.interpolate(self.stage3(x), size, mode='bilinear', align_corners=True)
-        x4 = F.interpolate(self.stage4(x), size, mode='bilinear', align_corners=True)
-        x = self.conv(torch.cat([x, x1, x2, x3, x4], dim=1))
-        return x
 
 
 class ResNet(nn.Module):
