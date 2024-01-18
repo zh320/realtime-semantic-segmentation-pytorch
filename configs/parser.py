@@ -32,7 +32,7 @@ def get_parser():
                  'enet', 'erfnet', 'esnet', 'espnet', 'espnetv2', 'farseenet',
                  'fastscnn', 'fddwnet', 'fpenet', 'fssnet', 'icnet', 'lednet',
                  'linknet', 'liteseg', 'mininet', 'mininetv2', 'ppliteseg', 
-                 'segnet', 'shelfnet', 'sqnet', 'swiftnet', 'smp'],
+                 'regseg', 'segnet', 'shelfnet', 'sqnet', 'swiftnet', 'smp'],
         help='choose which model you want to use')
     parser.add_argument('--encoder', type=str, default=None, 
         help='choose which encoder of SMP model you want to use (please refer to SMP repo)')
