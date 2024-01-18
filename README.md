@@ -43,6 +43,7 @@ tqdm
 - [MiniNet](models/mininet.py)[^mininet]  
 - [MiniNetv2](models/mininetv2.py)[^mininetv2]  
 - [PP-LiteSeg](models/pp_liteseg.py)[^ppliteseg]  
+- [RegSeg](models/regseg.py)[^regseg]  
 - [SegNet](models/segnet.py)[^segnet]  
 - [ShelfNet](models/shelfnet.py)[^shelfnet]  
 - [SQNet](models/sqnet.py)[^sqnet]  
@@ -90,6 +91,7 @@ Details of the configurations can also be found in this [file](configs/parser.py
 [^mininet]: [Enhancing V-SLAM Keyframe Selection with an Efficient ConvNet for Semantic Analysis](https://ieeexplore.ieee.org/abstract/document/8793923)  
 [^mininetv2]: [MiniNet: An Efficient Semantic Segmentation ConvNet for Real-Time Robotic Applications](https://ieeexplore.ieee.org/abstract/document/9023474)  
 [^ppliteseg]: [PP-LiteSeg: A Superior Real-Time Semantic Segmentation Model](https://arxiv.org/abs/2204.02681)  
+[^regseg]: [Rethinking Dilated Convolution for Real-time Semantic Segmentation](https://arxiv.org/abs/2111.09957)  
 [^segnet]: [SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation](https://arxiv.org/abs/1511.00561)  
 [^shelfnet]: [ShelfNet for Fast Semantic Segmentation](https://arxiv.org/abs/1811.11254)  
 [^sqnet]: [Speeding up Semantic Segmentation for Autonomous Driving](https://openreview.net/pdf?id=S1uHiFyyg)  
@@ -149,6 +151,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | MiniNetv2 | None | 0.5 / 0.51 | 86 | n.a. / 70.5| [71.79](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/mininetv2.pth) |
 | PP-LiteSeg | STDC1 | n.a. / 6.33 | 201 | 76.0 / 74.9| [72.49](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc1.pth) |
 | PP-LiteSeg | STDC2 | n.a. / 10.56 | 136 | 78.2 / 77.5| [74.37](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc2.pth) |
+| RegSeg | None | 3.34 / 3.37 | 104 | 78.5 / 78.3| 74.28 |
 | SegNet | None | 29.46 / 29.48 | 14 | n.a. / 56.1| [70.77](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/segnet.pth) |
 | ShelfNet | ResNet18 | 23.5 / 16.04 | 110 | n.a. / 74.8| [77.63](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/shelfnet.pth) |
 | SQNet | SqueezeNet-1.1 | n.a. / 4.81 | 69 | n.a. / 59.8| [69.55](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/sqnet.pth) |

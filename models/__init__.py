@@ -30,6 +30,7 @@ from .liteseg import LiteSeg
 from .mininet import MiniNet
 from .mininetv2 import MiniNetv2
 from .pp_liteseg import PPLiteSeg
+from .regseg import RegSeg
 from .segnet import SegNet
 from .shelfnet import ShelfNet
 from .sqnet import SQNet
@@ -51,8 +52,9 @@ def get_model(config):
                 'fastscnn':FastSCNN, 'fddwnet':FDDWNet, 'fpenet':FPENet, 
                 'fssnet':FSSNet, 'icnet':ICNet, 'lednet':LEDNet,
                 'linknet':LinkNet, 'liteseg':LiteSeg, 'mininet':MiniNet, 
-                'mininetv2':MiniNetv2, 'ppliteseg':PPLiteSeg, 'segnet':SegNet, 
-                'shelfnet':ShelfNet, 'sqnet':SQNet, 'swiftnet':SwiftNet,}
+                'mininetv2':MiniNetv2, 'ppliteseg':PPLiteSeg, 'regseg':RegSeg,
+                'segnet':SegNet, 'shelfnet':ShelfNet, 'sqnet':SQNet, 
+                'swiftnet':SwiftNet,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'ddrnet', 'icnet']
