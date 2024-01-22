@@ -2,7 +2,7 @@ import sys, time, torch
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-from configs import MyConfig
+from configs import MyConfig, load_parser
 from models import get_model
 
 
@@ -63,5 +63,6 @@ def test_model_speed(config, ratio=0.5, imgw=2048, imgh=1024, iterations=None):
 
 if __name__ == '__main__':
     config = MyConfig()
-    
+    config = load_parser(config)
+
     test_model_speed(config)

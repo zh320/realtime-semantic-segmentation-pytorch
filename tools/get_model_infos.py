@@ -2,7 +2,7 @@ import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-from configs import MyConfig
+from configs import MyConfig, load_parser
 from models import get_model
 
 
@@ -29,5 +29,6 @@ def cal_model_params(config, imgw=1024, imgh=512):
 
 if __name__ == '__main__':
     config = MyConfig()
+    config = load_parser(config)
     
     cal_model_params(config)

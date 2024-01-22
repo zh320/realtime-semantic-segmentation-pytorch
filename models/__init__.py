@@ -34,6 +34,7 @@ from .regseg import RegSeg
 from .segnet import SegNet
 from .shelfnet import ShelfNet
 from .sqnet import SQNet
+from .stdc import STDC, LaplacianConv
 from .swiftnet import SwiftNet
 
 
@@ -54,10 +55,13 @@ def get_model(config):
                 'linknet':LinkNet, 'liteseg':LiteSeg, 'mininet':MiniNet, 
                 'mininetv2':MiniNetv2, 'ppliteseg':PPLiteSeg, 'regseg':RegSeg,
                 'segnet':SegNet, 'shelfnet':ShelfNet, 'sqnet':SQNet, 
-                'swiftnet':SwiftNet,}
+                'stdc':STDC, 'swiftnet':SwiftNet,}
 
     # The following models currently support auxiliary heads
     aux_models = ['bisenetv2', 'ddrnet', 'icnet']
+
+    # The following models currently support detail heads
+    detail_head_models = ['stdc']
     
     if config.model == 'smp':   # Use segmentation models pytorch
         if config.decoder not in decoder_hub:
@@ -70,7 +74,14 @@ def get_model(config):
     elif config.model in model_hub.keys():
         if config.model in aux_models:
             model = model_hub[config.model](num_class=config.num_class, use_aux=config.use_aux)
+        elif config.model in detail_head_models:
+            model = model_hub[config.model](num_class=config.num_class, use_detail_head=config.use_detail_head, use_aux=config.use_aux)
         else:
+            if config.use_aux:
+                raise ValueError(f'Model {config.model} does not support auxiliary heads.\n')
+            if config.use_detail_head:
+                raise ValueError(f'Model {config.model} does not support detail heads.\n')
+
             model = model_hub[config.model](num_class=config.num_class)
 
     else:
@@ -83,7 +94,7 @@ def get_teacher_model(config, device):
     if config.kd_training:
         if not os.path.isfile(config.teacher_ckpt):
             raise ValueError(f'Could not find teacher checkpoint at path {config.teacher_ckpt}.')
-        
+
         if config.teacher_decoder not in decoder_hub.keys():
             raise ValueError(f"Unsupported teacher decoder type: {config.teacher_decoder}")      
 
@@ -93,10 +104,10 @@ def get_teacher_model(config, device):
         teacher_ckpt = torch.load(config.teacher_ckpt, map_location=torch.device('cpu'))
         model.load_state_dict(teacher_ckpt['state_dict'])
         del teacher_ckpt
-            
+
         model = model.to(device)    
         model.eval()
     else:
         model = None
-        
+
     return model
