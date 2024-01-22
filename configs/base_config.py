@@ -12,6 +12,13 @@ class BaseConfig:
         self.decoder = None
         self.encoder_weights = 'imagenet'
         
+        # Detail Head (For STDC)
+        self.use_detail_head = False
+        self.detail_thrs = 0.1
+        self.detail_loss_coef = 1.0
+        self.dice_loss_coef = 1.0
+        self.bce_loss_coef = 1.0
+        
         # Training
         self.total_epoch = 200
         self.base_lr = 0.01
