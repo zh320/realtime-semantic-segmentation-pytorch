@@ -21,6 +21,13 @@ class SegTrainer(BaseTrainer):
             self.teacher_model = get_teacher_model(config, self.device)
             self.metrics = get_seg_metrics(config).to(self.device)
 
+            if config.use_detail_head:
+                from .loss import get_detail_loss_fn
+                from models import LaplacianConv
+
+                self.laplacian_conv = LaplacianConv(self.device)
+                self.detail_loss_fn = get_detail_loss_fn(config)
+
     def train_one_epoch(self, config):
         self.model.train()
         
@@ -57,6 +64,23 @@ class SegTrainer(BaseTrainer):
                     with amp.autocast(enabled=config.amp_training):
                         loss += config.aux_coef[i] * self.loss_fn(preds_aux[i], masks_aux)
 
+            # Detail loss proposed in paper for model STDC
+            elif config.use_detail_head:
+                masks_detail = masks.unsqueeze(1).float()
+                masks_detail = self.laplacian_conv(masks_detail)
+
+                with amp.autocast(enabled=config.amp_training):
+                    # Detail ground truth
+                    masks_detail = self.model.module.detail_conv(masks_detail)
+                    masks_detail[masks_detail > config.detail_thrs] = 1
+                    masks_detail[masks_detail <= config.detail_thrs] = 0
+                    detail_size = masks_detail.size()[2:]
+
+                    preds, preds_detail = self.model(images, is_training=True)
+                    preds_detail = F.interpolate(preds_detail, detail_size, mode='bilinear', align_corners=True)
+                    loss_detail = self.detail_loss_fn(preds_detail, masks_detail)
+                    loss = self.loss_fn(preds, masks) + config.detail_loss_coef * loss_detail
+
             else:
                 with amp.autocast(enabled=config.amp_training):
                     preds = self.model(images)
@@ -64,7 +88,9 @@ class SegTrainer(BaseTrainer):
 
             if config.use_tb and self.main_rank:
                 self.writer.add_scalar('train/loss', loss.detach(), self.train_itrs)
-            
+                if config.use_detail_head:
+                    self.writer.add_scalar('train/loss_detail', loss_detail.detach(), self.train_itrs)
+
             # Knowledge distillation
             if config.kd_training:
                 with amp.autocast(enabled=config.amp_training):
@@ -75,8 +101,8 @@ class SegTrainer(BaseTrainer):
                     loss += config.kd_loss_coefficient * loss_kd
 
                 if config.use_tb and self.main_rank:
-                    self.writer.add_scalar('train/loss_kd', loss_kd.detach(), self.train_itrs)  
-                    self.writer.add_scalar('train/loss_total', loss.detach(), self.train_itrs)      
+                    self.writer.add_scalar('train/loss_kd', loss_kd.detach(), self.train_itrs)
+                    self.writer.add_scalar('train/loss_total', loss.detach(), self.train_itrs)
                    
             # Backward path
             self.scaler.scale(loss).backward()
