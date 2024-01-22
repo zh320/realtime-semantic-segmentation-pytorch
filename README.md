@@ -133,7 +133,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ADSCNet    | 2019 | None           | n.a. / 0.51                | 89              | n.a. / 67.5                         | [69.06](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/adscnet.pth)                   |
 | AGLNet     | 2020 | None           | 1.12 / 1.02                | 61              | 69.39 / 70.1                        | [73.58](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/aglnet.pth)                    |
 | BiSeNetv1  | 2018 | ResNet18       | 49.0 / 13.32               | 88              | 74.8 / 74.7                         | [74.91](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv1.pth)                 |
-| BiSeNetv2  | 2020 | None           | n.a. / 2.27                | 142             | 73.4 / 72.6                         | [73.73<sup>3</sup>](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv2-aux.pth) |
+| BiSeNetv2  | 2020 | None           | n.a. / 2.27                | 142             | 73.4 / 72.6                         | [73.73](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv2-aux.pth)<sup>3</sup> |
 | CANet      | 2019 | MobileNetv2    | 4.8 / 4.77                 | 76              | 73.4 / 73.5                         | [76.59](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.1/canet.pth)                     |
 | CFPNet     | 2021 | None           | 0.55 / 0.27                | 64              | n.a. / 70.1                         | [70.08](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/cfpnet.pth)                    |
 | CGNet      | 2018 | None           | 0.41 / 0.24                | 157             | 59.7 / 64.8<sup>4</sup>             | [67.25](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/cgnet.pth)                     |
@@ -160,12 +160,12 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | MiniNetv2  | 2020 | None           | 0.5 / 0.51                 | 86              | n.a. / 70.5                         | [71.79](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/mininetv2.pth)                 |
 | PP-LiteSeg | 2022 | STDC1          | n.a. / 6.33                | 201             | 76.0 / 74.9                         | [72.49](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc1.pth)           |
 | PP-LiteSeg | 2022 | STDC2          | n.a. / 10.56               | 136             | 78.2 / 77.5                         | [74.37](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/ppliteseg_stdc2.pth)           |
-| RegSeg     | 2021 | None           | 3.34 / 3.37                | 104             | 78.5 / 78.3                         | 74.28                                                                                                                         |
+| RegSeg     | 2021 | None           | 3.34 / 3.37                | 104             | 78.5 / 78.3                         | [74.28](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/regseg.pth)                    |
 | SegNet     | 2015 | None           | 29.46 / 29.48              | 14              | n.a. / 56.1                         | [70.77](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/segnet.pth)                    |
 | ShelfNet   | 2018 | ResNet18       | 23.5 / 16.04               | 110             | n.a. / 74.8                         | [77.63](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/shelfnet.pth)                  |
 | SQNet      | 2016 | SqueezeNet-1.1 | n.a. / 4.81                | 69              | n.a. / 59.8                         | [69.55](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/sqnet.pth)                     |
-| STDC       | 2021 | STDC1          | n.a. / 7.79                | 163             | 74.5 / 75.3                         | 75.25<sup>6</sup>                                                                                                             |
-| STDC       | 2021 | STDC2          | n.a. / 11.82               | 119             | 77.0 / 76.8                         | 76.78<sup>6</sup>                                                                                                             |
+| STDC       | 2021 | STDC1          | n.a. / 7.79                | 163             | 74.5 / 75.3                         | [75.25](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/stdc1.pth)<sup>6</sup>         |
+| STDC       | 2021 | STDC2          | n.a. / 11.82               | 119             | 77.0 / 76.8                         | [76.78](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/stdc2.pth)<sup>6</sup>         |
 | SwiftNet   | 2019 | ResNet18       | 11.8 / 11.95               | 141             | 75.4 / 75.5                         | [75.43](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/swiftnet.pth)                  |
 
 [<sup>1</sup>FPSs are evaluated on RTX 2080 at resolution 1024x512 using this [script](tools/test_speed.py)]  
@@ -173,21 +173,21 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 [<sup>3</sup>These results are obtained by using auxiliary heads]  
 [<sup>4</sup>This result is obtained by using deeper model, i.e. CGNet_M3N21]  
 [<sup>5</sup>The original encoder of ICNet is ResNet50]  
-[<sup>6</sup>In my experiments, detail loss does not improve the performances. However, use auxiliary heads do contribute to the improvements]  
+[<sup>6</sup>In my experiments, detail loss does not improve the performances. However, using auxiliary heads does contribute to the improvements]  
 
 ## SMP performance on Cityscapes
 
-| Decoder       | Params (M) | mIoU (200 epoch) | mIoU (800 epoch) |
-|:-------------:|:----------:|:----------------:|:----------------:|
-| DeepLabv3     | 15.90      | 75.22            | 77.16            |
-| DeepLabv3Plus | 12.33      | 73.97            | 75.90            |
-| FPN           | 13.05      | 73.44            | 74.94            |
-| LinkNet       | 11.66      | 71.17            | 73.19            |
-| MANet         | 21.68      | 74.59            | 76.14            |
-| PAN           | 11.37      | 70.25            | 72.46            |
-| PSPNet        | 11.41      | 61.63            | 67.26            |
-| UNet          | 14.33      | 72.99            | 74.45            |
-| UNetPlusPlus  | 15.97      | 74.31            | 75.57            |
+| Decoder       | Params (M) | mIoU (200 epoch) | mIoU (800 epoch)                                                                                               |
+|:-------------:|:----------:|:----------------:|:--------------------------------------------------------------------------------------------------------------:|
+| DeepLabv3     | 15.90      | 75.22            | [77.16](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/deeplabv3.pth)  |
+| DeepLabv3Plus | 12.33      | 73.97            | [75.90](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/deeplabv3p.pth) |
+| FPN           | 13.05      | 73.44            | [74.94](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/fpn.pth)        |
+| LinkNet       | 11.66      | 71.17            | [73.19](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/linknet.pth)    |
+| MANet         | 21.68      | 74.59            | [76.14](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/manet.pth)      |
+| PAN           | 11.37      | 70.25            | [72.46](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/pan.pth)        |
+| PSPNet        | 11.41      | 61.63            | [67.26](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/pspnet.pth)     |
+| UNet          | 14.33      | 72.99            | [74.45](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/unet.pth)       |
+| UNetPlusPlus  | 15.97      | 74.31            | [75.57](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/unetpp.pth)     |
 
 [For comparison, the above results are all using ResNet-18 as encoders.]  
 
