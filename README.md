@@ -129,7 +129,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 ## full resolution on Cityscapes
 
 | Model      | Year | Encoder        | Params(M) <br> paper/my  | FPS<sup>1</sup> | mIoU(paper) <br> val/test           | mIoU(my) val<sup>2</sup>                                                                                                      |
-| ---------- | ---- | -------------- | ------------------------ | --------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| ---------- |:----:|:--------------:|:------------------------ |:---------------:| ----------------------------------- |:-----------------------------------------------------------------------------------------------------------------------------:|
 | ADSCNet    | 2019 | None           | n.a. / 0.51              | 89              | n.a. / 67.5                         | [69.06](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/adscnet.pth)                   |
 | AGLNet     | 2020 | None           | 1.12 / 1.02              | 61              | 69.39 / 70.1                        | [73.58](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/aglnet.pth)                    |
 | BiSeNetv1  | 2018 | ResNet18       | 49.0 / 13.32             | 88              | 74.8 / 74.7                         | [74.91](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/bisenetv1.pth)                 |
