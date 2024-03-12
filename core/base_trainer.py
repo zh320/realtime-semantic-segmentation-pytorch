@@ -139,6 +139,9 @@ class BaseTrainer:
 
                 if self.main_rank:
                     self.logger.info(f"Resume training from {config.load_ckpt_path}")
+
+            else:
+                self.model.eval()
    
             del checkpoint
         else:
