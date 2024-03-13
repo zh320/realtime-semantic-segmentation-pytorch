@@ -158,6 +158,8 @@ class SegTrainer(BaseTrainer):
             
         self.logger.info('\nStart predicting...\n')
 
+        self.model.eval() # Put model in evalation mode
+
         for (images, images_aug, img_names) in tqdm(self.test_loader):
             images_aug = images_aug.to(self.device, dtype=torch.float32)
             
