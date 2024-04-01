@@ -26,6 +26,7 @@ from .fssnet import FSSNet
 from .icnet import ICNet
 from .lednet import LEDNet
 from .linknet import LinkNet
+from .lite_hrnet import LiteHRNet
 from .liteseg import LiteSeg
 from .mininet import MiniNet
 from .mininetv2 import MiniNetv2
@@ -52,7 +53,7 @@ def get_model(config):
                 'espnet':ESPNet, 'espnetv2':ESPNetv2, 'farseenet':FarSeeNet, 
                 'fastscnn':FastSCNN, 'fddwnet':FDDWNet, 'fpenet':FPENet, 
                 'fssnet':FSSNet, 'icnet':ICNet, 'lednet':LEDNet,
-                'linknet':LinkNet, 'liteseg':LiteSeg, 'mininet':MiniNet, 
+                'linknet':LinkNet, 'lite_hrnet':LiteHRNet, 'liteseg':LiteSeg, 'mininet':MiniNet, 
                 'mininetv2':MiniNetv2, 'ppliteseg':PPLiteSeg, 'regseg':RegSeg,
                 'segnet':SegNet, 'shelfnet':ShelfNet, 'sqnet':SQNet, 
                 'stdc':STDC, 'swiftnet':SwiftNet,}
