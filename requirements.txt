@@ -1,0 +1,6 @@
+torch # == 1.8.1
+segmentation-models-pytorch
+torchmetrics
+albumentations
+loguru
+tqdm
