@@ -1,7 +1,11 @@
 from torch.utils.data import DataLoader
 from .cityscapes import Cityscapes
+from .custom import Custom
 
-dataset_hub = {'cityscapes':Cityscapes,}
+dataset_hub = {
+    'cityscapes':Cityscapes,
+    'custom': Custom,
+}
 
 
 def get_dataset(config):
