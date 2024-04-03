@@ -4,3 +4,7 @@ torchmetrics
 albumentations
 loguru
 tqdm
+tensorboard
+onnx
+onnxsim
+onnxruntime
