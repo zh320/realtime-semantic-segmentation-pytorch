@@ -29,9 +29,9 @@ def get_parser():
     parser.add_argument('--model', type=str, default=None, 
         choices=['adscnet', 'aglnet', 'bisenetv1', 'bisenetv2', 'canet', 'cfpnet',
                  'cgnet', 'contextnet', 'dabnet', 'ddrnet', 'dfanet', 'edanet',
-                 'enet', 'erfnet', 'esnet', 'espnet', 'espnetv2', 'farseenet',
+                 'enet', 'erfnet', 'esnet', 'espnet', 'espnetv2', 'fanet', 'farseenet',
                  'fastscnn', 'fddwnet', 'fpenet', 'fssnet', 'icnet', 'lednet',
-                 'linknet', 'liteseg', 'mininet', 'mininetv2', 'ppliteseg', 
+                 'linknet', 'lite_hrnet', 'liteseg', 'mininet', 'mininetv2', 'ppliteseg', 
                  'regseg', 'segnet', 'shelfnet', 'sqnet', 'stdc', 'swiftnet',
                  'smp'],
         help='choose which model you want to use')

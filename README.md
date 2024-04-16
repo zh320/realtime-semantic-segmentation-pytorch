@@ -32,6 +32,7 @@ tqdm
 - [ESNet](models/esnet.py) [^esnet]  
 - [ESPNet](models/espnet.py) [^espnet]  
 - [ESPNetv2](models/espnetv2.py) [^espnetv2]  
+- [FANet](models/fanet.py) [^fanet]  
 - [FarseeNet](models/farseenet.py) [^farseenet]  
 - [FastSCNN](models/fastscnn.py) [^fastscnn]  
 - [FDDWNet](models/fddwnet.py) [^fddwnet]  
@@ -85,6 +86,7 @@ Details of the configurations can also be found in this [file](configs/parser.py
 [^esnet]: [ESNet: An Efficient Symmetric Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1906.09826)  
 [^espnet]: [ESPNet: Efficient Spatial Pyramid of Dilated Convolutions for Semantic Segmentation](https://arxiv.org/abs/1803.06815)  
 [^espnetv2]: [ESPNetv2: A Light-weight, Power Efficient, and General Purpose Convolutional Neural Network](https://arxiv.org/abs/1811.11431)  
+[^fanet]: [Real-time Semantic Segmentation with Fast Attention](https://arxiv.org/abs/2007.03815)  
 [^farseenet]: [FarSee-Net: Real-Time Semantic Segmentation by Efficient Multi-scale Context Aggregation and Feature Space Super-resolution](https://arxiv.org/abs/2003.03913)  
 [^fastscnn]: [Fast-SCNN: Fast Semantic Segmentation Network](https://arxiv.org/abs/1902.04502)  
 [^fddwnet]: [FDDWNet: A Lightweight Convolutional Neural Network for Real-time Sementic Segmentation](https://arxiv.org/abs/1911.00632)  
@@ -149,6 +151,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | ESNet      | 2019 | None           | 1.66/1.66               | 66              | n.a./70.7                         | [71.82](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/esnet.pth)                     |
 | ESPNet     | 2018 | None           | 0.36/0.38               | 111             | n.a./60.3                         | [66.39](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/espnet.pth)                    |
 | ESPNetv2   | 2018 | None           | 1.25/0.86               | 101             | 66.4/66.2                         | [70.35](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/espnetv2.pth)                  |
+| FANet      | 2020 | ResNet18       | n.a./12.26              | 100             | 75.0/74.4                         | [74.92](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.2/fanet.pth)                     |
 | FarseeNet  | 2020 | ResNet18       | n.a./16.75              | 130             | 73.5/70.2                         | [77.35](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/farseenet.pth)                 |
 | FastSCNN   | 2019 | None           | 1.11/1.02               | 358             | 68.6/68.0                         | [69.37](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/fastscnn.pth)                  |
 | FDDWNet    | 2019 | None           | 0.80/0.77               | 51              | n.a./71.5                         | [75.86](https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/fddwnet.pth)                   |
