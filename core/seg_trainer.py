@@ -158,6 +158,10 @@ class SegTrainer(BaseTrainer):
             
         self.logger.info('\nStart predicting...\n')
 
+        save_images_dir = os.path.join(config.save_dir, 'predicts')
+        if not os.path.exists(save_images_dir):
+            os.makedirs(save_images_dir)
+
         self.model.eval() # Put model in evalation mode
 
         for (images, images_aug, img_names) in tqdm(self.test_loader):
@@ -171,7 +175,7 @@ class SegTrainer(BaseTrainer):
 
             # Saving results
             for i in range(preds.shape[0]):
-                save_path = os.path.join(config.save_dir, img_names[i])
+                save_path = os.path.join(save_images_dir, img_names[i])
                 save_suffix = img_names[i].split('.')[-1]
                  
                 pred = Image.fromarray(preds[i].astype(np.uint8))

@@ -16,7 +16,7 @@ def load_parser(config):
 def get_parser():
     parser = argparse.ArgumentParser()
     # Dataset
-    parser.add_argument('--dataset', type=str, default=None, choices=['cityscapes'],
+    parser.add_argument('--dataset', type=str, default=None, choices=['cityscapes', 'custom'],
         help='choose which dataset you want to use')
     parser.add_argument('--dataroot', type=str, default=None, 
         help='path to your dataset')
