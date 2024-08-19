@@ -458,11 +458,11 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 
 ## Knowledge distillation
 
-| Model | Encoder       | Decoder                 | kd_training | mIoU(200 epoch) | mIoU(800 epoch) |
-|:-----:|:-------------:|:-----------------------:|:-----------:|:---------------:|:---------------:|
-| SMP   | DeepLabv3Plus | ResNet-101 <br> teacher | -           | 78.10           | 79.20           |
-| SMP   | DeepLabv3Plus | ResNet-18 <br> student  | False       | 73.97           | 75.90           |
-| SMP   | DeepLabv3Plus | ResNet-18 <br> student  | True        | 75.20           | 76.41           |
+| Model | Encoder                 | Decoder       | kd_training | mIoU(200 epoch) | mIoU(800 epoch) |
+|:-----:|:-----------------------:|:-------------:|:-----------:|:---------------:|:---------------:|
+| SMP   | ResNet-101 <br> teacher | DeepLabv3Plus | -           | 78.10           | 79.20           |
+| SMP   | ResNet-18 <br> student  | DeepLabv3Plus | False       | 73.97           | 75.90           |
+| SMP   | ResNet-18 <br> student  | DeepLabv3Plus | True        | 75.20           | 76.41           |
 
 # Prepare the dataset
 

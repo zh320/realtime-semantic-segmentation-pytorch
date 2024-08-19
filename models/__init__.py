@@ -69,7 +69,15 @@ def get_model(config):
         if config.decoder not in decoder_hub:
             raise ValueError(f"Unsupported decoder type: {config.decoder}")
 
-        model = decoder_hub[config.decoder](encoder_name=config.encoder, 
+        if config.encoder.startswith('mit_b') and config.decoder in ['pan']:
+                model = decoder_hub[config.decoder](encoder_name=config.encoder, 
+                                                encoder_weights=config.encoder_weights, 
+                                                encoder_output_stride=32,
+                                                in_channels=3, classes=config.num_class)
+        elif config.encoder.startswith('mit_b') and config.decoder in ['deeplabv3', 'deeplabv3p', 'linknet', 'unetpp']:
+            raise ValueError("Encoder `{}` is not supported for `{}".format(config.encoder, config.decoder))
+        else:
+            model = decoder_hub[config.decoder](encoder_name=config.encoder, 
                                             encoder_weights=config.encoder_weights, 
                                             in_channels=3, classes=config.num_class)
 

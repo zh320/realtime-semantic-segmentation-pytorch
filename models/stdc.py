@@ -87,6 +87,11 @@ class STDC(nn.Module):
         x = self.seg_head(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
 
+        if torch.onnx.is_in_onnx_export():
+            # output_data = x.softmax(dim=1)
+            max_probs, predictions = x.max(1, keepdim=True)
+            return predictions.to(torch.int8)
+
         if self.use_detail_head and is_training:
             x_detail = self.detail_head(x3)
             return x, x_detail
