@@ -13,6 +13,13 @@ albumentations
 loguru  
 tqdm  
 
+If you find any version conflicts, see [requirements](./requirements.txt). This repo may also work with torch > 1.8.1, but it has not been verified yet.  
+
+If you want a minimally reproducible environment, you may run
+```
+pip install -r requirements.txt
+```
+
 # Supported models
 
 <details><summary>ADSCNet</summary>
