@@ -384,7 +384,7 @@ Currently only support the original knowledge distillation method proposed by Ge
 
 # Hyperparameter Optimization
 
-This repo also supports hyperparameter optimization using Optuna.[^optuna] For example, if you want to search hyperparameters using BiSeNetv1, you may simply run
+This repo also supports hyperparameter optimization using Optuna.[^optuna] For example, if you have enough computing power and want to search hyperparameters using BiSeNetv1, you may simply run
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 optuna_search.py
