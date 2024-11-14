@@ -1,0 +1,17 @@
+{
+ "params": {
+  "optimizer": "sgd",
+  "base_lr": 0.012828976260490054,
+  "use_ema": true,
+  "scale_max": 0.943029447189605,
+  "scale_min": 0.5842921221652486,
+  "brightness": 0.26756860167160557,
+  "contrast": 0.16430400780652107,
+  "saturation": 0.5078665623692797,
+  "h_flip": 0.4059527463082462
+ },
+ "value": 0.754679262638092,
+ "finished_trials": 100,
+ "pruned_trials": 84,
+ "completed_trials": 16
+}

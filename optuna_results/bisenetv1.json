@@ -1,0 +1,17 @@
+{
+ "params": {
+  "optimizer": "adamw",
+  "base_lr": 0.0011041009325283182,
+  "use_ema": true,
+  "scale_max": 0.5767783923237831,
+  "scale_min": 0.7670720406133559,
+  "brightness": 0.4613930720243222,
+  "contrast": 0.45946637168836507,
+  "saturation": 0.4113661588519595,
+  "h_flip": 0.47701530410336107
+ },
+ "value": 0.7440062165260315,
+ "finished_trials": 100,
+ "pruned_trials": 85,
+ "completed_trials": 15
+}

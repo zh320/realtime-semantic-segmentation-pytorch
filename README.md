@@ -1,6 +1,6 @@
 # Introduction
 
-PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation etc.  
+PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation, hyperparameter optimization using Optuna etc.  
 \
 <img2 src="https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/enet_800epoch.gif" width="100%" height="100%" />
 
@@ -12,6 +12,8 @@ torchmetrics
 albumentations  
 loguru  
 tqdm  
+optuna == 4.0.0 (optional)  
+optuna-integration == 4.0.0 (optional)  
 
 If you find any version conflicts, see [requirements](./requirements.txt). This repo may also work with torch > 1.8.1, but it has not been verified yet.  
 
@@ -380,6 +382,16 @@ Currently only support the original knowledge distillation method proposed by Ge
 
 [^kd]: [Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)  
 
+# Hyperparameter Optimization
+
+This repo also supports hyperparameter optimization using Optuna.[^optuna] For example, if you want to search hyperparameters using BiSeNetv1, you may simply run
+
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 optuna_search.py
+```
+
+[^optuna]: [Optuna: A hyperparameter optimization framework](https://github.com/optuna/optuna)
+
 # How to use
 
 ## DDP training (recommend)
@@ -471,12 +483,25 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 | SMP   | DeepLabv3Plus | ResNet-18 <br> student  | False       | 73.97           | 75.90           |
 | SMP   | DeepLabv3Plus | ResNet-18 <br> student  | True        | 75.20           | 76.41           |
 
+## Hyperparameter Optimization
+
+| Model     | Encoder     | Method                                  | mIoU(200 epoch) |
+|:---------:|:-----------:|:---------------------------------------:|:---------------:|
+| BiSeNetv1 | ResNet18    | Random                                  | 72.71           |
+|           |             | [Optuna](optuna_results/bisenetv1.json) | 74.40           |
+| DDRNet    | None        | Random                                  | 71.18           |
+|           |             | [Optuna](optuna_results/ddrnet.json)    | 72.22           |
+| LiteSeg   | MobileNetv2 | Random                                  | 75.29           |
+|           |             | [Optuna](optuna_results/liteseg.json)   | 75.47           |
+
+[When using random search, the hyperparameters were chosen from the default config. For Optuna search, each experiment was performed 100 trials.]  
+
 # Prepare the dataset
 
 ```
-/Cityscapes
-    /gtFine
-    /leftImg8bit
+Cityscapes/
+├── gtFine/
+└── leftImg8bit/
 ```
 
 # References
