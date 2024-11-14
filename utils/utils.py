@@ -5,15 +5,15 @@ import numpy as np
 def mkdir(path):
     if not os.path.exists(path):
         os.mkdir(path)
-    
-    
+
+
 def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
-    
-    
+
+
 def get_writer(config, main_rank):
     if config.use_tb and main_rank:
         from torch.utils.tensorboard import SummaryWriter
@@ -21,8 +21,8 @@ def get_writer(config, main_rank):
     else:
         writer = None
     return writer
-    
-    
+
+
 def get_logger(config, main_rank):
     if main_rank:
         import sys
@@ -48,13 +48,13 @@ def log_config(config, logger):
             'optimizer_type', 'lr_policy', 'total_epoch', 'train_bs', 'val_bs',  
             'train_num', 'val_num', 'gpu_num', 'num_workers', 'amp_training', 
             'DDP', 'kd_training', 'synBN', 'use_ema', 'use_aux']
-            
+
     config_dict = vars(config)
     infos = f"\n\n\n{'#'*25} Config Informations {'#'*25}\n" 
     infos += '\n'.join('%s: %s' % (k, config_dict[k]) for k in keys)
     infos += f"\n{'#'*71}\n\n"
     logger.info(infos)
-    
+
 
 def get_colormap(config):
     if config.colormap == 'cityscapes':
@@ -66,12 +66,12 @@ def get_colormap(config):
 
     elif config.colormap == 'custom':
         raise NotImplementedError()
-        
+
     else:
         raise ValueError(f'Unsupport colormap type: {config.colormap}.')
 
     colormap = [color for color in colormap.values()]
-    
+
     if len(colormap) < config.num_class:
         raise ValueError('Length of colormap is smaller than the number of class.')
     else:

@@ -30,7 +30,8 @@ class BaseTrainer:
         self.scaler = amp.GradScaler(enabled=config.amp_training)
 
         # Create directory to save checkpoints and logs
-        mkdir(config.save_dir)
+        if self.main_rank:
+            mkdir(config.save_dir)
 
         # Set random seed to obtain reproducible results
         set_seed(config.random_seed)
@@ -39,6 +40,7 @@ class BaseTrainer:
         self.model = get_model(config).to(self.device)
 
         if config.is_testing:
+            assert config.load_ckpt, 'Need to load a pretrained checkpoint in `test` mode.'
             self.test_loader = get_test_loader(config)
         else:
             # Tensorboard monitor
@@ -108,9 +110,14 @@ class BaseTrainer:
 
         # Validate for the best model
         if config.save_ckpt:
-            self.val_best(config)
+            best_score = self.val_best(config)
 
         destroy_ddp_process(config)
+
+        if config.save_ckpt:
+            return best_score
+        else:
+            return self.best_score
 
     def parallel_model(self, config):
         self.model = parallel_model(config, self.model, self.local_rank, self.device)
@@ -140,7 +147,6 @@ class BaseTrainer:
                 self.optimizer.load_state_dict(checkpoint['optimizer'])
                 self.scheduler.load_state_dict(checkpoint['scheduler'])
                 self.train_itrs = self.cur_epoch * config.iters_per_epoch
-
                 if self.main_rank:
                     self.logger.info(f"Resume training from {config.load_ckpt_path}")
 
@@ -188,3 +194,5 @@ class BaseTrainer:
 
         if self.main_rank:
             self.logger.info(f'Best validation score is {val_score}.\n')
+
+        return val_score

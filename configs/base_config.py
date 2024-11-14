@@ -44,6 +44,7 @@ class BaseConfig:
         self.loss_type = 'ohem'
         self.class_weights = None
         self.ohem_thrs = 0.7
+        self.reduction = 'mean'
 
         # Scheduler
         self.lr_policy = 'cos_warmup'
@@ -85,6 +86,7 @@ class BaseConfig:
 
         # DDP
         self.synBN = True
+        self.destroy_ddp_process = True
 
         # Knowledge Distillation
         self.kd_training = False

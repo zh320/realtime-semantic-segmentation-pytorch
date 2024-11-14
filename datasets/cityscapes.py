@@ -107,10 +107,10 @@ class Cityscapes(Dataset):
 
         if not os.path.isdir(img_dir):
             raise RuntimeError(f'Image directory: {img_dir} does not exist.')
-            
+
         if not os.path.isdir(msk_dir):
             raise RuntimeError(f'Mask directory: {msk_dir} does not exist.')
-        
+
         if mode == 'train':
             self.transform = AT.Compose([
                 transforms.Scale(scale=config.scale),
@@ -122,7 +122,7 @@ class Cityscapes(Dataset):
                 AT.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
                 ToTensorV2(),                
             ])
-            
+
         elif mode == 'val':
             self.transform = AT.Compose([
                 transforms.Scale(scale=config.scale),
@@ -148,15 +148,15 @@ class Cityscapes(Dataset):
     def __getitem__(self, index):
         image = np.asarray(Image.open(self.images[index]).convert('RGB'))
         mask = np.asarray(Image.open(self.masks[index]).convert('L'))
-        
+
         # Perform augmentation and normalization
         augmented = self.transform(image=image, mask=mask)
         image, mask = augmented['image'], augmented['mask']
-        
+
         # Encode mask using trainId
         mask = self.encode_target(mask)
         return image, mask
 
     @classmethod
     def encode_target(cls, mask):
-        return cls.id_to_train_id[np.array(mask)]    
+        return cls.id_to_train_id[np.array(mask)]

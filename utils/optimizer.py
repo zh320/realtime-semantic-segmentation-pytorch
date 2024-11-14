@@ -12,7 +12,7 @@ def get_optimizer(config, model):
                                                     weight_decay=config.weight_decay)
 
     elif config.optimizer_type in ['adam', 'adamw']:
-        config.lr = 0.001 * config.gpu_num
+        config.lr = 0.1 * config.base_lr * config.gpu_num
         optimizer = optimizer_hub[config.optimizer_type](params=params, lr=config.lr)
 
     else:

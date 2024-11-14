@@ -30,9 +30,9 @@ class SegTrainer(BaseTrainer):
 
     def train_one_epoch(self, config):
         self.model.train()
-        
+
         sampler_set_epoch(config, self.train_loader, self.cur_epoch) 
-    
+
         pbar = tqdm(self.train_loader) if self.main_rank else self.train_loader
 
         for cur_itrs, (images, masks) in enumerate(pbar):
@@ -43,13 +43,13 @@ class SegTrainer(BaseTrainer):
             masks = masks.to(self.device, dtype=torch.long)    
 
             self.optimizer.zero_grad()
-            
+
             # Forward path
             if config.use_aux:
                 with amp.autocast(enabled=config.amp_training):
                     preds, preds_aux = self.model(images, is_training=True)
                     loss = self.loss_fn(preds, masks)
-                    
+
                 masks_auxs = masks.unsqueeze(1).float()
                 if config.aux_coef is None:
                     config.aux_coef = torch.ones(len(preds_aux))
@@ -96,20 +96,20 @@ class SegTrainer(BaseTrainer):
                 with amp.autocast(enabled=config.amp_training):
                     with torch.no_grad():
                         teacher_preds = self.teacher_model(images)   # Teacher predictions
-                        
+
                     loss_kd = kd_loss_fn(config, preds, teacher_preds.detach())
                     loss += config.kd_loss_coefficient * loss_kd
 
                 if config.use_tb and self.main_rank:
                     self.writer.add_scalar('train/loss_kd', loss_kd.detach(), self.train_itrs)
                     self.writer.add_scalar('train/loss_total', loss.detach(), self.train_itrs)
-                   
+
             # Backward path
             self.scaler.scale(loss).backward()
             self.scaler.step(self.optimizer)
             self.scaler.update()
             self.scheduler.step()
-            
+
             self.ema_model.update(self.model, self.train_itrs)
 
             if self.main_rank:
@@ -155,33 +155,33 @@ class SegTrainer(BaseTrainer):
     def predict(self, config):
         if config.DDP:
             raise ValueError('Predict mode currently does not support DDP.')
-            
+
         self.logger.info('\nStart predicting...\n')
 
         self.model.eval() # Put model in evalation mode
 
         for (images, images_aug, img_names) in tqdm(self.test_loader):
             images_aug = images_aug.to(self.device, dtype=torch.float32)
-            
+
             preds = self.model(images_aug)
-                        
+
             preds = self.colormap[preds.max(dim=1)[1]].cpu().numpy()
-            
+
             images = images.cpu().numpy()
 
             # Saving results
             for i in range(preds.shape[0]):
                 save_path = os.path.join(config.save_dir, img_names[i])
                 save_suffix = img_names[i].split('.')[-1]
-                 
+
                 pred = Image.fromarray(preds[i].astype(np.uint8))
-                
+
                 if config.save_mask:
                     pred.save(save_path)
-                
+
                 if config.blend_prediction:
                     save_blend_path = save_path.replace(f'.{save_suffix}', f'_blend.{save_suffix}')
-                    
+
                     image = Image.fromarray(images[i].astype(np.uint8))
                     image = Image.blend(image, pred, config.blend_alpha)
                     image.save(save_blend_path)

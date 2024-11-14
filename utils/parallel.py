@@ -17,7 +17,8 @@ def de_parallel(model):
 def set_device(config, rank):
     if config.DDP:
         torch.cuda.set_device(rank)
-        dist.init_process_group(backend=dist.Backend.NCCL, init_method='env://')
+        if not dist.is_initialized():
+            dist.init_process_group(backend=dist.Backend.NCCL, init_method='env://')
         device = torch.device('cuda', rank)
         config.gpu_num = dist.get_world_size()
     else:   # DP
@@ -29,7 +30,7 @@ def set_device(config, rank):
     config.num_workers = config.gpu_num * config.base_workers
 
     return device
-    
+
 
 def parallel_model(config, model, rank, device):
     if config.DDP:
@@ -39,15 +40,15 @@ def parallel_model(config, model, rank, device):
     else:
         model = nn.DataParallel(model)
         model.to(device)
-        
+
     return model
 
-    
+
 def destroy_ddp_process(config):
-    if config.DDP:
+    if config.DDP and config.destroy_ddp_process:
         dist.destroy_process_group()
-        
-        
+
+
 def sampler_set_epoch(config, loader, cur_epochs):
     if config.DDP:
         loader.sampler.set_epoch(cur_epochs)

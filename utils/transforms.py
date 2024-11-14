@@ -14,17 +14,17 @@ class Scale:
         self.interpolation = interpolation
         self.p = p
         self.is_testing = is_testing
-        
+
     def __call__(self, image, mask=None):
         img = to_numpy(image)
         if not self.is_testing:
             msk = to_numpy(mask)
-        
+
         imgh, imgw, _ = img.shape
         new_imgh, new_imgw = int(imgh * self.scale), int(imgw * self.scale)
-    
+
         aug = AT.Resize(height=new_imgh, width=new_imgw, interpolation=self.interpolation, p=self.p)
-        
+
         if self.is_testing:
             augmented = aug(image=img)
         else:

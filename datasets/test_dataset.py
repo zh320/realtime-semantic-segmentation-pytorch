@@ -37,5 +37,5 @@ class TestDataset(Dataset):
         # Perform augmentation and normalization
         augmented = self.transform(image=image)
         image_aug = augmented['image']
-        
-        return image, image_aug, img_name  
+
+        return image, image_aug, img_name
