@@ -5,7 +5,7 @@ from optuna.trial import TrialState
 from optuna.storages import RetryFailedTrialCallback
 import torch.distributed as dist
 from core import SegTrainer
-from configs import OptunaConfig
+from configs.optuna_config import OptunaConfig
 
 import warnings
 warnings.filterwarnings("ignore")
