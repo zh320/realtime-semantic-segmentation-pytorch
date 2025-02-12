@@ -10,13 +10,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import (conv1x1, DSConvBNAct, PWConvBNAct, ConvBNAct, 
-                        PyramidPoolingModule, SegHead)
+from .modules import conv1x1, DSConvBNAct, PWConvBNAct, ConvBNAct, PyramidPoolingModule, SegHead
+from .model_registry import register_model
 
 
+@register_model()
 class ESPNetv2(nn.Module):
     def __init__(self, num_class=1, n_channel=3, K=4, alpha3=3, alpha4=7, act_type='prelu'):
-        super(ESPNetv2, self).__init__()
+        super().__init__()
         self.pool = nn.AvgPool2d(3, 2, 1)
         self.l1_block = ConvBNAct(n_channel, 32, 3, 2, act_type=act_type)
         self.l2_block = EESPModule(32, stride=2, act_type=act_type)
@@ -34,20 +35,20 @@ class ESPNetv2(nn.Module):
         x_d4 = self.pool(self.pool(x))
         x_d8 = self.pool(x_d4)
         x_d16 = self.pool(x_d8)
-        
+
         x = self.l1_block(x)
         x = self.l2_block(x, x_d4)
 
         x = self.l3_block1(x, x_d8)
         x3 = self.l3_block2(x)
         size_l3 = x3.size()[2:]
-        
+
         x = self.l4_block1(x3, x_d16)
         x = self.l4_block2(x)
         x = F.interpolate(x, size_l3, mode='bilinear', align_corners=True)
         x = self.convl4_l3(x)
         x = torch.cat([x, x3], dim=1)
-        
+
         x = self.ppm(x)
         x = self.decoder(x)
         x = F.interpolate(x, size, mode='bilinear', align_corners=True)
@@ -64,9 +65,9 @@ def build_blocks(block, channels, num_block, act_type='relu'):
 
 class EESPModule(nn.Module):
     def __init__(self, channels, K=4, ks=3, stride=1, act_type='prelu'):
-        super(EESPModule, self).__init__()
+        super().__init__()
         assert channels % K == 0, 'Input channels should be integer multiples of K.\n'
-        
+
         self.K = K
         channel_k = channels // K
         self.use_skip = stride == 1
@@ -95,7 +96,7 @@ class EESPModule(nn.Module):
         x = self.conv_init(x)     # Reduce
         for i in range(self.K):
             transform_feats.append(self.layers[i](x))   # Split --> Transform
-            
+
         for j in range(1, self.K):
             transform_feats[j] += transform_feats[j-1]      # Merge: Sum
 

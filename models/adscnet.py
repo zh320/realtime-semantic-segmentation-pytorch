@@ -10,11 +10,13 @@ import torch
 import torch.nn as nn
 
 from .modules import conv1x1, ConvBNAct, DWConvBNAct, DeConvBNAct, Activation
+from .model_registry import register_model
 
 
+@register_model()
 class ADSCNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='relu6'):
-        super(ADSCNet, self).__init__()
+        super().__init__()
         self.conv0 = ConvBNAct(n_channel, 32, 3, 2, act_type=act_type, inplace=True)
         self.conv1 = ADSCModule(32, 1, act_type=act_type)
         self.conv2_4 = nn.Sequential(
@@ -54,7 +56,7 @@ class ADSCNet(nn.Module):
 
 class ADSCModule(nn.Module):
     def __init__(self, channels, stride, dilation=1, act_type='relu'):
-        super(ADSCModule, self).__init__()
+        super().__init__()
         assert stride in [1, 2], 'Unsupported stride type.\n'
         self.use_skip = stride == 1
         self.conv = nn.Sequential(
@@ -80,7 +82,7 @@ class ADSCModule(nn.Module):
 
 class DDCC(nn.Module):
     def __init__(self, channels, dilations, act_type):
-        super(DDCC, self).__init__()
+        super().__init__()
         assert len(dilations)==4, 'Length of dilations should be 4.\n'
         self.block1 = nn.Sequential(
                             nn.AvgPool2d(dilations[0], 1, dilations[0]//2),
@@ -109,16 +111,16 @@ class DDCC(nn.Module):
 
     def forward(self, x):
         x1 = self.block1(x)
-        
+
         x2 = torch.cat([x, x1], dim=1)
         x2 = self.block2(x2)
-        
+
         x3 = torch.cat([x, x1, x2], dim=1)
         x3 = self.block3(x3)
-        
+
         x4 = torch.cat([x, x1, x2, x3], dim=1)
         x4 = self.block4(x4)
-        
+
         x = torch.cat([x, x1, x2, x3, x4], dim=1)
         x = self.conv_last(x)
 

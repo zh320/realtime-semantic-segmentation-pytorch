@@ -15,7 +15,7 @@ def get_ema_model(config, model, device):
 
 class ModelEmaV2(nn.Module):
     def __init__(self, config, model, device=None):
-        super(ModelEmaV2, self).__init__()
+        super().__init__()
         # make a copy of the model for accumulating moving average of weights
         self.ema = deepcopy(de_parallel(model))
         self.ema.eval()

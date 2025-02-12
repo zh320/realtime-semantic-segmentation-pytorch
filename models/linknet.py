@@ -10,11 +10,13 @@ import torch.nn as nn
 
 from .modules import ConvBNAct, DeConvBNAct, Activation
 from .backbone import ResNet
+from .model_registry import register_model
 
 
+@register_model()
 class LinkNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='resnet18', act_type='relu'):
-        super(LinkNet, self).__init__()
+        super().__init__()
         if 'resnet' in backbone_type:
             self.backbone = ResNet(backbone_type)
             channels = [64, 128, 256, 512] if backbone_type in ['resnet18', 'resnet34'] else [256, 512, 1024, 2048]
@@ -40,7 +42,7 @@ class LinkNet(nn.Module):
 
 class DecoderBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type, scale_factor=2):
-        super(DecoderBlock, self).__init__()
+        super().__init__()
         hid_channels = in_channels // 4
         self.conv1 = ConvBNAct(in_channels, hid_channels, 1, act_type=act_type)
         if scale_factor > 1:
@@ -60,7 +62,7 @@ class DecoderBlock(nn.Module):
 class SegHead(nn.Sequential):
     def __init__(self, in_channels, num_class, act_type, scale_factor=2):
         hid_channels = in_channels // 2
-        super(SegHead, self).__init__(
+        super().__init__(
                 DeConvBNAct(in_channels, hid_channels, scale_factor, act_type=act_type),
                 ConvBNAct(hid_channels, hid_channels, 3, act_type=act_type),
                 DeConvBNAct(hid_channels, num_class, scale_factor, act_type=act_type)

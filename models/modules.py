@@ -36,7 +36,7 @@ def channel_shuffle(x, groups=2):
 class DSConvBNAct(nn.Sequential):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, 
                     dilation=1, act_type='relu', **kwargs):
-        super(DSConvBNAct, self).__init__(
+        super().__init__(
             DWConvBNAct(in_channels, in_channels, kernel_size, stride, dilation, act_type, **kwargs),
             PWConvBNAct(in_channels, out_channels, act_type, **kwargs)
         )
@@ -51,7 +51,7 @@ class DWConvBNAct(nn.Sequential):
         elif isinstance(kernel_size, int):    
             padding = (kernel_size - 1) // 2 * dilation
 
-        super(DWConvBNAct, self).__init__(
+        super().__init__(
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, 
                         dilation=dilation, groups=in_channels, bias=False),
             nn.BatchNorm2d(out_channels),
@@ -62,7 +62,7 @@ class DWConvBNAct(nn.Sequential):
 # Point-wise convolution -> batchnorm -> activation
 class PWConvBNAct(nn.Sequential):
     def __init__(self, in_channels, out_channels, act_type='relu', bias=True, **kwargs):
-        super(PWConvBNAct, self).__init__(
+        super().__init__(
             nn.Conv2d(in_channels, out_channels, 1, bias=bias),
             nn.BatchNorm2d(out_channels),
             Activation(act_type, **kwargs)
@@ -78,7 +78,7 @@ class ConvBNAct(nn.Sequential):
         elif isinstance(kernel_size, int):    
             padding = (kernel_size - 1) // 2 * dilation
 
-        super(ConvBNAct, self).__init__(
+        super().__init__(
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias),
             nn.BatchNorm2d(out_channels),
             Activation(act_type, **kwargs)
@@ -89,7 +89,7 @@ class ConvBNAct(nn.Sequential):
 class DeConvBNAct(nn.Module):
     def __init__(self, in_channels, out_channels, scale_factor=2, kernel_size=None, 
                     padding=None, act_type='relu', **kwargs):
-        super(DeConvBNAct, self).__init__()
+        super().__init__()
         if kernel_size is None:
             kernel_size = 2*scale_factor - 1
         if padding is None:    
@@ -110,7 +110,7 @@ class DeConvBNAct(nn.Module):
 
 class Activation(nn.Module):
     def __init__(self, act_type, **kwargs):
-        super(Activation, self).__init__()
+        super().__init__()
         activation_hub = {'relu': nn.ReLU,             'relu6': nn.ReLU6,
                           'leakyrelu': nn.LeakyReLU,    'prelu': nn.PReLU,
                           'celu': nn.CELU,              'elu': nn.ELU, 
@@ -133,7 +133,7 @@ class Activation(nn.Module):
 
 class PyramidPoolingModule(nn.Module):
     def __init__(self, in_channels, out_channels, act_type, pool_sizes=[1,2,4,6], bias=False):
-        super(PyramidPoolingModule, self).__init__()
+        super().__init__()
         assert len(pool_sizes) == 4, 'Length of pool size should be 4.\n'
         hid_channels = int(in_channels // 4)
         self.stage1 = self._make_stage(in_channels, hid_channels, pool_sizes[0])
@@ -160,7 +160,7 @@ class PyramidPoolingModule(nn.Module):
 
 class SegHead(nn.Sequential):
     def __init__(self, in_channels, num_class, act_type, hid_channels=128):
-        super(SegHead, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
             conv1x1(hid_channels, num_class)
         )

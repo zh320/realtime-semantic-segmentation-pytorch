@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct
 from .backbone import ResNet, Mobilenetv2
+from .model_registry import register_model
 
 
+@register_model()
 class LiteSeg(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='mobilenet_v2', act_type='relu'):
-        super(LiteSeg, self).__init__()
+        super().__init__()
         if backbone_type == 'mobilenet_v2':
             self.backbone = Mobilenetv2()
             channels = [320, 32]
@@ -46,7 +48,7 @@ class LiteSeg(nn.Module):
 
 class DASPPModule(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(DASPPModule, self).__init__()
+        super().__init__()
         hid_channels = in_channels // 5
         last_channels = in_channels - hid_channels * 4
         self.stage1 = ConvBNAct(in_channels, hid_channels, 1, act_type=act_type)
@@ -75,7 +77,7 @@ class DASPPModule(nn.Module):
 
 class SegHead(nn.Sequential):
     def __init__(self, in_channels, num_class, act_type, hid_channels=256):
-        super(SegHead, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
             ConvBNAct(hid_channels, hid_channels//2, 3, act_type=act_type),
             conv1x1(hid_channels//2, num_class)

@@ -10,12 +10,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, conv3x3, ConvBNAct
+from .model_registry import register_model
 
 
+@register_model()
 class PPLiteSeg(nn.Module):
     def __init__(self, num_class=1, n_channel=3, encoder_channels=[32, 64, 256, 512, 1024],
                     encoder_type='stdc1', fusion_type='spatial', act_type='relu'):
-        super(PPLiteSeg, self).__init__()
+        super().__init__()
         decoder_channel_hub = {'stdc1': [32, 64, 128], 'stdc2': [64, 96, 128]}
         decoder_channels = decoder_channel_hub[encoder_type]
 
@@ -34,13 +36,13 @@ class PPLiteSeg(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, encoder_channels, encoder_type, act_type):
-        super(Encoder, self).__init__()
+        super().__init__()
         encoder_hub = {'stdc1':STDCBackbone, 'stdc2':STDCBackbone}
         if encoder_type not in encoder_hub.keys():
             raise ValueError(f'Unsupport encoder type: {encoder_type}.\n')
-        
+
         self.encoder = encoder_hub[encoder_type](in_channels, encoder_channels, encoder_type, act_type)
-        
+
     def forward(self, x):
         x3, x4, x5 = self.encoder(x)
 
@@ -49,7 +51,7 @@ class Encoder(nn.Module):
 
 class SPPM(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(SPPM, self).__init__()
+        super().__init__()
         hid_channels = int(in_channels // 4)
         self.act_type = act_type
 
@@ -70,13 +72,13 @@ class SPPM(nn.Module):
         x2 = F.interpolate(self.pool2(x), size, mode='bilinear', align_corners=True)
         x3 = F.interpolate(self.pool3(x), size, mode='bilinear', align_corners=True)
         x = self.conv(x1 + x2 + x3)
-        
+
         return x
 
 
 class FLD(nn.Module):
     def __init__(self, encoder_channels, decoder_channels, num_class, fusion_type, act_type):
-        super(FLD, self).__init__()
+        super().__init__()
         self.stage6 = ConvBNAct(decoder_channels[0], decoder_channels[0])
         self.fusion1 = UAFM(encoder_channels[3], decoder_channels[0], fusion_type)
         self.stage7 = ConvBNAct(decoder_channels[0], decoder_channels[1])
@@ -98,7 +100,7 @@ class FLD(nn.Module):
 
 class STDCBackbone(nn.Module):
     def __init__(self, in_channels, encoder_channels, encoder_type, act_type):
-        super(STDCBackbone, self).__init__()
+        super().__init__()
         repeat_times_hub = {'stdc1': [1,1,1], 'stdc2': [3,4,2]}
         repeat_times = repeat_times_hub[encoder_type]
         self.stage1 = ConvBNAct(in_channels, encoder_channels[0], 3, 2)
@@ -109,7 +111,7 @@ class STDCBackbone(nn.Module):
 
     def _make_stage(self, in_channels, out_channels, repeat_times, act_type):
         layers = [STDCModule(in_channels, out_channels, 2, act_type)]
-        
+
         for _ in range(repeat_times):
             layers.append(STDCModule(out_channels, out_channels, 1, act_type))
         return nn.Sequential(*layers)
@@ -125,7 +127,7 @@ class STDCBackbone(nn.Module):
 
 class STDCModule(nn.Module):
     def __init__(self, in_channels, out_channels, stride, act_type):
-        super(STDCModule, self).__init__()
+        super().__init__()
         if out_channels % 8 != 0:
             raise ValueError('Output channel should be evenly divided by 8.\n')
         self.stride = stride
@@ -135,7 +137,7 @@ class STDCModule(nn.Module):
             self.pool = nn.AvgPool2d(3, 2, 1)
         self.block3 = ConvBNAct(out_channels//4, out_channels//8, 3)
         self.block4 = ConvBNAct(out_channels//8, out_channels//8, 3)
-        
+
     def forward(self, x):
         x = self.block1(x)
         x2 = self.block2(x)
@@ -149,7 +151,7 @@ class STDCModule(nn.Module):
 
 class UAFM(nn.Module):
     def __init__(self, in_channels, out_channels, fusion_type):
-        super(UAFM, self).__init__()
+        super().__init__()
         fusion_hub = {'spatial': SpatialAttentionModule, 'channel': ChannelAttentionModule}
         if fusion_type not in fusion_hub.keys():
             raise ValueError(f'Unsupport fusion type: {fusion_type}.\n')
@@ -163,15 +165,15 @@ class UAFM(nn.Module):
         x_up = F.interpolate(x_high, size, mode='bilinear', align_corners=True)
         alpha = self.attention(x_up, x_low)
         x = alpha * x_up + (1 - alpha) * x_low
-        
+
         return x
 
 
 class SpatialAttentionModule(nn.Module):
     def __init__(self, out_channels):
-        super(SpatialAttentionModule, self).__init__()
+        super().__init__()
         self.conv = conv1x1(4, 1)
-        
+
     def forward(self, x_up, x_low):
         mean_up = torch.mean(x_up, dim=1, keepdim=True)
         max_up, _ = torch.max(x_up, dim=1, keepdim=True)
@@ -179,13 +181,13 @@ class SpatialAttentionModule(nn.Module):
         max_low, _ = torch.max(x_low, dim=1, keepdim=True)
         x = self.conv(torch.cat([mean_up, max_up, mean_low, max_low], dim=1))
         x = torch.sigmoid(x)    # [N, 1, H, W]
-        
+
         return x
 
 
 class ChannelAttentionModule(nn.Module):
     def __init__(self, out_channels):
-        super(ChannelAttentionModule, self).__init__()
+        super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.max_pool = nn.AdaptiveMaxPool2d(1)
         self.conv = conv1x1(4*out_channels, out_channels)

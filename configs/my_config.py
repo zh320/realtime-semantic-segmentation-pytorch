@@ -3,7 +3,7 @@ from .base_config import BaseConfig
 
 class MyConfig(BaseConfig):
     def __init__(self,):
-        super(MyConfig, self).__init__()
+        super().__init__()
         # Dataset
         self.dataset = 'cityscapes'
         self.data_root = '/path/to/your/dataset'

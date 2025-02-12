@@ -31,4 +31,7 @@ if __name__ == '__main__':
     config = MyConfig()
     config = load_parser(config)
 
+    config.use_aux = False
+    config.use_detail_head = False
+
     cal_model_params(config)

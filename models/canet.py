@@ -10,11 +10,13 @@ import torch.nn as nn
 
 from .modules import ConvBNAct, DeConvBNAct, Activation
 from .backbone import ResNet, Mobilenetv2
+from .model_registry import register_model
 
 
+@register_model()
 class CANet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='mobilenet_v2', act_type='relu'):
-        super(CANet, self).__init__()
+        super().__init__()
         self.spatial_branch = SpatialBranch(n_channel, 64, act_type)
         self.context_branch = ContextBranch(64*4, backbone_type)
         self.fca = FeatureCrossAttentionModule(64*4, num_class, act_type)
@@ -32,7 +34,7 @@ class CANet(nn.Module):
 
 class SpatialBranch(nn.Sequential):
     def __init__(self, n_channel, channels, act_type):
-        super(SpatialBranch, self).__init__(
+        super().__init__(
             ConvBNAct(n_channel, channels, 3, 2, act_type=act_type, inplace=True),
             ConvBNAct(channels, channels*2, 3, 2, act_type=act_type, inplace=True),
             ConvBNAct(channels*2, channels*4, 3, 2, act_type=act_type, inplace=True),
@@ -41,7 +43,7 @@ class SpatialBranch(nn.Sequential):
 
 class ContextBranch(nn.Module):
     def __init__(self, out_channels, backbone_type, hid_channels=192):
-        super(ContextBranch, self).__init__()
+        super().__init__()
         if 'mobilenet' in backbone_type:
             self.backbone = Mobilenetv2()
             channels = [320, 96]
@@ -50,7 +52,7 @@ class ContextBranch(nn.Module):
             channels = [512, 256] if (('18' in backbone_type) or ('34' in backbone_type)) else [2048, 1024]
         else:
             raise NotImplementedError()
-            
+
         self.up1 = DeConvBNAct(channels[0], hid_channels)
         self.up2 = DeConvBNAct(channels[1] + hid_channels, out_channels)
 
@@ -66,7 +68,7 @@ class ContextBranch(nn.Module):
 
 class FeatureCrossAttentionModule(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(FeatureCrossAttentionModule, self).__init__()
+        super().__init__()
         self.conv_init = ConvBNAct(2*in_channels, in_channels, act_type=act_type, inplace=True)
         self.sa = SpatialAttentionBlock(in_channels)
         self.ca = ChannelAttentionBlock(in_channels)
@@ -91,14 +93,14 @@ class FeatureCrossAttentionModule(nn.Module):
 
 class SpatialAttentionBlock(nn.Sequential):
     def __init__(self, in_channels):
-        super(SpatialAttentionBlock, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, 1, act_type='sigmoid')
         )
 
 
 class ChannelAttentionBlock(nn.Module):
     def __init__(self, in_channels):
-        super(ChannelAttentionBlock, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.max_pool = nn.AdaptiveMaxPool2d(1)
         self.avg_pool = nn.AdaptiveAvgPool2d(1)

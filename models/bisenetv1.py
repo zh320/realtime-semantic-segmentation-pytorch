@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, SegHead
 from .backbone import ResNet
+from .model_registry import register_model
 
 
+@register_model()
 class BiSeNetv1(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='resnet18', act_type='relu',):
-        super(BiSeNetv1, self).__init__()
+        super().__init__()
         self.spatial_path = SpatialPath(n_channel, 128, act_type=act_type)
         self.context_path = ContextPath(256, backbone_type, act_type=act_type)
         self.ffm = FeatureFusionModule(384, 256, act_type=act_type)
@@ -34,7 +36,7 @@ class BiSeNetv1(nn.Module):
 
 class SpatialPath(nn.Sequential):
     def __init__(self, in_channels, out_channels, act_type):
-        super(SpatialPath, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, out_channels, 3, 2, act_type=act_type),
             ConvBNAct(out_channels, out_channels, 3, 2, act_type=act_type),
             ConvBNAct(out_channels, out_channels, 3, 2, act_type=act_type),
@@ -43,7 +45,7 @@ class SpatialPath(nn.Sequential):
 
 class ContextPath(nn.Module):
     def __init__(self, out_channels, backbone_type, act_type):
-        super(ContextPath, self).__init__()
+        super().__init__()
         if 'resnet' in backbone_type:
             self.backbone = ResNet(backbone_type)
             channels = [256, 512] if ('18' in backbone_type) or ('34' in backbone_type) else [1024, 2048]
@@ -69,13 +71,13 @@ class ContextPath(nn.Module):
         x_16 = self.conv_16(x_16)
         x_16 += x_32
         x_16 = F.interpolate(x_16, scale_factor=2, mode='bilinear', align_corners=True)
-        
+
         return x_16
 
 
 class AttentionRefinementModule(nn.Module):
     def __init__(self, channels):
-        super(AttentionRefinementModule, self).__init__()
+        super().__init__()
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.conv = ConvBNAct(channels, channels, 1, act_type='sigmoid')
 
@@ -90,7 +92,7 @@ class AttentionRefinementModule(nn.Module):
 
 class FeatureFusionModule(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(FeatureFusionModule, self).__init__()
+        super().__init__()
         self.conv1 = ConvBNAct(in_channels, out_channels, 3, act_type=act_type)
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.conv2 = nn.Sequential(

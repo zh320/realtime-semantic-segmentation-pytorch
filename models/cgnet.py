@@ -10,11 +10,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, Activation
+from .model_registry import register_model
 
 
+@register_model()
 class CGNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, M=3, N=15, act_type='prelu'):
-        super(CGNet, self).__init__()
+        super().__init__()
         self.stage1 = InitBlock(n_channel, 32, act_type=act_type)
         self.stage2_down = CGBlock(64, 64, 2, 2, act_type=act_type)
         self.stage2 = build_blocks(CGBlock, 64+3, 64, 2, M-1, act_type)
@@ -48,11 +50,11 @@ class CGNet(nn.Module):
 
 class InitBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(InitBlock, self).__init__()
+        super().__init__()
         self.conv0 = ConvBNAct(in_channels, out_channels, stride=2, act_type=act_type)
         self.conv1 = ConvBNAct(out_channels, out_channels, act_type=act_type)
         self.conv2 = ConvBNAct(out_channels, out_channels, act_type=act_type)
-        
+
     def forward(self, x):
         x0 = self.conv0(x)
         x = self.conv1(x0)
@@ -70,7 +72,7 @@ def build_blocks(block, in_channels, out_channels, dilation, num_block, act_type
 
 class CGBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, dilation, res_type='GRL', act_type='prelu'):
-        super(CGBlock, self).__init__()
+        super().__init__()
         if res_type not in ['GRL', 'LRL']:
             raise ValueError('Residual learning only support GRL and LRL type.\n')
         self.res_type = res_type

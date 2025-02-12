@@ -10,11 +10,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, conv3x3, ConvBNAct, Activation
+from .model_registry import register_model
 
 
+@register_model()
 class EDANet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, k=40, num_b1=5, num_b2=8, act_type='relu'):
-        super(EDANet, self).__init__()
+        super().__init__()
         self.stage1 = DownsamplingBlock(n_channel, 15, act_type)
         self.stage2_d = DownsamplingBlock(15, 60, act_type)
         self.stage2 = EDABlock(60, k, num_b1, [1,1,1,2,2], act_type)
@@ -37,7 +39,7 @@ class EDANet(nn.Module):
 
 class DownsamplingBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingBlock, self).__init__()
+        super().__init__()
         self.conv = conv3x3(in_channels, out_channels - in_channels, 2)
         self.pool = nn.MaxPool2d(2, 2)
         self.bn_act = nn.Sequential(
@@ -52,7 +54,7 @@ class DownsamplingBlock(nn.Module):
 
 class EDABlock(nn.Module):
     def __init__(self, in_channels, k, num_block, dilations, act_type):
-        super(EDABlock, self).__init__()
+        super().__init__()
         assert len(dilations) == num_block, 'number of dilation rate should be equal to number of block'
 
         layers = []
@@ -68,7 +70,7 @@ class EDABlock(nn.Module):
 
 class EDAModule(nn.Module):
     def __init__(self, in_channels, k, dilation=1, act_type='relu'):
-        super(EDAModule, self).__init__()
+        super().__init__()
         self.conv = nn.Sequential(
                         ConvBNAct(in_channels, k, 1),
                         nn.Conv2d(k, k, (3, 1), padding=(1, 0), bias=False),

@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, Activation, channel_shuffle
 from .enet import InitialBlock as DownsampleUint
+from .model_registry import register_model
 
 
+@register_model()
 class LEDNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='relu'):
-        super(LEDNet, self).__init__()
+        super().__init__()
         self.encoder = Encoder(n_channel, 128, act_type)
         self.apn = AttentionPyramidNetwork(128, num_class, act_type)
 
@@ -29,7 +31,7 @@ class LEDNet(nn.Module):
 
 class Encoder(nn.Sequential):
     def __init__(self, in_channels, out_channels, act_type):
-        super(Encoder, self).__init__(
+        super().__init__(
             DownsampleUint(in_channels, 32, act_type),
             SSnbtUnit(32, 1, act_type=act_type),
             SSnbtUnit(32, 1, act_type=act_type),
@@ -51,7 +53,7 @@ class Encoder(nn.Sequential):
 
 class SSnbtUnit(nn.Module):
     def __init__(self, channels, dilation, act_type):
-        super(SSnbtUnit, self).__init__()
+        super().__init__()
         assert channels % 2 == 0, 'Input channel should be multiple of 2.\n'
         split_channels = channels // 2
         self.split_channels = split_channels
@@ -64,7 +66,7 @@ class SSnbtUnit(nn.Module):
                                 Activation(act_type),
                                 ConvBNAct(split_channels, split_channels, (1, 3), dilation=dilation, act_type=act_type),
                             )
-                            
+
         self.right_branch = nn.Sequential(
                                 nn.Conv2d(split_channels, split_channels, (1, 3), padding=(0,1)),
                                 Activation(act_type),
@@ -90,7 +92,7 @@ class SSnbtUnit(nn.Module):
 
 class AttentionPyramidNetwork(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(AttentionPyramidNetwork, self).__init__()
+        super().__init__()
         self.left_conv1_1 = ConvBNAct(in_channels, in_channels, 3, 2, act_type=act_type)
         self.left_conv1_2 = ConvBNAct(in_channels, out_channels, 3, act_type=act_type)
         self.left_conv2_1 = ConvBNAct(in_channels, in_channels, 3, 2, act_type=act_type)
@@ -108,27 +110,27 @@ class AttentionPyramidNetwork(nn.Module):
 
     def forward(self, x):
         size0 = x.size()[2:]
-        
+
         x_left = self.left_conv1_1(x)
         size1 = x_left.size()[2:]
-        
+
         x_left2 = self.left_conv2_1(x_left)
         size2 = x_left2.size()[2:]
-        
+
         x_left3 = self.left_conv3(x_left2)
         x_left3 = F.interpolate(x_left3, size2, mode='bilinear', align_corners=True)
-        
+
         x_left2 = self.left_conv2_2(x_left2)
         x_left2 += x_left3
         x_left2 = F.interpolate(x_left2, size1, mode='bilinear', align_corners=True)
-        
+
         x_left = self.left_conv1_2(x_left)
         x_left += x_left2
         x_left = F.interpolate(x_left, size0, mode='bilinear', align_corners=True)
-        
+
         x_mid = self.mid_branch(x)
         x_mid = torch.mul(x_left, x_mid)
-        
+
         x_right = self.right_branch(x)
         x_right = F.interpolate(x_right, size0, mode='bilinear', align_corners=True)
 

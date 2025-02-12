@@ -10,12 +10,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, DSConvBNAct, DWConvBNAct, ConvBNAct, channel_shuffle
+from .model_registry import register_model
 
 
+@register_model()
 class LiteHRNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, base_ch=40, arch_type='litehrnet18', 
                     repeat=2, act_type='relu'):
-        super(LiteHRNet, self).__init__()
+        super().__init__()
         arch_hub = {'litehrnet18': [2,4,2], 'litehrnet30': [3,8,3],}
         if arch_type not in arch_hub.keys():
             raise ValueError(f'Unsupport architecture type: {arch_type}.\n')
@@ -49,7 +51,7 @@ class LiteHRNet(nn.Module):
 
 class StageBlock(nn.Module):
     def __init__(self, base_ch, stage, repeat, num_modules, act_type):
-        super(StageBlock, self).__init__()
+        super().__init__()
         assert stage >= 2
         assert repeat > 0
         assert num_modules > 0
@@ -92,7 +94,7 @@ class StageBlock(nn.Module):
 
 class RepresentationHead(nn.Module):
     def __init__(self, base_ch, num_class, num_stage, act_type, hid_ch=128):
-        super(RepresentationHead, self).__init__()
+        super().__init__()
         self.up = nn.ModuleList([nn.Identity()])
         for i in range(num_stage-1):
             self.up.append(nn.Upsample(scale_factor=2**(i+1), mode='bilinear', align_corners=True))
@@ -116,7 +118,7 @@ class RepresentationHead(nn.Module):
 
 class ShuffleBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, act_type):
-        super(ShuffleBlock, self).__init__()
+        super().__init__()
         assert stride in [1, 2]
         in_ch_l, out_ch_l = in_channels//2, out_channels//2
         in_ch_r, out_ch_r = in_channels-in_ch_l, out_channels-out_ch_l
@@ -148,7 +150,7 @@ class ShuffleBlock(nn.Module):
 
 class CCWBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, act_type):
-        super(CCWBlock, self).__init__()
+        super().__init__()
         assert stride in [1, 2]
         in_ch_l, out_ch_l = in_channels//2, out_channels//2
         in_ch_r, out_ch_r = in_channels-in_ch_l, out_channels-out_ch_l
@@ -183,7 +185,7 @@ class CCWBlock(nn.Module):
 
 class CrossResolutionWeightModule(nn.Module):
     def __init__(self, channels, act_type, ch_reduction=8, pool_size=None):
-        super(CrossResolutionWeightModule, self).__init__()
+        super().__init__()
         hid_channels = channels // ch_reduction
         self.pool_size = pool_size
         self.conv = nn.Sequential(
@@ -210,7 +212,7 @@ class CrossResolutionWeightModule(nn.Module):
 
 class FusionBlock(nn.Module):
     def __init__(self, base_ch, stage, extra_output, act_type):
-        super(FusionBlock, self).__init__()
+        super().__init__()
         assert stage in [2,3,4]
         self.stage = stage
         self.extra_output = extra_output
@@ -276,7 +278,7 @@ class FusionBlock(nn.Module):
 
 class SpatialWeightModule(nn.Module):
     def __init__(self, channels, act_type, ch_reduction=8):
-        super(SpatialWeightModule, self).__init__()
+        super().__init__()
         hid_channels = channels // ch_reduction
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
@@ -293,7 +295,7 @@ class SpatialWeightModule(nn.Module):
 
 class UpsampleBlock(nn.Sequential):
     def __init__(self, in_ch, out_ch, scale_factor, act_type):
-        super(UpsampleBlock, self).__init__(
+        super().__init__(
             ConvBNAct(in_ch, out_ch, 1, act_type=act_type),
             nn.Upsample(scale_factor=scale_factor, mode='bilinear', align_corners=True)
         )
@@ -301,7 +303,7 @@ class UpsampleBlock(nn.Sequential):
 
 class DownsampleBlock(nn.Module):
     def __init__(self, in_ch, out_ch, num_block, act_type):
-        super(DownsampleBlock, self).__init__()
+        super().__init__()
         assert num_block >= 1
 
         layers = []

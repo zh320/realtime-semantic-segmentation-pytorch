@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
-from .cityscapes import Cityscapes
 
-dataset_hub = {'cityscapes':Cityscapes,}
+from .cityscapes import Cityscapes
+from .dataset_registry import dataset_hub
 
 
 def get_dataset(config):
@@ -59,3 +59,9 @@ def get_test_loader(config):
                                     shuffle=False, num_workers=config.num_workers)
 
     return test_loader
+
+
+def list_available_datasets():
+    dataset_list = list(dataset_hub.keys())
+
+    return dataset_list

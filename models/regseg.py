@@ -10,11 +10,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, Activation
+from .model_registry import register_model
 
 
+@register_model()
 class RegSeg(nn.Module):
     def __init__(self, num_class=1, n_channel=3, dilations=None, act_type='relu'):
-        super(RegSeg, self).__init__()
+        super().__init__()
         if dilations is None:
             dilations = [[1,1], [1,2], [1,2], [1,3], [2,3], [2,7], [2,3],
                          [2,6], [2,5], [2,9], [2,11], [4,7], [5,14]]
@@ -24,7 +26,7 @@ class RegSeg(nn.Module):
 
         # Backbone-1
         self.conv_init = ConvBNAct(n_channel, 32, 3, 2, act_type=act_type)
-        
+
         # Backbone-2
         self.stage_d4 = DBlock(32, 48, 2, act_type=act_type)
 
@@ -62,7 +64,7 @@ class RegSeg(nn.Module):
 class DBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1, r1=None, r2=None, 
                     g=16, se_ratio=0.25, act_type='relu'):
-        super(DBlock, self).__init__()
+        super().__init__()
         assert stride in [1, 2], f'Unsupported stride: {stride}'
         self.stride = stride
 
@@ -108,7 +110,7 @@ class DBlock(nn.Module):
 
 class SEBlock(nn.Module):
     def __init__(self, channels, reduction_ratio, act_type):
-        super(SEBlock, self).__init__()
+        super().__init__()
         squeeze_channels = int(channels * reduction_ratio)
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.se_block = nn.Sequential(
@@ -129,7 +131,7 @@ class SEBlock(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(self, num_class, d4_channel, d8_channel, d16_channel, act_type):
-        super(Decoder, self).__init__()
+        super().__init__()
         self.conv_d16 = ConvBNAct(d16_channel, 128, 1, act_type=act_type)
         self.conv_d8_stage1 = ConvBNAct(d8_channel, 128, 1, act_type=act_type)
         self.conv_d4_stage1 = ConvBNAct(d4_channel, 8, 1, act_type=act_type)

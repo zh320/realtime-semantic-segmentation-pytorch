@@ -10,12 +10,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, Activation, PyramidPoolingModule, SegHead
+from .model_registry import register_model, aux_models
 
 
+@register_model(aux_models)
 class ICNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='resnet18', act_type='relu', 
                     use_aux=True):
-        super(ICNet, self).__init__()
+        super().__init__()
         if 'resnet' in backbone_type:
             self.backbone = ResNet(backbone_type)
             ch1 = 512 if backbone_type in ['resnet18', 'resnet34'] else 2048
@@ -66,7 +68,7 @@ class ICNet(nn.Module):
 
 class CascadeFeatureFusionUnit(nn.Module):
     def __init__(self, channel1, channel2, out_channels, num_class, act_type, use_aux):
-        super(CascadeFeatureFusionUnit, self).__init__()
+        super().__init__()
         self.use_aux = use_aux
         self.conv1 = ConvBNAct(channel1, out_channels, 3, 1, 2, act_type='none')
         self.conv2 = ConvBNAct(channel2, out_channels, 1, act_type='none')
@@ -92,7 +94,7 @@ class CascadeFeatureFusionUnit(nn.Module):
 
 class HighResolutionBranch(nn.Sequential):
     def __init__(self, in_channels, out_channels, hid_channels=32, act_type='relu'):
-        super(HighResolutionBranch, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, hid_channels, 3, 2, act_type=act_type),
             ConvBNAct(hid_channels, hid_channels*2, 3, 2, act_type=act_type),
             ConvBNAct(hid_channels*2, out_channels, 3, 2, act_type=act_type)
@@ -101,7 +103,7 @@ class HighResolutionBranch(nn.Sequential):
 
 class ResNet(nn.Module):
     def __init__(self, resnet_type, pretrained=True):
-        super(ResNet, self).__init__()
+        super().__init__()
         from torchvision.models import resnet18, resnet34, resnet50, resnet101
 
         resnet_hub = {'resnet18':resnet18, 'resnet34':resnet34, 'resnet50':resnet50,

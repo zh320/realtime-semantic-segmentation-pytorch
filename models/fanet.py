@@ -12,12 +12,14 @@ from torchvision.models.resnet import BasicBlock
 
 from .modules import ConvBNAct, DeConvBNAct, SegHead, Activation
 from .backbone import ResNet
+from .model_registry import register_model
 
 
+@register_model()
 class FANet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, att_channel=32, backbone_type='resnet18', cat_feat=True,
                     act_type='relu'):
-        super(FANet, self).__init__()
+        super().__init__()
         if backbone_type in ['resnet18', 'resnet34']:
             self.backbone = ResNet(backbone_type)
             channels = [64, 128, 256, 512]
@@ -73,7 +75,7 @@ class FANet(nn.Module):
 
 class FastAttention(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(FastAttention, self).__init__()
+        super().__init__()
         self.conv_q = ConvBNAct(in_channels, out_channels, 3, act_type='none')
         self.conv_k = ConvBNAct(in_channels, out_channels, 3, act_type='none')
         self.conv_v = ConvBNAct(in_channels, out_channels, 3, act_type='none')
@@ -105,7 +107,7 @@ class FastAttention(nn.Module):
 
 class FuseUp(nn.Module):
     def __init__(self, in_channels, out_channels, has_up=True, act_type='relu'):
-        super(FuseUp, self).__init__()
+        super().__init__()
         self.has_up = has_up
         if has_up:
             self.up = DeConvBNAct(in_channels, in_channels, act_type=act_type, inplace=True)

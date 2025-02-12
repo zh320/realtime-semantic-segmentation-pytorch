@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, DWConvBNAct, ConvBNAct
 from .enet import InitialBlock
+from .model_registry import register_model
 
 
+@register_model()
 class DABNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='prelu'):
-        super(DABNet, self).__init__()
+        super().__init__()
         self.layer1 = ConvBNAct(n_channel, 32, 3, 2, act_type=act_type)
         self.layer2 = ConvBNAct(32, 32, 3, 1, act_type=act_type)
         self.layer3 = ConvBNAct(32, 32, 3, 1, act_type=act_type)
@@ -70,7 +72,7 @@ def build_blocks(block, channels, num_block, dilation, act_type):
 
 class DABModule(nn.Module):
     def __init__(self, channels, dilation, act_type):
-        super(DABModule, self).__init__()
+        super().__init__()
         assert channels % 2 == 0, 'Input channel of DABModule should be multiple of 2.\n'
         hid_channels = channels // 2
         self.init_conv = ConvBNAct(channels, hid_channels, 3, act_type=act_type)

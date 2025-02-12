@@ -9,11 +9,13 @@ import torch
 import torch.nn as nn
 
 from .modules import conv1x1, DSConvBNAct, ConvBNAct, DeConvBNAct, Activation
+from .model_registry import register_model
 
 
+@register_model()
 class MiniNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='selu'):
-        super(MiniNet, self).__init__()
+        super().__init__()
         # Downsample block
         self.down1 = DSConvBNAct(n_channel, 12, 3, 2, act_type=act_type)
         self.down2 = DSConvBNAct(12, 24, 3, 2, act_type=act_type)
@@ -74,7 +76,7 @@ class MiniNet(nn.Module):
 
 class ConvModule(nn.Module):
     def __init__(self, channels, dilation, act_type):
-        super(ConvModule, self).__init__()
+        super().__init__()
         self.conv1 = nn.Sequential(
                         nn.Conv2d(channels, channels, (1,3), padding=(0, dilation), 
                                     dilation=dilation, groups=channels, bias=False),
@@ -92,7 +94,7 @@ class ConvModule(nn.Module):
                     )
         self.dropout = nn.Dropout(p=0.25)
         self.act = Activation(act_type)
-    
+
     def forward(self, x):
         residual = x
 

@@ -12,12 +12,14 @@ from math import ceil
 
 from .modules import ConvBNAct
 from .enet import InitialBlock as DownsamplingBlock
+from .model_registry import register_model
 
 
+@register_model()
 class CFPNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, n=2, m=6, dilations=[2,2,4,4,8,8,16,16], 
                     act_type='prelu'):
-        super(CFPNet, self).__init__()
+        super().__init__()
         assert len(dilations) == (n+m), f'Length of dilations should be equal to {n+m}.\n'
         self.conv_init = nn.Sequential(
                             ConvBNAct(n_channel, 32, stride=2, act_type=act_type),
@@ -68,7 +70,7 @@ def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
 
 class CFPModule(nn.Module):
     def __init__(self, channels, rk, K=4, rk_ratio=None, act_type='prelu',):
-        super(CFPModule, self).__init__()
+        super().__init__()
         if rk_ratio is None:
             rk_ratio = [1/rk, 1/4, 1/2, 1]
         assert len(rk_ratio) == K, f'Length of rk_ratio should be {K}.\n'
@@ -108,7 +110,7 @@ class CFPModule(nn.Module):
 
 class FeaturePyramidChannel(nn.Module):
     def __init__(self, channels, dilation, act_type, channel_split=[1,1,2]):
-        super(FeaturePyramidChannel, self).__init__()
+        super().__init__()
         split_num = sum(channel_split)
         assert channels % split_num == 0, f'Channel of FPC should be multiple of {split_num}.\n'
         ch_b1 = (channels // split_num) * channel_split[0]
@@ -132,7 +134,7 @@ class FeaturePyramidChannel(nn.Module):
         x1 = self.block1(x)
         x2 = self.block2(x1)
         x3 = self.block3(x2)
-        
+
         x = torch.cat([x1, x2, x3], dim=1)
 
         return x

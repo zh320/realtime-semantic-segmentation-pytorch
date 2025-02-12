@@ -11,12 +11,14 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, DeConvBNAct, Activation
 from .backbone import ResNet
+from .model_registry import register_model
 
 
+@register_model()
 class ShelfNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='resnet18', 
                     hid_channels=[32,64,128,256], act_type='relu'):
-        super(ShelfNet, self).__init__()
+        super().__init__()
         if 'resnet' in backbone_type:
             self.backbone = ResNet(backbone_type)
             channels = [64, 128, 256, 512] if backbone_type in ['resnet18', 'resnet34'] else [256, 512, 1024, 2048]
@@ -61,16 +63,16 @@ class ShelfNet(nn.Module):
 
 class EncoderBlock(nn.Module):
     def __init__(self, channels, act_type):
-        super(EncoderBlock, self).__init__()
+        super().__init__()
         self.block_A = SBlock(channels[0], act_type)
         self.down_A = ConvBNAct(channels[0], channels[1], 3, 2, act_type=act_type)
 
         self.block_B = SBlock(channels[1], act_type)
         self.down_B = ConvBNAct(channels[1], channels[2], 3, 2, act_type=act_type)
-        
+
         self.block_C = SBlock(channels[2], act_type)
         self.down_C = ConvBNAct(channels[2], channels[3], 3, 2, act_type=act_type)
-        
+
     def forward(self, x_a, x_b, x_c):
         x_a = self.block_A(x_a)
         x = self.down_A(x_a)
@@ -86,7 +88,7 @@ class EncoderBlock(nn.Module):
 
 class DecoderBlock(nn.Module):
     def __init__(self, channels, act_type):
-        super(DecoderBlock, self).__init__()
+        super().__init__()
         self.block_D = SBlock(channels[3], act_type)
         self.up_D = DeConvBNAct(channels[3], channels[2], act_type=act_type)
 
@@ -118,7 +120,7 @@ class DecoderBlock(nn.Module):
 
 class SBlock(nn.Module):
     def __init__(self, channels, act_type):
-        super(SBlock, self).__init__()
+        super().__init__()
         self.conv1 = ConvBNAct(channels, channels, 3, act_type=act_type)
         self.conv2 = ConvBNAct(channels, channels, 3, act_type='none')
         self.act = Activation(act_type)

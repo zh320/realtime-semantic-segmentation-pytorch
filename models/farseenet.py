@@ -12,11 +12,13 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, DWConvBNAct, ConvBNAct
 from .backbone import ResNet
+from .model_registry import register_model
 
 
+@register_model()
 class FarSeeNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='resnet18', act_type='relu'):
-        super(FarSeeNet, self).__init__()
+        super().__init__()
         if 'resnet' in backbone_type:
             self.frontend_network = ResNet(backbone_type)
             high_channels = 512 if backbone_type in ['resnet18', 'resnet34'] else 2048
@@ -41,7 +43,7 @@ class FarSeeNet(nn.Module):
 class FASPP(nn.Module):
     def __init__(self, high_channels, low_channels, num_class, act_type, 
                     dilations=[6,12,18], hid_channels=256):
-        super(FASPP, self).__init__()
+        super().__init__()
         # High level convolutions
         self.conv_high = nn.ModuleList([
                                 ConvBNAct(high_channels, hid_channels, 1, act_type=act_type)
@@ -98,7 +100,7 @@ class FASPP(nn.Module):
         low_feats = []
         for conv_low in self.conv_low:
             low_feats.append(conv_low(x))
-            
+
         x = torch.cat(low_feats, dim=1)
         x = self.conv_low_last(x)
         x = self.sub_pixel_low(x)

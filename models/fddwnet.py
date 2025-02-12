@@ -11,11 +11,13 @@ import torch.nn as nn
 
 from .modules import DWConvBNAct, ConvBNAct, DeConvBNAct, Activation
 from .enet import InitialBlock as DownsamplingUnit
+from .model_registry import register_model
 
 
+@register_model()
 class FDDWNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, ks=3, act_type='relu'):
-        super(FDDWNet, self).__init__()
+        super().__init__()
         self.layer1 = DownsamplingUnit(n_channel, 16, act_type)
         self.layer2 = DownsamplingUnit(16, 64, act_type)
         self.layer3_7 = build_blocks(EERMUnit, 64, 5, ks, [1,1,1,1,1], act_type)
@@ -60,7 +62,7 @@ def build_blocks(block, channels, num_block, kernel_size, dilations=[], act_type
 
 class EERMUnit(nn.Module):
     def __init__(self, channels, ks, dt, act_type):
-        super(EERMUnit, self).__init__()
+        super().__init__()
         self.conv = nn.Sequential(
                         DWConvBNAct(channels, channels, (ks, 1), act_type='none'),
                         DWConvBNAct(channels, channels, (1, ks), act_type='none'),

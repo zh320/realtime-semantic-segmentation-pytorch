@@ -10,12 +10,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import conv1x1, DSConvBNAct, DWConvBNAct, ConvBNAct, Activation, SegHead
+from .model_registry import register_model
 
 
+@register_model()
 class DFANet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, backbone_type='XceptionA', expansion=4, 
                     repeat_times=[4,6,4], use_extra_backbone=True, act_type='relu'):
-        super(DFANet, self).__init__()
+        super().__init__()
         assert len(repeat_times) == 3
         if backbone_type == 'XceptionA':
             channels = [48, 96, 192]
@@ -45,7 +47,7 @@ class DFANet(nn.Module):
         x = self.conv1(x)
 
         x, x_enc2, x_enc3, x_enc4 = self.backbone1(x)
-        
+
         if self.use_extra_backbone:
             enc_x1, fc_x1 = x_enc2, x
             x = F.interpolate(x, scale_factor=4, mode='bilinear', align_corners=True)
@@ -66,7 +68,7 @@ class DFANet(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, channels, expansion, repeat_times, act_type):
-        super(Encoder, self).__init__()
+        super().__init__()
         assert len(in_channels) == 3
         self.enc2 = EncoderBlock(in_channels[0], channels[0], expansion, repeat_times[0], act_type)
         self.enc3 = EncoderBlock(in_channels[1], channels[1], expansion, repeat_times[1], act_type)
@@ -96,16 +98,16 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(self, enc_channels, fc_channels, num_class, act_type, hid_channels=48):
-        super(Decoder, self).__init__()
+        super().__init__()
         self.enc_conv1 = ConvBNAct(enc_channels, hid_channels, 3, act_type=act_type, inplace=True)
         self.enc_conv2 = ConvBNAct(enc_channels, hid_channels, 3, act_type=act_type, inplace=True)
         self.enc_conv3 = ConvBNAct(enc_channels, hid_channels, 3, act_type=act_type, inplace=True)
         self.conv_enc = conv1x1(hid_channels, num_class)
-        
+
         self.fc_conv1 = SegHead(fc_channels, num_class, act_type)
         self.fc_conv2 = SegHead(fc_channels, num_class, act_type)
         self.fc_conv3 = SegHead(fc_channels, num_class, act_type)
-        
+
     def forward(self, enc_x1, enc_x2, enc_x3, fc_x1, fc_x2, fc_x3):
         enc_x1 = self.enc_conv1(enc_x1)
         enc_x2 = self.enc_conv2(enc_x2)
@@ -131,7 +133,7 @@ class Decoder(nn.Module):
 
 class EncoderBlock(nn.Module):
     def __init__(self, in_channels, out_channels, expansion, repeat_times, act_type):
-        super(EncoderBlock, self).__init__()
+        super().__init__()
         layers = [XceptionBlock(in_channels, out_channels, 2, expansion, act_type)]
 
         for _ in range(repeat_times-1):
@@ -144,7 +146,7 @@ class EncoderBlock(nn.Module):
 
 class FCAttention(nn.Module):
     def __init__(self, channels, act_type, linear_channels=1000):
-        super(FCAttention, self).__init__()
+        super().__init__()
         self.channels = channels
         self.pool = nn.AdaptiveMaxPool2d(1)
         self.linear = nn.Linear(channels, linear_channels)
@@ -162,7 +164,7 @@ class FCAttention(nn.Module):
 
 class XceptionBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, expansion, act_type):
-        super(XceptionBlock, self).__init__()
+        super().__init__()
         self.use_skip = (in_channels == out_channels) and (stride == 1)
         self.stride = stride
         hid_channels = out_channels // expansion

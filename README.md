@@ -7,7 +7,7 @@ PyTorch implementation of realtime semantic segmentation models, support multi-g
 # Requirements
 
 torch == 1.8.1  
-segmentation-models-pytorch  
+segmentation-models-pytorch (optional)  
 torchmetrics  
 albumentations  
 loguru  

@@ -12,7 +12,7 @@ from utils import (get_optimizer, get_scheduler, parallel_model, de_parallel,
 
 class BaseTrainer:
     def __init__(self, config):
-        super(BaseTrainer, self).__init__()
+        super().__init__()
         # DDP parameters, DO NOT CHANGE
         self.rank = int(os.getenv('RANK', -1))
         self.local_rank = int(os.getenv('LOCAL_RANK', -1))

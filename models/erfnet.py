@@ -10,26 +10,28 @@ import torch.nn as nn
 
 from .modules import ConvBNAct, DeConvBNAct, Activation
 from .enet import InitialBlock as DownsamplerBlock
+from .model_registry import register_model
 
 
+@register_model()
 class ERFNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='relu'):
-        super(ERFNet, self).__init__()
+        super().__init__()
         self.layer1 = DownsamplerBlock(n_channel, 16, act_type=act_type)
 
         self.layer2 = DownsamplerBlock(16, 64, act_type=act_type)
         self.layer3_7 = build_blocks(NonBt1DBlock, 64, 5, act_type=act_type)
-        
+
         self.layer8 = DownsamplerBlock(64, 128, act_type=act_type)
         self.layer9_16 = build_blocks(NonBt1DBlock, 128, 8, 
                                         dilations=[2,4,8,16,2,4,8,16], act_type=act_type)
-        
+
         self.layer17 = DeConvBNAct(128, 64, act_type=act_type)
         self.layer18_19 = build_blocks(NonBt1DBlock, 64, 2, act_type=act_type)
 
         self.layer20 = DeConvBNAct(64, 16, act_type=act_type)
         self.layer21_22 = build_blocks(NonBt1DBlock, 16, 2, act_type=act_type)
-        
+
         self.layer23 = DeConvBNAct(16, num_class, act_type=act_type)
 
     def forward(self, x):
@@ -61,7 +63,7 @@ def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
 
 class NonBt1DBlock(nn.Module):
     def __init__(self, channels, dilation=1, act_type='relu'):
-        super(NonBt1DBlock, self).__init__()
+        super().__init__()
         self.conv = nn.Sequential(
                                 ConvBNAct(channels, channels, (3, 1), inplace=True),
                                 ConvBNAct(channels, channels, (1, 3), inplace=True),

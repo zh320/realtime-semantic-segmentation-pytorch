@@ -1,5 +1,8 @@
 import argparse
 
+from datasets import list_available_datasets
+from models import list_available_models
+
 
 def load_parser(config):
     args = get_parser()
@@ -16,7 +19,8 @@ def load_parser(config):
 def get_parser():
     parser = argparse.ArgumentParser()
     # Dataset
-    parser.add_argument('--dataset', type=str, default=None, choices=['cityscapes'],
+    dataset_list = list_available_datasets()
+    parser.add_argument('--dataset', type=str, default=None, choices=dataset_list,
         help='choose which dataset you want to use')
     parser.add_argument('--dataroot', type=str, default=None, 
         help='path to your dataset')
@@ -26,14 +30,8 @@ def get_parser():
         help='ignore index used for cross_entropy/ohem loss')
 
     # Model
-    parser.add_argument('--model', type=str, default=None, 
-        choices=['adscnet', 'aglnet', 'bisenetv1', 'bisenetv2', 'canet', 'cfpnet',
-                 'cgnet', 'contextnet', 'dabnet', 'ddrnet', 'dfanet', 'edanet',
-                 'enet', 'erfnet', 'esnet', 'espnet', 'espnetv2', 'fanet', 'farseenet',
-                 'fastscnn', 'fddwnet', 'fpenet', 'fssnet', 'icnet', 'lednet',
-                 'linknet', 'lite_hrnet', 'liteseg', 'mininet', 'mininetv2', 'ppliteseg', 
-                 'regseg', 'segnet', 'shelfnet', 'sqnet', 'stdc', 'swiftnet',
-                 'smp'],
+    model_list = list_available_models()
+    parser.add_argument('--model', type=str, default=None, choices=model_list,
         help='choose which model you want to use')
     parser.add_argument('--encoder', type=str, default=None, 
         help='choose which encoder of SMP model you want to use (please refer to SMP repo)')

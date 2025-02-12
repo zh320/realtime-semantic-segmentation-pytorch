@@ -5,7 +5,7 @@ class ResNet(nn.Module):
     # Load ResNet pretrained on ImageNet from torchvision, see
     # https://pytorch.org/vision/stable/models/resnet.html
     def __init__(self, resnet_type, pretrained=True):
-        super(ResNet, self).__init__()
+        super().__init__()
         from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 
         resnet_hub = {'resnet18':resnet18, 'resnet34':resnet34, 'resnet50':resnet50,
@@ -38,7 +38,7 @@ class ResNet(nn.Module):
 
 class Mobilenetv2(nn.Module):
     def __init__(self, pretrained=True):
-        super(Mobilenetv2, self).__init__()
+        super().__init__()
         from torchvision.models import mobilenet_v2
 
         mobilenet = mobilenet_v2(pretrained=pretrained)

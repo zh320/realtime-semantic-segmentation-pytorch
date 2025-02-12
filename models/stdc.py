@@ -11,12 +11,14 @@ import torch.nn.functional as F
 
 from .modules import conv1x1, ConvBNAct, SegHead
 from .bisenetv1 import AttentionRefinementModule, FeatureFusionModule
+from .model_registry import register_model, aux_models, detail_head_models
 
 
+@register_model(aux_models, detail_head_models)
 class STDC(nn.Module):
     def __init__(self, num_class=1, n_channel=3, encoder_type='stdc1', use_detail_head=False, use_aux=False, 
                     act_type='relu'):
-        super(STDC, self).__init__()
+        super().__init__()
         repeat_times_hub = {'stdc1': [1,1,1], 'stdc2': [3,4,2]}
         if encoder_type not in repeat_times_hub.keys():
             raise ValueError('Unsupported encoder type.\n')
@@ -30,7 +32,7 @@ class STDC(nn.Module):
         self.stage3 = self._make_stage(64, 256, repeat_times[0], act_type)
         self.stage4 = self._make_stage(256, 512, repeat_times[1], act_type)
         self.stage5 = self._make_stage(512, 1024, repeat_times[2], act_type)
-        
+
         if use_aux:
             self.aux_head3 = SegHead(256, num_class, act_type)
             self.aux_head4 = SegHead(512, num_class, act_type)
@@ -41,7 +43,7 @@ class STDC(nn.Module):
         self.arm5 = AttentionRefinementModule(1024)
         self.conv4 = conv1x1(512, 256)
         self.conv5 = conv1x1(1024, 256)
-        
+
         self.ffm = FeatureFusionModule(256+256, 128, act_type)
 
         self.seg_head = SegHead(128, num_class, act_type)
@@ -51,7 +53,7 @@ class STDC(nn.Module):
 
     def _make_stage(self, in_channels, out_channels, repeat_times, act_type):
         layers = [STDCModule(in_channels, out_channels, 2, act_type)]
-        
+
         for _ in range(repeat_times):
             layers.append(STDCModule(out_channels, out_channels, 1, act_type))
         return nn.Sequential(*layers)
@@ -98,7 +100,7 @@ class STDC(nn.Module):
 
 class STDCModule(nn.Module):
     def __init__(self, in_channels, out_channels, stride, act_type):
-        super(STDCModule, self).__init__()
+        super().__init__()
         if out_channels % 8 != 0:
             raise ValueError('Output channel should be evenly divided by 8.\n')
         if stride not in [1, 2]:
@@ -125,7 +127,7 @@ class STDCModule(nn.Module):
 
 class LaplacianConv(nn.Module):
     def __init__(self, device):
-        super(LaplacianConv, self).__init__()
+        super().__init__()
         self.laplacian_kernel = torch.tensor([[[[-1.,-1.,-1.],[-1.,8.,-1.],[-1.,-1.,-1.]]]]).to(device)
 
     def forward(self, lbl):

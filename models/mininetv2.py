@@ -11,12 +11,14 @@ import torch.nn.functional as F
 
 from .modules import DWConvBNAct, PWConvBNAct, ConvBNAct, DeConvBNAct, Activation
 from .enet import InitialBlock as DownsamplingUnit
+from .model_registry import register_model
 
 
+@register_model()
 class MiniNetv2(nn.Module):
     def __init__(self, num_class=1, n_channel=3, feat_dt=[1,2,1,4,1,8,1,16,1,1,1,2,1,4,1,8],
                     act_type='relu'):
-        super(MiniNetv2, self).__init__()
+        super().__init__()
         self.d1_2 = nn.Sequential(
                         DownsamplingUnit(n_channel, 16, act_type),
                         DownsamplingUnit(16, 64, act_type),
@@ -67,7 +69,7 @@ def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
 
 class MultiDilationDSConv(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, dilation=1, act_type='relu'):
-        super(MultiDilationDSConv, self).__init__()
+        super().__init__()
         self.dilated = dilation > 1
         self.dw_conv = DWConvBNAct(in_channels, in_channels, kernel_size, stride, 1, act_type)
         self.pw_conv = PWConvBNAct(in_channels, out_channels, act_type, inplace=True)

@@ -9,13 +9,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import conv1x1, DSConvBNAct, DWConvBNAct, PWConvBNAct, ConvBNAct, Activation, \
-                        PyramidPoolingModule
+from .modules import conv1x1, DSConvBNAct, DWConvBNAct, PWConvBNAct, ConvBNAct, Activation, PyramidPoolingModule
+from .model_registry import register_model
 
 
+@register_model()
 class FastSCNN(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='relu'):
-        super(FastSCNN, self).__init__()
+        super().__init__()
         self.learning_to_downsample = LearningToDownsample(n_channel, 64, act_type=act_type)
         self.global_feature_extractor = GlobalFeatureExtractor(64, 128, act_type=act_type)
         self.feature_fusion = FeatureFusionModule(64, 128, 128, act_type=act_type)
@@ -34,7 +35,7 @@ class FastSCNN(nn.Module):
 
 class LearningToDownsample(nn.Sequential):
     def __init__(self, in_channels, out_channels, hid_channels=[32, 48], act_type='relu'):
-        super(LearningToDownsample, self).__init__(
+        super().__init__(
             ConvBNAct(in_channels, hid_channels[0], 3, 2, act_type=act_type),
             DSConvBNAct(hid_channels[0], hid_channels[1], 3, 2, act_type=act_type),
             DSConvBNAct(hid_channels[1], out_channels, 3, 2, act_type=act_type),
@@ -43,7 +44,7 @@ class LearningToDownsample(nn.Sequential):
 
 class GlobalFeatureExtractor(nn.Module):
     def __init__(self, in_channels, out_channels, act_type='relu'):
-        super(GlobalFeatureExtractor, self).__init__()
+        super().__init__()
         inverted_residual_setting = [
                 # t, c, n, s
                 [6, 64, 3, 2],
@@ -72,7 +73,7 @@ class GlobalFeatureExtractor(nn.Module):
 
 class FeatureFusionModule(nn.Module):
     def __init__(self, higher_channels, lower_channels, out_channels, act_type='relu'):
-        super(FeatureFusionModule, self).__init__()
+        super().__init__()
         self.higher_res_conv = conv1x1(higher_channels, out_channels)
         self.lower_res_conv = nn.Sequential(
                                 DWConvBNAct(lower_channels, lower_channels, 3, 1, act_type=act_type),
@@ -95,7 +96,7 @@ class FeatureFusionModule(nn.Module):
 
 class Classifier(nn.Sequential):
     def __init__(self, in_channels, num_class, act_type='relu'):
-        super(Classifier, self).__init__(
+        super().__init__(
             DSConvBNAct(in_channels, in_channels, 3, 1, act_type=act_type),
             DSConvBNAct(in_channels, in_channels, 3, 1, act_type=act_type),
             PWConvBNAct(in_channels, num_class, act_type=act_type),
@@ -104,7 +105,7 @@ class Classifier(nn.Sequential):
 
 class InvertedResidual(nn.Module):
     def __init__(self, in_channels, out_channels, stride, expand_ratio=6, act_type='relu'):
-        super(InvertedResidual, self).__init__()
+        super().__init__()
         hid_channels = int(round(in_channels * expand_ratio))
         self.use_res_connect = stride == 1 and in_channels == out_channels
 

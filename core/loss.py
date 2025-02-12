@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class OhemCELoss(nn.Module):
     def __init__(self, thresh, ignore_index=255):
-        super(OhemCELoss, self).__init__()
+        super().__init__()
         self.thresh = -torch.log(torch.tensor(thresh, requires_grad=False, dtype=torch.float)).cuda()
         self.ignore_index = ignore_index
         self.criteria = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='none')
@@ -22,7 +22,7 @@ class OhemCELoss(nn.Module):
 
 class DiceLoss(nn.Module):
     def __init__(self, smooth=1):
-        super(DiceLoss, self).__init__()
+        super().__init__()
         self.smooth = smooth
 
     def forward(self, logits, labels):
@@ -39,7 +39,7 @@ class DetailLoss(nn.Module):
     '''Implement detail loss used in paper
        `Rethinking BiSeNet For Real-time Semantic Segmentation`'''
     def __init__(self, dice_loss_coef=1., bce_loss_coef=1., smooth=1):
-        super(DetailLoss, self).__init__()
+        super().__init__()
         self.dice_loss_coef = dice_loss_coef
         self.bce_loss_coef = bce_loss_coef
         self.dice_loss_fn = DiceLoss(smooth)

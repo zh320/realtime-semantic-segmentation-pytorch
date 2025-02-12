@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import ConvBNAct, DeConvBNAct, Activation
 from .enet import InitialBlock as DownsamplingUnit
+from .model_registry import register_model
 
 
+@register_model()
 class ESNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='relu'):
-        super(ESNet, self).__init__()
+        super().__init__()
         self.block1_down = DownsamplingUnit(n_channel, 16, act_type)
         self.block1 = build_blocks('fcu', 16, 3, K=3, act_type=act_type)
         self.block2_down = DownsamplingUnit(16, 64, act_type)
@@ -64,7 +66,7 @@ def build_blocks(block_type, channels, num_block, K=None, r1=None, r2=None, r3=N
 
 class FCU(nn.Module):
     def __init__(self, channels, K, act_type):
-        super(FCU, self).__init__()
+        super().__init__()
         assert K is not None, 'K should not be None.\n'
         padding = (K - 1) // 2
         self.conv = nn.Sequential(
@@ -88,7 +90,7 @@ class FCU(nn.Module):
 
 class PFCU(nn.Module):
     def __init__(self, channels, r1, r2, r3, act_type):
-        super(PFCU, self).__init__()
+        super().__init__()
         assert (r1 is not None) and (r2 is not None) and (r3 is not None)
 
         self.conv0 = nn.Sequential(

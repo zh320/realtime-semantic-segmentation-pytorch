@@ -5,9 +5,12 @@ from PIL import Image
 from torch.utils.data import Dataset
 import albumentations as AT
 from albumentations.pytorch import ToTensorV2
+
 from utils import transforms
+from .dataset_registry import register_dataset
 
 
+@register_dataset
 class Cityscapes(Dataset):
     # Codes are based on https://github.com/mcordts/cityscapesScripts
     

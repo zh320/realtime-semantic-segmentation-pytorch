@@ -9,11 +9,13 @@ import torch
 import torch.nn as nn
 
 from .modules import ConvBNAct
+from .model_registry import register_model
 
 
+@register_model()
 class SegNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, hid_channel=64, act_type='relu'):
-        super(SegNet, self).__init__()
+        super().__init__()
         self.down_stage1 = DownsampleBlock(n_channel, hid_channel, act_type, False)
         self.down_stage2 = DownsampleBlock(hid_channel, hid_channel*2, act_type, False)
         self.down_stage3 = DownsampleBlock(hid_channel*2, hid_channel*4, act_type, True)
@@ -38,19 +40,19 @@ class SegNet(nn.Module):
         x = self.up_stage2(x, indices2)
         x = self.up_stage1(x, indices1)
         x = self.classifier(x)
-        
+
         return x
 
 
 class DownsampleBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type='relu', extra_conv=False):
-        super(DownsampleBlock, self).__init__()
+        super().__init__()
         layers = [ConvBNAct(in_channels, out_channels, 3, act_type=act_type, inplace=True),
                   ConvBNAct(out_channels, out_channels, 3, act_type=act_type, inplace=True)]
         if extra_conv:
             layers.append(ConvBNAct(out_channels, out_channels, 3, act_type=act_type, inplace=True))
         self.conv = nn.Sequential(*layers)
-        
+
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, return_indices=True)
 
     def forward(self, x):
@@ -61,14 +63,14 @@ class DownsampleBlock(nn.Module):
 
 class UpsampleBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type='relu', extra_conv=False):
-        super(UpsampleBlock, self).__init__()
+        super().__init__()
         self.pool = nn.MaxUnpool2d(kernel_size=2, stride=2)
-        
+
         hid_channel = in_channels if extra_conv else out_channels
-        
+
         layers = [ConvBNAct(in_channels, in_channels, 3, act_type=act_type, inplace=True),
                   ConvBNAct(in_channels, hid_channel, 3, act_type=act_type, inplace=True)]
-                  
+
         if extra_conv:
             layers.append(ConvBNAct(in_channels, out_channels, 3, act_type=act_type, inplace=True))
         self.conv = nn.Sequential(*layers)
@@ -76,5 +78,5 @@ class UpsampleBlock(nn.Module):
     def forward(self, x, indices):
         x = self.pool(x, indices)
         x = self.conv(x)
-        
+
         return x

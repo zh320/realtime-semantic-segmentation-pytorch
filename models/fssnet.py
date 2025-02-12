@@ -11,11 +11,13 @@ import torch.nn.functional as F
 
 from .modules import ConvBNAct, DeConvBNAct, Activation
 from .enet import InitialBlock as InitBlock
+from .model_registry import register_model
 
 
+@register_model()
 class FSSNet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, act_type='prelu'):
-        super(FSSNet, self).__init__()
+        super().__init__()
         # Encoder
         self.init_block = InitBlock(n_channel, 16, act_type)
         self.down1 = DownsamplingBlock(16, 64, act_type)
@@ -60,7 +62,7 @@ def build_blocks(block, channels, num_block, dilations=[], act_type='relu'):
 
 class FactorizedBlock(nn.Module):
     def __init__(self, channels, dilation=1, act_type='relu'):
-        super(FactorizedBlock, self).__init__()
+        super().__init__()
         hid_channels = channels // 4
         self.conv = nn.Sequential(
                         ConvBNAct(channels, hid_channels, 1, act_type=act_type),
@@ -81,7 +83,7 @@ class FactorizedBlock(nn.Module):
 
 class DilatedBlock(nn.Module):
     def __init__(self, channels, dilation, act_type):
-        super(DilatedBlock, self).__init__()
+        super().__init__()
         hid_channels = channels // 4
         self.conv = nn.Sequential(
                         ConvBNAct(channels, hid_channels, 1, act_type=act_type),
@@ -89,7 +91,7 @@ class DilatedBlock(nn.Module):
                         ConvBNAct(hid_channels, channels, 1, act_type='none')
                     )
         self.act = Activation(act_type)
-        
+
     def forward(self, x):
         residual = x
 
@@ -101,7 +103,7 @@ class DilatedBlock(nn.Module):
 
 class DownsamplingBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(DownsamplingBlock, self).__init__()
+        super().__init__()
         hid_channels = out_channels // 4
         self.conv = nn.Sequential(
                         ConvBNAct(in_channels, hid_channels, 2, 2, act_type=act_type),
@@ -124,7 +126,7 @@ class DownsamplingBlock(nn.Module):
 
 class UpsamplingBlock(nn.Module):
     def __init__(self, in_channels, out_channels, act_type):
-        super(UpsamplingBlock, self).__init__()
+        super().__init__()
         hid_channels = in_channels // 4
         self.deconv = nn.Sequential(
                             ConvBNAct(in_channels, hid_channels, 1, act_type=act_type),

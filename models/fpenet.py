@@ -10,11 +10,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .modules import DWConvBNAct, ConvBNAct
+from .model_registry import register_model
 
 
+@register_model()
 class FPENet(nn.Module):
     def __init__(self, num_class=1, n_channel=3, p=3, q=9, k=4, act_type='relu'):
-        super(FPENet, self).__init__()
+        super().__init__()
         self.stage1 = nn.Sequential(
                             ConvBNAct(n_channel, 16, 3, 2, act_type=act_type, inplace=True),
                             FPEBlock(16, 16, 1, 1, act_type=act_type)
@@ -52,7 +54,7 @@ def build_blocks(block, channels, num_block, expansion, act_type):
 class FPEBlock(nn.Module):
     def __init__(self, in_channels, out_channels, expansion, stride, dilations=[1,2,4,8], 
                     act_type='relu'):
-        super(FPEBlock, self).__init__()
+        super().__init__()
         assert len(dilations) > 0, 'Length of dilations should be larger than 0.\n'
         self.K = len(dilations)
         self.use_skip = (in_channels == out_channels) and (stride == 1)
@@ -92,7 +94,7 @@ class FPEBlock(nn.Module):
 
 class MEUModule(nn.Module):
     def __init__(self, low_channels, high_channels, out_channels, act_type):
-        super(MEUModule, self).__init__()
+        super().__init__()
         self.conv_low = ConvBNAct(low_channels, out_channels, 1, act_type=act_type, inplace=True)
         self.conv_high = ConvBNAct(high_channels, out_channels, 1, act_type=act_type, inplace=True)
         self.sa = SpatialAttentionBlock(act_type)
@@ -114,7 +116,7 @@ class MEUModule(nn.Module):
 
 class SpatialAttentionBlock(nn.Module):
     def __init__(self, act_type):
-        super(SpatialAttentionBlock, self).__init__()
+        super().__init__()
         self.conv = ConvBNAct(1, 1, 1, act_type=act_type, inplace=True)
 
     def forward(self, x):
@@ -125,7 +127,7 @@ class SpatialAttentionBlock(nn.Module):
 
 class ChannelAttentionBlock(nn.Sequential):
     def __init__(self, channels, act_type):
-        super(ChannelAttentionBlock, self).__init__(
+        super().__init__(
             nn.AdaptiveAvgPool2d(1),
             ConvBNAct(channels, channels, 1, act_type=act_type, inplace=True)
         )

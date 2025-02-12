@@ -7,7 +7,7 @@ from .base_config import BaseConfig
 
 class OptunaConfig(BaseConfig):
     def __init__(self,):
-        super(OptunaConfig, self).__init__()
+        super().__init__()
         # Dataset
         self.dataset = 'cityscapes'
         self.data_root = '/path/to/your/dataset'
