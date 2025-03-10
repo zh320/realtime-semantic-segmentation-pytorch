@@ -1,6 +1,6 @@
 # Introduction
 
-PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation, hyperparameter optimization using Optuna etc.  
+PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation, hyperparameter optimization using Optuna and exporting to ONNX etc.  
 \
 <img2 src="https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/enet_800epoch.gif" width="100%" height="100%" />
 
@@ -376,6 +376,88 @@ Details of the configurations can also be found in this [file](configs/parser.py
 
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
+# How to use
+
+## Train
+Please modify the [config file](configs/my_config.py) first
+```
+self.task = 'train'
+```
+
+Then run the following command
+
+### DDP training (recommend)
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py
+```
+
+### DP training
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
+```
+
+Alternatively, you can also run in one command (this also holds for other tasks), e.g.
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py --task train
+```
+
+## Validate Only
+Please modify the [config file](configs/my_config.py) first
+```
+self.task = 'val'
+self.load_ckpt = True
+self.load_ckpt_path = '/path/to/your/validate/checkpoint'
+```
+
+Then run the following command (e.g. in DDP)
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py
+```
+
+## Predict
+Please modify the [config file](configs/my_config.py) first
+```
+self.task = 'predict'
+self.load_ckpt = True
+self.load_ckpt_path = '/path/to/your/predict/checkpoint'
+```
+
+Then run the following command (currently DDP is not supported)
+```
+CUDA_VISIBLE_DEVICES=0 python main.py
+```
+
+## Export
+Please note that currently only ONNX format is supported.
+
+If you want to export the trained model to ONNX format, you may modify the [config file](configs/my_config.py) first
+```
+self.load_ckpt_path = '/path/to/your/source/checkpoint'
+self.export_format = 'onnx'
+```
+
+Or if you only want to check the model structure without loading a pretrained checkpoint, you may also modify the config file as
+```
+self.load_ckpt_path = None
+self.export_format = 'onnx'
+```
+
+Then run the following command
+```
+python tools/export.py
+```
+
+Other parameters please refer to the config file.
+
+## Speed testing
+Currently support speed testing on CUDA using PyTorch or on CPU using ONNX runtime. Please modify the variable `mode` within this [script](tools/test_speed.py) accordingly.  
+
+Then run the following command
+```
+CUDA_VISIBLE_DEVICES=0 python tools/test_speed.py
+```
+
+
 # Knowledge Distillation
 
 Currently only support the original knowledge distillation method proposed by Geoffrey Hinton.[^kd]  
@@ -392,19 +474,6 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 
 [^optuna]: [Optuna: A hyperparameter optimization framework](https://github.com/optuna/optuna)
 
-# How to use
-
-## DDP training (recommend)
-
-```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py
-```
-
-## DP training
-
-```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
-```
 
 # Performances and checkpoints
 
