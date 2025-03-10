@@ -3,6 +3,9 @@ import os
 
 class BaseConfig:
     def __init__(self,):
+        # Task
+        self.task = 'train' # train, val, predict
+
         # Dataset
         self.dataset = None
         self.dataroot = None
@@ -35,7 +38,6 @@ class BaseConfig:
         self.val_interval = 1   # Epoch interval between validation
 
         # Testing
-        self.is_testing = False
         self.test_bs = 16
         self.test_data_folder = None
         self.colormap = 'cityscapes'
@@ -109,7 +111,7 @@ class BaseConfig:
         self.load_onnx_path = None
 
     def init_dependent_config(self):
-        if self.load_ckpt_path is None and not self.is_testing:
+        if self.load_ckpt_path is None and self.task == 'train':
             self.load_ckpt_path = f'{self.save_dir}/last.pth'
 
         if self.tb_log_dir is None:

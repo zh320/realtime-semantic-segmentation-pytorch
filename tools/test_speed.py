@@ -90,12 +90,12 @@ def test_model_speed(config, mode='cuda', ratio=0.5, imgw=2048, imgh=1024, itera
             session.run(None, {input_name: dummy_input})
 
         num_iterations = iterations if iterations else 100
-        print('Start testing performance on CPU using ONNX runtime...')
-        start_time = time.perf_counter()
+        print('Start speed testing on CPU using ONNX runtime...')
+        start_time = time.time()
         for _ in range(num_iterations):
             session.run(None, {input_name: dummy_input})
 
-        end_time = time.perf_counter()
+        end_time = time.time()
         FPS = num_iterations / (end_time - start_time)
 
     else:

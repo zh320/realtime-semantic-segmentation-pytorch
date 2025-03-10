@@ -15,7 +15,11 @@ if __name__ == '__main__':
 
     trainer = SegTrainer(config)
 
-    if config.is_testing:
+    if config.task == 'train':
+        trainer.run(config)
+    elif config.task == 'val':
+        trainer.validate(config)
+    elif config.task == 'predict':
         trainer.predict(config)
     else:    
-        trainer.run(config)
+        raise ValueError(f'Unsupported task type: {config.task}.\n')

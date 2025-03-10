@@ -15,18 +15,20 @@ from utils import (get_seg_metrics, sampler_set_epoch, get_colormap)
 class SegTrainer(BaseTrainer):
     def __init__(self, config):
         super().__init__(config)
-        if config.is_testing:
+        if config.task == 'predict':
             self.colormap = torch.tensor(get_colormap(config)).to(self.device)
         else:
-            self.teacher_model = get_teacher_model(config, self.device)
             self.metrics = get_seg_metrics(config).to(self.device)
 
-            if config.use_detail_head:
-                from .loss import get_detail_loss_fn
-                from models import LaplacianConv
+            if config.task == 'train':
+                self.teacher_model = get_teacher_model(config, self.device)
 
-                self.laplacian_conv = LaplacianConv(self.device)
-                self.detail_loss_fn = get_detail_loss_fn(config)
+                if config.use_detail_head:
+                    from .loss import get_detail_loss_fn
+                    from models import LaplacianConv
+
+                    self.laplacian_conv = LaplacianConv(self.device)
+                    self.detail_loss_fn = get_detail_loss_fn(config)
 
     def train_one_epoch(self, config):
         self.model.train()

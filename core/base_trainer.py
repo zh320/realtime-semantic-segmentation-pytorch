@@ -13,6 +13,9 @@ from utils import (get_optimizer, get_scheduler, parallel_model, de_parallel,
 class BaseTrainer:
     def __init__(self, config):
         super().__init__()
+        if config.task in ['val', 'predict'] and not config.load_ckpt:
+            raise RuntimeError(f'Need to load a pretrained checkpoint for `{config.task}` task.')
+
         # DDP parameters, DO NOT CHANGE
         self.rank = int(os.getenv('RANK', -1))
         self.local_rank = int(os.getenv('LOCAL_RANK', -1))
@@ -39,35 +42,35 @@ class BaseTrainer:
         # Define model and put it to the selected device
         self.model = get_model(config).to(self.device)
 
-        if config.is_testing:
-            assert config.load_ckpt, 'Need to load a pretrained checkpoint in `test` mode.'
+        if config.task == 'predict':
             self.test_loader = get_test_loader(config)
         else:
             # Tensorboard monitor
             self.writer = get_writer(config, self.main_rank)
 
-            # Define loss function
-            self.loss_fn = get_loss_fn(config, self.device)
-
             # Get train and validate loader
             self.train_loader, self.val_loader = get_loader(config, self.local_rank)
-
-            # Define optimizer
-            self.optimizer = get_optimizer(config, self.model)
-
-            # Define scheduler to control how learning rate changes
-            self.scheduler = get_scheduler(config, self.optimizer)
 
             # Define variables to monitor training process
             self.best_score = 0.
             self.cur_epoch = 0
             self.train_itrs = 0
 
+            if config.task == 'train':
+                # Define loss function
+                self.loss_fn = get_loss_fn(config, self.device)
+
+                # Define optimizer
+                self.optimizer = get_optimizer(config, self.model)
+
+                # Define scheduler to control how learning rate changes
+                self.scheduler = get_scheduler(config, self.optimizer)
+
         # Load specific checkpoints if needed
         self.load_ckpt(config)
 
         # Use exponential moving average of checkpoint update if needed
-        if not config.is_testing:
+        if config.task != 'predict':
             self.ema_model = get_ema_model(config, self.model, self.device)
 
     def run(self, config):
@@ -141,18 +144,20 @@ class BaseTrainer:
             if self.main_rank:
                 self.logger.info(f"Load model state dict from {config.load_ckpt_path}")
 
-            if not config.is_testing and config.resume_training:
-                self.cur_epoch = checkpoint['cur_epoch'] + 1
+            if config.task in ['train', 'val']:
                 self.best_score = checkpoint['best_score']
-                self.optimizer.load_state_dict(checkpoint['optimizer'])
-                self.scheduler.load_state_dict(checkpoint['scheduler'])
-                self.train_itrs = self.cur_epoch * config.iters_per_epoch
-                if self.main_rank:
-                    self.logger.info(f"Resume training from {config.load_ckpt_path}")
+
+                if config.task == 'train' and config.resume_training:
+                    self.cur_epoch = checkpoint['cur_epoch'] + 1
+                    self.optimizer.load_state_dict(checkpoint['optimizer'])
+                    self.scheduler.load_state_dict(checkpoint['scheduler'])
+                    self.train_itrs = self.cur_epoch * config.iters_per_epoch
+                    if self.main_rank:
+                        self.logger.info(f"Resume training from {config.load_ckpt_path}")
 
             del checkpoint
         else:
-            if config.is_testing:
+            if config.task in ['val', 'predict']:
                 raise ValueError(f'Could not find any pretrained checkpoint at path: {config.load_ckpt_path}.')
             else:
                 if self.main_rank:

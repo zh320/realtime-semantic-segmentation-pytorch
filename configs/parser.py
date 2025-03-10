@@ -18,6 +18,10 @@ def load_parser(config):
 
 def get_parser():
     parser = argparse.ArgumentParser()
+    # Task
+    parser.add_argument('--task', type=str, default=None, choices = ['train', 'val', 'predict'],
+        help='choose which task you want to use')
+
     # Dataset
     dataset_list = list_available_datasets()
     parser.add_argument('--dataset', type=str, default=None, choices=dataset_list,
@@ -63,8 +67,6 @@ def get_parser():
         help='epoch interval between two validations')
 
     # Testing
-    parser.add_argument('--is_testing', action='store_true', default=None,
-        help='whether to perform testing/predicting or not (default: False)')
     parser.add_argument('--test_bs', type=int, default=None, 
         help='testing batch size (currently only support single GPU)')
     parser.add_argument('--test_data_folder', type=str, default=None, 

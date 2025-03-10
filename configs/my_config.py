@@ -4,6 +4,9 @@ from .base_config import BaseConfig
 class MyConfig(BaseConfig):
     def __init__(self,):
         super().__init__()
+        # Task
+        self.task = 'predict'
+
         # Dataset
         self.dataset = 'cityscapes'
         self.data_root = '/path/to/your/dataset'
@@ -24,7 +27,6 @@ class MyConfig(BaseConfig):
         self.val_bs = 10
 
         # Testing
-        self.is_testing = True
         self.test_bs = 8
         self.test_data_folder = '/path/to/your/test/folder'
         self.load_ckpt_path = '/path/to/your/inference/checkpoint'
