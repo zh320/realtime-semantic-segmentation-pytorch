@@ -164,3 +164,30 @@ class SegHead(nn.Sequential):
             ConvBNAct(in_channels, hid_channels, 3, act_type=act_type),
             conv1x1(hid_channels, num_class)
         )
+
+
+class AdaptiveAvgPool2dForONNX(nn.Module):
+    def __init__(self, output_size):
+        super().__init__()
+        output_size = (output_size, output_size) if isinstance(output_size, int) else output_size
+        self.output_size = torch.tensor(output_size)
+
+    def forward(self, x):
+        input_size = x.size()[2:]
+
+        kernel_size = (input_size[0] // self.output_size[0], input_size[1] // self.output_size[1])
+        stride = kernel_size
+
+        return F.avg_pool2d(x, kernel_size, stride=stride)
+
+
+def replace_adaptive_avg_pool(model):
+    for name, module in model.named_children():
+        if isinstance(module, nn.AdaptiveAvgPool2d):
+            if module.output_size != 1:    # Global average pooling is already supported by ONNX
+                setattr(model, name, AdaptiveAvgPool2dForONNX(module.output_size))
+
+        elif isinstance(module, nn.Module):
+            replace_adaptive_avg_pool(module)
+
+    return model

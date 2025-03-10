@@ -1,3 +1,6 @@
+import os
+
+
 class BaseConfig:
     def __init__(self,):
         # Dataset
@@ -98,6 +101,13 @@ class BaseConfig:
         self.kd_loss_coefficient = 1.0
         self.kd_temperature = 4.0
 
+        # Export
+        self.export_format = 'onnx'
+        self.export_size = (512, 1024)
+        self.export_name = None
+        self.onnx_opset = 11
+        self.load_onnx_path = None
+
     def init_dependent_config(self):
         if self.load_ckpt_path is None and not self.is_testing:
             self.load_ckpt_path = f'{self.save_dir}/last.pth'
@@ -110,3 +120,7 @@ class BaseConfig:
 
         if self.crop_w is None:
             self.crop_w = self.crop_size
+
+        if self.export_name is None:
+            suffix = os.path.basename(self.load_ckpt_path).replace('.pth', '') if self.load_ckpt_path else 'dummy'
+            self.export_name = f'{self.model}_{suffix}'

@@ -176,5 +176,17 @@ def get_parser():
     parser.add_argument('--kd_temperature', type=float, default=None, 
         help='temperature used for KL divergence loss')
 
+    # Export
+    parser.add_argument('--export_format', type=str, default=None, choices = ['onnx'],
+        help='choose which `export_format` you want to use')
+    parser.add_argument('--export_size', type=tuple, default=None, 
+        help='input shape for exportation. Required by static graph format like ONNX.')
+    parser.add_argument('--export_name', type=str, default=None, 
+        help='given name for the target exported file')
+    parser.add_argument('--onnx_opset', type=int, default=None, 
+        help='ONNX opset version')
+    parser.add_argument('--load_onnx_path', type=str, default=None, 
+        help='path to load a specific ONNX file, otherwise try to export a dummy one according to `model`')
+
     args = parser.parse_args()
     return args
