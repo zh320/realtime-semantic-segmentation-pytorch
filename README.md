@@ -1,3 +1,15 @@
+# Table of Contents
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Supported Models](#supported-models)
+- [How to Use](#how-to-use)
+- [Knowledge Distillation](#knowledge-distillation)
+- [Hyperparameter Optimization](#hyperparameter-optimization)
+- [Performances and Checkpoints](#performances-and-checkpoints)
+- [ONNX Visualizer](#onnx-visualizer)
+- [Prepare the Dataset](#prepare-the-dataset)
+- [References](#references)
+
 # Introduction
 
 PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation, hyperparameter optimization using Optuna and exporting to ONNX etc.  
@@ -22,7 +34,7 @@ If you want a minimally reproducible environment, you may run
 pip install -r requirements.txt
 ```
 
-# Supported models
+# Supported Models
 
 <details><summary>ADSCNet</summary>
 
@@ -376,7 +388,7 @@ Details of the configurations can also be found in this [file](configs/parser.py
 
 [^smp]: [segmentation-models-pytorch](https://github.com/qubvel/segmentation_models.pytorch)  
 
-# How to use
+# How to Use
 
 ## Train
 Please modify the [config file](configs/my_config.py) first
@@ -386,12 +398,12 @@ self.task = 'train'
 
 Then run the following command
 
-### DDP training (recommend)
+### DDP Training (recommend)
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py
 ```
 
-### DP training
+### DP Training
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
 ```
@@ -449,7 +461,7 @@ python tools/export.py
 
 Other parameters please refer to the config file.
 
-## Speed testing
+## Speed Testing
 Currently support speed testing on CUDA using PyTorch or on CPU using ONNX runtime. Please modify the variable `mode` within this [script](tools/test_speed.py) accordingly.  
 
 Then run the following command
@@ -475,9 +487,9 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 [^optuna]: [Optuna: A hyperparameter optimization framework](https://github.com/optuna/optuna)
 
 
-# Performances and checkpoints
+# Performances and Checkpoints
 
-## full resolution on Cityscapes
+## Full Resolution on Cityscapes
 
 | Model      | Year | Encoder        | Params(M) <br> paper/my | FPS<sup>1</sup> | mIoU(paper) <br> val/test         | mIoU(my) val<sup>2</sup>                                                                                                      |
 | ---------- |:----:|:--------------:|:----------------------- |:---------------:| --------------------------------- |:-----------------------------------------------------------------------------------------------------------------------------:|
@@ -528,7 +540,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 [<sup>5</sup>The original encoder of ICNet is ResNet50]  
 [<sup>6</sup>In my experiments, detail loss does not improve the performances. However, using auxiliary heads does contribute to the improvements]  
 
-## SMP performance on Cityscapes
+## SMP Performances on Cityscapes
 
 | Decoder       | Params (M) | mIoU (200 epoch) | mIoU (800 epoch)                                                                                               |
 |:-------------:|:----------:|:----------------:|:--------------------------------------------------------------------------------------------------------------:|
@@ -544,7 +556,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 
 [For comparison, the above results are all using ResNet-18 as encoders.]  
 
-## Knowledge distillation
+## Knowledge Distillation
 
 | Model | Encoder       | Decoder                 | kd_training | mIoU(200 epoch) | mIoU(800 epoch) |
 |:-----:|:-------------:|:-----------------------:|:-----------:|:---------------:|:---------------:|
@@ -588,7 +600,7 @@ pip install streamlit onnxruntime pillow numpy
 The UI looks as follows
 ![onnx_viewer_ui](images/onnx_viewer_ui.png)
 
-# Prepare the dataset
+# Prepare the Dataset
 
 ```
 Cityscapes/
