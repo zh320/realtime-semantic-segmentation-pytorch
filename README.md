@@ -565,6 +565,29 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 
 [When using random search, the hyperparameters were chosen from the default config. For Optuna search, each experiment was performed 100 trials.]  
 
+# ONNX Visualizer
+
+If you need an easy-to-use inference tool using onnx runtime, you could simply run
+```
+streamlit run tools/onnx_viewer.py
+```
+
+This standalone script provides an interactive UI for segmentation inference, allowing you to
+
+- Load your ONNX model dynamically.
+
+- Batch upload images for inference.
+
+- View and save the segmentation overlays and raw prediction masks.
+
+Before using the visualizer, ensure you have prepared your ONNX model and inference images, and install the necessary packages via
+```
+pip install streamlit onnxruntime pillow numpy
+```
+
+The UI looks as follows
+![onnx_viewer_ui](images/onnx_viewer_ui.png)
+
 # Prepare the dataset
 
 ```
