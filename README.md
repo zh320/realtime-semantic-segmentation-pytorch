@@ -1,5 +1,6 @@
 # Table of Contents
 - [Introduction](#introduction)
+- [Project Goals](#project-goals)
 - [Requirements](#requirements)
 - [Supported Models](#supported-models)
 - [How to Use](#how-to-use)
@@ -15,6 +16,20 @@
 PyTorch implementation of realtime semantic segmentation models, support multi-gpu training and validating, automatic mixed precision training, knowledge distillation, hyperparameter optimization using Optuna and exporting to ONNX etc.  
 \
 <img2 src="https://github.com/zh320/realtime-semantic-segmentation-pytorch/releases/download/v1.0/enet_800epoch.gif" width="100%" height="100%" />
+
+# Project Goals
+
+This repository focuses on realtime semantic segmentation benchmarking, reproducible experiments, and readable reference implementations.
+
+This project prioritizes:
+- explicit model implementations
+- reproducibility
+- readability
+- lightweight experimentation
+
+instead of heavy abstraction or production-oriented framework design.
+
+Each model is implemented independently to preserve paper fidelity and improve code clarity.
 
 # Requirements
 
