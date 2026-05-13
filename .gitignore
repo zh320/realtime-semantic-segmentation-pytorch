@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# PyTorch checkpoints
+*.pth
+*.pt
+*.ckpt
+
+# Experiment outputs
+save/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Testing / cache
+.pytest_cache/
+.cache/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# ONNX export
+*.onnx
+
+# Temporary files
+tmp/
+temp/
