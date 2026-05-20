@@ -59,11 +59,11 @@ def get_loss_fn(config, device):
         weights = torch.Tensor(config.class_weights).to(device)
 
     if config.loss_type == 'ce':
-        criterion = nn.CrossEntropyLoss(ignore_index=config.ignore_index, 
+        criterion = nn.CrossEntropyLoss(ignore_index=config.ignore_index,
                                         reduction=config.reduction, weight=weights)
 
     elif config.loss_type == 'ohem':
-        criterion = OhemCELoss(thresh=config.ohem_thrs, ignore_index=config.ignore_index)  
+        criterion = OhemCELoss(thresh=config.ohem_thrs, ignore_index=config.ignore_index)
 
     else:
         raise NotImplementedError(f"Unsupport loss type: {config.loss_type}")
@@ -71,18 +71,18 @@ def get_loss_fn(config, device):
     return criterion
 
 
-def get_detail_loss_fn(config):
-    detail_loss_fn = DetailLoss(dice_loss_coef=config.dice_loss_coef, bce_loss_coef=config.bce_loss_coef)
+def get_detail_loss_fn(dice_loss_coef, bce_loss_coef):
+    detail_loss_fn = DetailLoss(dice_loss_coef=dice_loss_coef, bce_loss_coef=bce_loss_coef)
 
     return detail_loss_fn
 
 
-def kd_loss_fn(config, outputs, outputsT):
-    if config.kd_loss_type == 'kl_div':
-        lossT = F.kl_div(F.log_softmax(outputs/config.kd_temperature, dim=1),
-                    F.softmax(outputsT.detach()/config.kd_temperature, dim=1)) * config.kd_temperature ** 2
+def kd_loss_fn(loss_type, T, outputs, outputsT):
+    if loss_type == 'kl_div':
+        lossT = F.kl_div(F.log_softmax(outputs/T, dim=1),
+                    F.softmax(outputsT.detach()/T, dim=1)) * T ** 2
 
-    elif config.kd_loss_type == 'mse':
+    elif loss_type == 'mse':
         lossT = F.mse_loss(outputs, outputsT.detach())
 
     return lossT

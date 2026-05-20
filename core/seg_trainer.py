@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from .base_trainer import BaseTrainer
 from .loss import kd_loss_fn
 from models import get_teacher_model
-from utils import (get_seg_metrics, sampler_set_epoch, get_colormap)
+from utils import (get_seg_metrics, get_colormap)
 
 
 class SegTrainer(BaseTrainer):
@@ -28,12 +28,13 @@ class SegTrainer(BaseTrainer):
                     from models import LaplacianConv
 
                     self.laplacian_conv = LaplacianConv(self.device)
-                    self.detail_loss_fn = get_detail_loss_fn(config)
+                    self.detail_loss_fn = get_detail_loss_fn(config.dice_loss_coef, config.bce_loss_coef)
 
     def train_one_epoch(self, config):
         self.model.train()
 
-        sampler_set_epoch(config, self.train_loader, self.cur_epoch) 
+        if self.is_DDP:
+            self.train_loader.sampler.set_epoch(self.cur_epoch)
 
         pbar = tqdm(self.train_loader) if self.main_rank else self.train_loader
 
@@ -42,7 +43,7 @@ class SegTrainer(BaseTrainer):
             self.train_itrs += 1
 
             images = images.to(self.device, dtype=torch.float32)
-            masks = masks.to(self.device, dtype=torch.long)    
+            masks = masks.to(self.device, dtype=torch.long)
 
             self.optimizer.zero_grad()
 
@@ -99,7 +100,7 @@ class SegTrainer(BaseTrainer):
                     with torch.no_grad():
                         teacher_preds = self.teacher_model(images)   # Teacher predictions
 
-                    loss_kd = kd_loss_fn(config, preds, teacher_preds.detach())
+                    loss_kd = kd_loss_fn(config.kd_loss_type, config.kd_temperature, preds, teacher_preds.detach())
                     loss += config.kd_loss_coefficient * loss_kd
 
                 if config.use_tb and self.main_rank:
@@ -115,7 +116,7 @@ class SegTrainer(BaseTrainer):
             self.ema_model.update(self.model, self.train_itrs)
 
             if self.main_rank:
-                pbar.set_description(('%s'*2) % 
+                pbar.set_description(('%s'*2) %
                                 (f'Epoch:{self.cur_epoch}/{config.total_epoch}{" "*4}|',
                                 f'Loss:{loss.detach():4.4g}{" "*4}|',)
                                 )
@@ -140,10 +141,10 @@ class SegTrainer(BaseTrainer):
 
         if self.main_rank:
             if val_best:
-                self.logger.info(f'\n\nTrain {config.total_epoch} epochs finished.' + 
+                self.logger.info(f'\n\nTrain {config.total_epoch} epochs finished.' +
                                  f'\n\nBest mIoU is: {score:.4f}\n')
             else:
-                self.logger.info(f' Epoch{self.cur_epoch} mIoU: {score:.4f}    | ' + 
+                self.logger.info(f' Epoch{self.cur_epoch} mIoU: {score:.4f}    | ' +
                                  f'best mIoU so far: {self.best_score:.4f}\n')
 
             if config.use_tb and self.cur_epoch < config.total_epoch:
@@ -155,7 +156,7 @@ class SegTrainer(BaseTrainer):
 
     @torch.no_grad()
     def predict(self, config):
-        if config.DDP:
+        if self.is_DDP:
             raise ValueError('Predict mode currently does not support DDP.')
 
         self.logger.info('\nStart predicting...\n')

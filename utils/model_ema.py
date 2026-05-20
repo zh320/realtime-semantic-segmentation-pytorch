@@ -9,12 +9,12 @@ from copy import deepcopy
 from .parallel import de_parallel
 
 
-def get_ema_model(config, model, device):
-    return ModelEmaV2(config, model, device=device)
+def get_ema_model(config, model, total_itrs, device):
+    return ModelEmaV2(config, model, total_itrs, device=device)
 
 
 class ModelEmaV2(nn.Module):
-    def __init__(self, config, model, device=None):
+    def __init__(self, config, model, total_itrs, device=None):
         super().__init__()
         # make a copy of the model for accumulating moving average of weights
         self.ema = deepcopy(de_parallel(model))
@@ -22,8 +22,8 @@ class ModelEmaV2(nn.Module):
         self.device = device  # perform ema on different device from model if set
         if self.device is not None:
             self.ema.to(device=device)
-        self.use_ema = config.use_ema    
-        self.total_itrs = config.total_itrs    
+        self.use_ema = config.use_ema
+        self.total_itrs = total_itrs
 
     @torch.no_grad()
     def _update(self, model, update_fn):

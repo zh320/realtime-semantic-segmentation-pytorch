@@ -1,12 +1,13 @@
 import os
 import torch
 from torch.cuda import amp
+from math import ceil
 from copy import deepcopy
 from .loss import get_loss_fn
 from models import get_model
 from datasets import get_loader, get_test_loader
-from utils import (get_optimizer, get_scheduler, parallel_model, de_parallel, 
-                    get_ema_model, set_seed, set_device, get_writer, get_logger, 
+from utils import (get_optimizer, get_scheduler, parallel_model, de_parallel,
+                    get_ema_model, set_seed, set_device, get_writer, get_logger,
                     destroy_ddp_process, mkdir, save_config, log_config,)
 
 
@@ -20,14 +21,14 @@ class BaseTrainer:
         self.rank = int(os.getenv('RANK', -1))
         self.local_rank = int(os.getenv('LOCAL_RANK', -1))
         self.world_size = int(os.getenv('WORLD_SIZE', 1))
-        config.DDP = self.local_rank != -1
+        self.is_DDP = self.local_rank != -1
         self.main_rank = self.local_rank in [-1, 0]
 
         # Logger compatible with ddp training
         self.logger = get_logger(config, self.main_rank)
 
         # Select device to train the model
-        self.device = set_device(config, self.local_rank)
+        self.device, self.gpu_num, self.num_workers = set_device(config, self.is_DDP, self.local_rank)
 
         # Automatic mixed precision training scaler
         self.scaler = amp.GradScaler(enabled=config.amp_training)
@@ -43,13 +44,30 @@ class BaseTrainer:
         self.model = get_model(config).to(self.device)
 
         if config.task == 'predict':
-            self.test_loader = get_test_loader(config)
+            self.test_loader, self.test_num = get_test_loader(config, self.is_DDP, self.num_workers)
         else:
             # Tensorboard monitor
             self.writer = get_writer(config, self.main_rank)
 
+            # Set batch size
+            self.train_bs, self.val_bs = config.train_bs, config.val_bs
+            if not self.is_DDP:
+                self.train_bs *= self.gpu_num
+
             # Get train and validate loader
-            self.train_loader, self.val_loader = get_loader(config, self.local_rank)
+            self.train_loader, self.train_num = get_loader(config, 'train', self.is_DDP, self.train_bs,
+                                                            self.local_rank, self.gpu_num, self.num_workers)
+            self.val_loader, self.val_num = get_loader(config, 'val', self.is_DDP, self.val_bs,
+                                                            self.local_rank, self.gpu_num, self.num_workers)
+
+            # Calculate number of iteration per epoch
+            if self.is_DDP:
+                self.iters_per_epoch = ceil(self.train_num/self.train_bs/self.gpu_num)
+            else:
+                self.iters_per_epoch = ceil(self.train_num/self.train_bs)
+
+            # Calculate total number of training iterations
+            self.total_itrs = int(config.total_epoch * self.iters_per_epoch)
 
             # Define variables to monitor training process
             self.best_score = 0.
@@ -61,17 +79,17 @@ class BaseTrainer:
                 self.loss_fn = get_loss_fn(config, self.device)
 
                 # Define optimizer
-                self.optimizer = get_optimizer(config, self.model)
+                self.optimizer, self.max_lr = get_optimizer(config, self.model, self.gpu_num)
 
                 # Define scheduler to control how learning rate changes
-                self.scheduler = get_scheduler(config, self.optimizer)
+                self.scheduler = get_scheduler(config, self.optimizer, self.max_lr, self.total_itrs)
 
         # Load specific checkpoints if needed
         self.load_ckpt(config)
 
         # Use exponential moving average of checkpoint update if needed
         if config.task != 'predict':
-            self.ema_model = get_ema_model(config, self.model, self.device)
+            self.ema_model = get_ema_model(config, self.model, self.total_itrs, self.device)
 
     def run(self, config):
         # Parallel the model using DP or DDP
@@ -96,10 +114,10 @@ class BaseTrainer:
                     # Save best model
                     self.best_score = val_score
                     if config.save_ckpt:
-                        self.save_ckpt(config, save_best=True) 
+                        self.save_ckpt(config, save_best=True)
 
             if self.main_rank and config.save_ckpt:
-                # Save last model    
+                # Save last model
                 self.save_ckpt(config)
 
         # Close tensorboard after training
@@ -108,14 +126,14 @@ class BaseTrainer:
             self.writer.close()
 
         # Wait for main rank to save the checkpoint
-        if config.DDP:
+        if self.is_DDP:
             torch.distributed.barrier()
 
         # Validate for the best model
         if config.save_ckpt:
             best_score = self.val_best(config)
 
-        destroy_ddp_process(config)
+        destroy_ddp_process(config, self.is_DDP)
 
         if config.save_ckpt:
             return best_score
@@ -123,16 +141,16 @@ class BaseTrainer:
             return self.best_score
 
     def parallel_model(self, config):
-        self.model = parallel_model(config, self.model, self.local_rank, self.device)
+        self.model = parallel_model(config, self.is_DDP, self.model, self.local_rank, self.device)
 
     def train_one_epoch(self, config):
-        '''You may implement whatever training process you like here, 
-            e.g. knowledge distillation, self-supervised learning or 
+        '''You may implement whatever training process you like here,
+            e.g. knowledge distillation, self-supervised learning or
             semi-supervised learning.'''
         raise NotImplementedError()
 
     def validate(self, config):
-        raise NotImplementedError()   
+        raise NotImplementedError()
 
     def predict(self, config):
         raise NotImplementedError()
@@ -151,7 +169,7 @@ class BaseTrainer:
                     self.cur_epoch = checkpoint['cur_epoch'] + 1
                     self.optimizer.load_state_dict(checkpoint['optimizer'])
                     self.scheduler.load_state_dict(checkpoint['scheduler'])
-                    self.train_itrs = self.cur_epoch * config.iters_per_epoch
+                    self.train_itrs = self.cur_epoch * self.iters_per_epoch
                     if self.main_rank:
                         self.logger.info(f"Resume training from {config.load_ckpt_path}")
 
