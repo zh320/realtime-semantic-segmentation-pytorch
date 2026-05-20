@@ -9,6 +9,7 @@
 - [Performances and Checkpoints](#performances-and-checkpoints)
 - [ONNX Visualizer](#onnx-visualizer)
 - [Prepare the Dataset](#prepare-the-dataset)
+- [Citation](#citation)
 - [References](#references)
 
 # Introduction
@@ -627,6 +628,19 @@ The UI looks as follows
 Cityscapes/
 ├── gtFine/
 └── leftImg8bit/
+```
+
+# Citation
+
+```bibtex
+@misc{zh2023realtime,
+  author       = {zh320},
+  title        = {Realtime Semantic Segmentation PyTorch},
+  year         = {2023},
+  publisher    = {GitHub},
+  journal      = {GitHub Repository},
+  howpublished = {\url{https://github.com/zh320/realtime-semantic-segmentation-pytorch}}
+}
 ```
 
 # References
