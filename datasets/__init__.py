@@ -4,61 +4,48 @@ from .cityscapes import Cityscapes
 from .dataset_registry import dataset_hub
 
 
-def get_dataset(config):
-    if config.dataset in dataset_hub.keys():
-        train_dataset = dataset_hub[config.dataset](config=config, mode='train')
-        val_dataset = dataset_hub[config.dataset](config=config, mode='val')
-    else:
+def get_dataset(config, mode):
+    if config.dataset not in dataset_hub.keys():
         raise NotImplementedError('Unsupported dataset!')
 
-    return train_dataset, val_dataset
+    return dataset_hub[config.dataset](config=config, mode=mode)
 
 
-def get_loader(config, rank, pin_memory=True):
-    train_dataset, val_dataset = get_dataset(config)
+def get_loader(config, mode, is_DDP, batch_size, rank, gpu_num, num_workers, pin_memory=True):
+    dataset = get_dataset(config, mode)
+
+    is_train = mode == 'train'
 
     # Make sure train number is divisible by train batch size
-    config.train_num = int(len(train_dataset) // config.train_bs * config.train_bs)
-    config.val_num = len(val_dataset)
+    num_samples = int(len(dataset) // batch_size * batch_size) if is_train else len(dataset)
 
-    if config.DDP:
+    if is_DDP:
         from torch.utils.data.distributed import DistributedSampler
-        train_sampler = DistributedSampler(train_dataset, num_replicas=config.gpu_num, 
-                                            rank=rank, shuffle=True)
-        val_sampler = DistributedSampler(val_dataset, num_replicas=config.gpu_num,
-                                            rank=rank, shuffle=False)
+        sampler = DistributedSampler(dataset, num_replicas=gpu_num, rank=rank, shuffle=is_train)
+    else:   # DP
+        sampler = None
 
-        train_loader = DataLoader(train_dataset, batch_size=config.train_bs, shuffle=False, 
-                                    num_workers=config.num_workers, pin_memory=pin_memory, 
-                                    sampler=train_sampler, drop_last=True)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=(is_train and not is_DDP),
+                        sampler=sampler, num_workers=num_workers, pin_memory=pin_memory,
+                        drop_last=is_train)
 
-        val_loader = DataLoader(val_dataset, batch_size=config.val_bs, shuffle=False,
-                                    num_workers=config.num_workers, pin_memory=pin_memory,
-                                    sampler=val_sampler)
-    else:
-        train_loader = DataLoader(train_dataset, batch_size=config.train_bs, 
-                                    shuffle=True, num_workers=config.num_workers, drop_last=True)
-
-        val_loader = DataLoader(val_dataset, batch_size=config.val_bs, 
-                                    shuffle=False, num_workers=config.num_workers)
-
-    return train_loader, val_loader
+    return loader, num_samples
 
 
-def get_test_loader(config): 
+def get_test_loader(config, is_DDP, num_workers):
     from .test_dataset import TestDataset
     dataset = TestDataset(config)
 
-    config.test_num = len(dataset)
+    test_num = len(dataset)
 
-    if config.DDP:
+    if is_DDP:
         raise NotImplementedError()
 
     else:
-        test_loader = DataLoader(dataset, batch_size=config.test_bs, 
-                                    shuffle=False, num_workers=config.num_workers)
+        test_loader = DataLoader(dataset, batch_size=config.test_bs,
+                                    shuffle=False, num_workers=num_workers)
 
-    return test_loader
+    return test_loader, test_num
 
 
 def list_available_datasets():

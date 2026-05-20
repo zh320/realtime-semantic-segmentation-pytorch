@@ -44,13 +44,12 @@ def save_config(config):
 
 
 def log_config(config, logger):
-    keys = ['task', 'dataset', 'num_class', 'model', 'encoder', 'decoder', 'loss_type', 
-            'optimizer_type', 'lr_policy', 'total_epoch', 'train_bs', 'val_bs',  
-            'train_num', 'val_num', 'gpu_num', 'num_workers', 'amp_training', 
-            'DDP', 'kd_training', 'synBN', 'use_ema', 'use_aux']
+    keys = ['task', 'dataset', 'num_class', 'model', 'encoder', 'decoder', 'loss_type',
+            'optimizer_type', 'lr_policy', 'total_epoch', 'train_bs', 'val_bs',
+            'amp_training', 'kd_training', 'synBN', 'use_ema', 'use_aux']
 
     config_dict = vars(config)
-    infos = f"\n\n\n{'#'*25} Config Informations {'#'*25}\n" 
+    infos = f"\n\n\n{'#'*25} Config Informations {'#'*25}\n"
     infos += '\n'.join('%s: %s' % (k, config_dict[k]) for k in keys)
     infos += f"\n{'#'*71}\n\n"
     logger.info(infos)
