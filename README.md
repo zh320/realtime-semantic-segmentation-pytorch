@@ -405,6 +405,12 @@ Details of the configurations can also be found in this [file](configs/parser.py
 
 # How to Use
 
+## Install
+```bash
+git clone https://github.com/zh320/realtime-semantic-segmentation-pytorch.git
+cd realtime-semantic-segmentation-pytorch
+```
+
 ## Train
 Please modify the [config file](configs/my_config.py) first
 ```
