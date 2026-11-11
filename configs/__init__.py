@@ -1,2 +1,2 @@
 from .my_config import MyConfig
-from .parser import load_parser
+from .parser import load_parser, load_config_json

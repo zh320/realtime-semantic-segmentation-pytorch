@@ -1,22 +1,41 @@
+import json
 import argparse
 
 from datasets import list_available_datasets
 from models import list_available_models
 
 
-def load_parser(config):
-    args = get_parser()
+def load_config_json(config, json_path):
+    with open(json_path, "r") as f:
+        params = json.load(f)
 
-    for k,v in vars(args).items():
-        if v is not None:
-            try:
-                exec(f"config.{k} = v")
-            except:
-                raise RuntimeError(f'Unable to assign value to config.{k}')
+    ignored = []
+    for k, v in params.items():
+        if hasattr(config, k):
+            setattr(config, k, v)
+        else:
+            ignored.append(k)
+
+    if ignored:
+        print(f"Ignored unknown config keys: {ignored}")
+
     return config
 
 
-def get_parser():
+def load_parser(config, args=None):
+    args = get_parser(args)
+
+    for k, v in vars(args).items():
+        if v is not None:
+            try:
+                setattr(config, k, v)
+            except Exception:
+                raise RuntimeError(f"Unable to assign value to config.{k}")
+
+    return config
+
+
+def get_parser(args):
     parser = argparse.ArgumentParser()
     # Task
     parser.add_argument('--task', type=str, default=None, choices = ['train', 'val', 'predict'],
@@ -192,5 +211,4 @@ def get_parser():
     parser.add_argument('--load_onnx_path', type=str, default=None,
         help='path to load a specific ONNX file, otherwise try to export a dummy one according to `model`')
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args(args)

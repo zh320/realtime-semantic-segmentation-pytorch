@@ -1,17 +1,27 @@
-from core import SegTrainer
-from configs import MyConfig, load_parser
-
+import argparse
 import warnings
+
+from core import SegTrainer
+from configs import MyConfig, load_parser, load_config_json
+
 warnings.filterwarnings("ignore")
 
 
-if __name__ == '__main__':
+def main():
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--config-json", type=str, default=None)
+    args, remaining = parser.parse_known_args()
+
     config = MyConfig()
 
-    config.init_dependent_config()
+    # Restore parameters from a previous experiment
+    if args.config_json is not None:
+        config = load_config_json(config, args.config_json)
 
-    # If you want to use command-line arguments, please uncomment the following line
-    # config = load_parser(config)
+    # Apply command-line overrides
+    config = load_parser(config, args=remaining)
+
+    config.init_dependent_config()
 
     trainer = SegTrainer(config)
 
@@ -21,5 +31,9 @@ if __name__ == '__main__':
         trainer.validate(config)
     elif config.task == 'predict':
         trainer.predict(config)
-    else:    
+    else:
         raise ValueError(f'Unsupported task type: {config.task}.\n')
+
+
+if __name__ == '__main__':
+    main()
