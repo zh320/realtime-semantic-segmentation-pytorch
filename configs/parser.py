@@ -71,7 +71,7 @@ def get_parser():
         help='testing batch size (currently only support single GPU)')
     parser.add_argument('--test_data_folder', type=str, default=None,
         help='path to your testing image folder')
-    parser.add_argument('--colormap', type=str, default=None, choices = ['cityscapes', 'custom'],
+    parser.add_argument('--colormap', type=str, default=None, choices = ['cityscapes', 'random', 'custom'],
         help='choose which colormap of visulization you want to use')
     parser.add_argument('--save_mask', action='store_false', default=None,
         help='whether to save the predicted mask or not (default: True)')

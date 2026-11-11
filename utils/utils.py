@@ -62,11 +62,22 @@ def get_colormap(config):
                     12:(255,  0,  0), 13:(  0,  0,142), 14:(  0,  0, 70), 15:(  0, 60,100),
                     16:(  0, 80,100), 17:(  0,  0,230), 18:(119, 11, 32)}
 
+    elif config.colormap == 'random':
+        random_colors = np.random.randint(0, 256, size=(config.num_class, 3))
+        colormap = {
+            i: tuple(int(value) for value in color)
+            for i, color in enumerate(random_colors)
+        }
+
     elif config.colormap == 'custom':
         raise NotImplementedError()
 
     else:
         raise ValueError(f'Unsupport colormap type: {config.colormap}.')
+
+    colormap_json = {k: list(v) for k, v in colormap.items()}
+    with open(f'{config.save_dir}/colormap.json', 'w') as f:
+        json.dump(colormap_json, f, indent=1)
 
     colormap = [color for color in colormap.values()]
 
