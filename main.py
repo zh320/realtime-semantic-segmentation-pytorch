@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import warnings
 
 from core import SegTrainer
@@ -9,10 +10,16 @@ warnings.filterwarnings("ignore")
 
 def main():
     parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--config-json", type=str, default=None)
     args, remaining = parser.parse_known_args()
 
-    config = MyConfig()
+    if args.config is not None:
+        module_name = args.config.replace("/", ".").removesuffix(".py")
+        module = importlib.import_module(module_name)
+        config = module.MyConfig()
+    else:
+        config = MyConfig()
 
     # Restore parameters from a previous experiment
     if args.config_json is not None:
