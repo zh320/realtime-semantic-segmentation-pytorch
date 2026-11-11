@@ -386,7 +386,7 @@ SegNet was primarily motivated by scene understanding applications. Hence, it is
 </details>
 <br>
 
-If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) to (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
+If you want to use encoder-decoder structure with pretrained encoders, you may refer to: segmentation-models-pytorch[^smp]. This repo also provides easy access to SMP. Just modify the [config file](configs/my_config.py) (e.g. if you want to train DeepLabv3Plus with ResNet-101 backbone as teacher model to perform knowledge distillation)  
 
 ```
 self.model = 'smp'
@@ -394,7 +394,7 @@ self.encoder = 'resnet101'
 self.decoder = 'deeplabv3p'
 ```
 
-or use [command-line arguments](configs/parser.py)  
+You can also override configuration parameters using [command-line arguments](configs/parser.py):  
 
 ```
 python main.py --model smp --encoder resnet101 --decoder deeplabv3p
@@ -413,30 +413,42 @@ cd realtime-semantic-segmentation-pytorch
 ```
 
 ## Train
-Please modify the [config file](configs/my_config.py) first
+You can use the default [config file](configs/my_config.py), or specify your own config file (*.py) using `--config`. Each custom config should define a `MyConfig` class.
+
+For example:
+
 ```
-self.task = 'train'
+python main.py --config configs/my_experiment.py
 ```
 
-Then run the following command
+You can also restore the configuration from a previous experiment using `--config-json`. This is useful for reproducing or continuing an experiment. Parameters in the JSON file are loaded first, and command-line arguments override them when specified.
+
+```
+python main.py --config-json /path/to/previous/config.json
+```
+
+Configuration parameters are loaded from the `*.py` config first, then optionally restored from a previous experiment using `--config-json`. Any parameters explicitly provided through command-line arguments will override the loaded values.
+
+After loading the configuration, dependent parameters are initialized automatically.
 
 ### DDP Training (recommend)
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py --config configs/my_experiment.py
 ```
 
 ### DP Training
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py
+CUDA_VISIBLE_DEVICES=0,1,2,3 python main.py --config configs/my_experiment.py
 ```
 
-Alternatively, you can also run in one command (this also holds for other tasks), e.g.
+You can also specify the task directly through command-line arguments (this also holds for other tasks), e.g.
+
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 main.py --task train
 ```
 
 ## Validate Only
-Please modify the [config file](configs/my_config.py) first
+Please modify the [config file](configs/my_config.py) first, or specify a custom `*.py` config using `--config`  
 ```
 self.task = 'val'
 self.load_ckpt = True
@@ -449,7 +461,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 ```
 
 ## Predict
-Please modify the [config file](configs/my_config.py) first
+Please modify the [config file](configs/my_config.py) first, or specify a custom `*.py` config using `--config`  
 ```
 self.task = 'predict'
 self.load_ckpt = True
