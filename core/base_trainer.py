@@ -24,6 +24,10 @@ class BaseTrainer:
         self.is_DDP = self.local_rank != -1
         self.main_rank = self.local_rank in [-1, 0]
 
+        # Create directory to save checkpoints and logs
+        if self.main_rank:
+            mkdir(config.save_dir)
+
         # Logger compatible with ddp training
         self.logger = get_logger(config, self.main_rank)
 
@@ -32,10 +36,6 @@ class BaseTrainer:
 
         # Automatic mixed precision training scaler
         self.scaler = amp.GradScaler(enabled=config.amp_training)
-
-        # Create directory to save checkpoints and logs
-        if self.main_rank:
-            mkdir(config.save_dir)
 
         # Set random seed to obtain reproducible results
         set_seed(config.random_seed)
