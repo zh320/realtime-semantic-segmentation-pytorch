@@ -1,4 +1,4 @@
-import os, random, torch, json
+import os, random, torch, json, re
 import numpy as np
 
 
@@ -75,3 +75,28 @@ def get_colormap(config):
         raise ValueError('Length of colormap is smaller than the number of class.')
     else:
         return colormap[:config.num_class]
+
+
+def get_exp_dir(save_dir=None, base_dir="exps", prefix="exp", resume_training=False):
+    if save_dir is not None:
+        return save_dir
+
+    if not os.path.exists(base_dir) or not os.path.isdir(base_dir):
+        mkdir(base_dir)
+
+    pattern = re.compile(rf"^{prefix}(\d+)$")
+
+    existing_nums = []
+    for item in os.listdir(base_dir):
+        item_path = os.path.join(base_dir, item)
+        if os.path.isdir(item_path):
+            match = pattern.match(item)
+            if match:
+                existing_nums.append(int(match.group(1)))
+
+    if resume_training:
+        assert len(existing_nums) > 0
+        next_num = max(existing_nums)
+    else:
+        next_num = max(existing_nums) + 1 if existing_nums else 1
+    return f"{base_dir}/{prefix}{next_num}"

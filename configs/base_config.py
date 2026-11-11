@@ -1,4 +1,5 @@
 import os
+from utils import get_exp_dir
 
 
 class BaseConfig:
@@ -62,7 +63,8 @@ class BaseConfig:
 
         # Monitoring
         self.save_ckpt = True
-        self.save_dir = 'save'
+        self.save_dir = None
+        self.exp_folder = 'exps'
         self.use_tb = True          # tensorboard
         self.tb_log_dir = None
         self.ckpt_name = None
@@ -70,7 +72,7 @@ class BaseConfig:
 
         # Training setting
         self.amp_training = False
-        self.resume_training = True
+        self.resume_training = False
         self.load_ckpt = True
         self.load_ckpt_path = None
         self.base_workers = 8
@@ -111,8 +113,14 @@ class BaseConfig:
         self.load_onnx_path = None
 
     def init_dependent_config(self):
-        if self.load_ckpt_path is None and self.task == 'train':
-            self.load_ckpt_path = f'{self.save_dir}/last.pth'
+        resume_training = self.resume_training if self.task == 'train' else False
+        self.save_dir = get_exp_dir(save_dir=self.save_dir, base_dir=self.exp_folder,
+                                    prefix=self.task, resume_training=resume_training)
+
+        if self.task == 'train':
+            self.load_ckpt_path = f'{self.save_dir}/last.pth' if self.load_ckpt_path is None else self.load_ckpt_path
+        else:
+            assert self.load_ckpt_path is not None
 
         if self.tb_log_dir is None:
             self.tb_log_dir = f'{self.save_dir}/tb_logs/'

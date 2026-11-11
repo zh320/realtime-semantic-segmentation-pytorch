@@ -109,6 +109,8 @@ def get_parser():
         help='whether to save checkpoint or not (default: True)')
     parser.add_argument('--save_dir', type=str, default=None,
         help='path to save checkpoints and training configurations etc.')
+    parser.add_argument('--exp_folder', type=str, default=None,
+        help='parent folder to save outputs of experiments if save_dir is not specified')
     parser.add_argument('--use_tb', action='store_false', default=None,
         help='whether to use tensorboard or not (default: True)')
     parser.add_argument('--tb_log_dir', type=str, default=None,
@@ -119,8 +121,8 @@ def get_parser():
     # Training setting
     parser.add_argument('--amp_training', action='store_true', default=None,
         help='whether to use automatic mixed precision training or not (default: False)')
-    parser.add_argument('--resume_training', action='store_false', default=None,
-        help='whether to load training state from specific checkpoint or not if present (default: True)')
+    parser.add_argument('--resume_training', action='store_true', default=None,
+        help='whether to load training state from specific checkpoint or not if present (default: False)')
     parser.add_argument('--load_ckpt', action='store_false', default=None,
         help='whether to load given checkpoint or not if exist (default: True)')
     parser.add_argument('--load_ckpt_path', type=str, default=None,
