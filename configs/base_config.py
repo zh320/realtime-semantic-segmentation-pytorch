@@ -8,7 +8,7 @@ class BaseConfig:
 
         # Dataset
         self.dataset = None
-        self.dataroot = None
+        self.data_root = None
         self.num_class = -1
         self.ignore_index = 255
 
