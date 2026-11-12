@@ -34,7 +34,7 @@ Each model is implemented independently to preserve paper fidelity and improve c
 
 # Requirements
 
-torch == 1.8.1  
+torch  
 segmentation-models-pytorch (optional)  
 torchmetrics  
 albumentations  
@@ -43,12 +43,16 @@ tqdm
 optuna == 4.0.0 (optional)  
 optuna-integration == 4.0.0 (optional)  
 
-If you find any version conflicts, see [requirements](./requirements.txt). This repo may also work with torch > 1.8.1, but it has not been verified yet.  
+If you encounter any version conflicts, please refer to [requirements](./requirements.txt).
 
-If you want a minimally reproducible environment, you may run
+To set up a minimally reproducible environment, you can run:
 ```
 pip install -r requirements.txt
 ```
+
+This repository was developed and tested with `torch==1.8.1` and has also been verified to work with newer PyTorch versions.
+
+**Note for DDP users:** When using newer PyTorch versions, you may need to replace the deprecated `torch.distributed.launch` with `torchrun` (see the official PyTorch documentation for details).
 
 # Supported Models
 
