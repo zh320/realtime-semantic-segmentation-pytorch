@@ -124,7 +124,7 @@ def get_parser(args):
         help='weight decay rate of SGD optimizer')
 
     # Monitoring
-    parser.add_argument('--no_save_ckpt', dest='save_ckpt', action='', default=None,
+    parser.add_argument('--no_save_ckpt', dest='save_ckpt', action='store_false', default=None,
         help='whether to save checkpoint or not (default: True)')
     parser.add_argument('--save_dir', type=str, default=None,
         help='path to save checkpoints and training configurations etc.')
