@@ -73,7 +73,7 @@ def get_parser(args):
     parser.add_argument('--train_bs', type=int, default=None,
         help='training batch size for single GPU, total batch size *= gpu number')
     parser.add_argument('--use_aux', action='store_true', default=None,
-        help='whether to use auxiliary heads or not if exist (default: False)')
+        help='enable auxiliary heads if exist (default: Disabled)')
     parser.add_argument('--aux_coef', type=tuple, default=None,
         help='coefficients of auxiliary losses, must have the same length as auxiliary heads')
 
@@ -92,10 +92,10 @@ def get_parser(args):
         help='path to your testing image folder')
     parser.add_argument('--colormap', type=str, default=None, choices = ['cityscapes', 'random', 'custom'],
         help='choose which colormap of visulization you want to use')
-    parser.add_argument('--save_mask', action='store_false', default=None,
-        help='whether to save the predicted mask or not (default: True)')
-    parser.add_argument('--blend_prediction', action='store_false', default=None,
-        help='whether to blend the image and mask using colormap for visualization or not (default: True)')
+    parser.add_argument('--no_save_mask', dest='save_mask', action='store_false', default=None,
+        help='disable saving the predicted mask (default: Enabled)')
+    parser.add_argument('--no_blend_prediction', dest='blend_prediction', action='store_false', default=None,
+        help='disable blending the image and mask using colormap for visualization (default: Enabled)')
     parser.add_argument('--blend_alpha', type=float, default=None,
         help='coefficient to blend the mask with the image')
 
@@ -124,14 +124,14 @@ def get_parser(args):
         help='weight decay rate of SGD optimizer')
 
     # Monitoring
-    parser.add_argument('--save_ckpt', action='store_false', default=None,
+    parser.add_argument('--no_save_ckpt', dest='save_ckpt', action='', default=None,
         help='whether to save checkpoint or not (default: True)')
     parser.add_argument('--save_dir', type=str, default=None,
         help='path to save checkpoints and training configurations etc.')
     parser.add_argument('--exp_folder', type=str, default=None,
         help='parent folder to save outputs of experiments if save_dir is not specified')
-    parser.add_argument('--use_tb', action='store_false', default=None,
-        help='whether to use tensorboard or not (default: True)')
+    parser.add_argument('--no_use_tb', dest='use_tb', action='store_false', default=None,
+        help='disable tensorboard (default: Enabled)')
     parser.add_argument('--tb_log_dir', type=str, default=None,
         help='path to save tensorboard logs')
     parser.add_argument('--ckpt_name', type=str, default=None,
@@ -139,11 +139,11 @@ def get_parser(args):
 
     # Training setting
     parser.add_argument('--amp_training', action='store_true', default=None,
-        help='whether to use automatic mixed precision training or not (default: False)')
+        help='enable automatic mixed precision training (default: Disabled)')
     parser.add_argument('--resume_training', action='store_true', default=None,
-        help='whether to load training state from specific checkpoint or not if present (default: False)')
-    parser.add_argument('--load_ckpt', action='store_false', default=None,
-        help='whether to load given checkpoint or not if exist (default: True)')
+        help='enable loading training state from specific checkpoint if present (default: Disabled)')
+    parser.add_argument('--no_load_ckpt', dest='load_ckpt', action='store_false', default=None,
+        help='disable loading given checkpoint if exist (default: Enabled)')
     parser.add_argument('--load_ckpt_path', type=str, default=None,
         help='path to load specific checkpoint, otherwise try to load `last.pth`')
     parser.add_argument('--base_workers', type=int, default=None,
@@ -151,7 +151,7 @@ def get_parser(args):
     parser.add_argument('--random_seed', type=int, default=None,
         help='random seed')
     parser.add_argument('--use_ema', action='store_true', default=None,
-        help='whether to use exponetial moving average to update weights or not (default: False)')
+        help='enable using exponetial moving average to update weights (default: Disabled)')
 
     # Augmentation
     parser.add_argument('--crop_size', type=int, default=None,
@@ -176,14 +176,14 @@ def get_parser(args):
         help='probability to perform VerticalFlip')
 
     # DDP
-    parser.add_argument('--synBN', action='store_false', default=None,
-        help='whether to use SyncBatchNorm or not if trained with DDP (default: True)')
+    parser.add_argument('--no_synBN', dest='synBN', action='store_false', default=None,
+        help='disable SyncBatchNorm if trained with DDP (default: Enabled)')
     parser.add_argument('--local-rank', type=int, default=None,
         help='used for DDP, DO NOT CHANGE')
 
     # Knowledge Distillation
     parser.add_argument('--kd_training', action='store_true', default=None,
-        help='whether to use knowledge distillation or not (default: False)')
+        help='enable knowledge distillation (default: Disabled)')
     parser.add_argument('--teacher_ckpt', type=str, default=None,
         help='path to your teacher checkpoint')
     parser.add_argument('--teacher_model', type=str, default=None,
